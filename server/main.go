@@ -18,7 +18,7 @@ import (
 var (
 	addr        = flag.String("addr", ":8080", "listen address")
 	dataDir     = flag.String("data", "data/", "data directory")
-	allowOrigin = flag.String("allow-origin", "", "allowed CORS origin (empty = disable check)")
+	allowOrigin = flag.String("allow-origin", "", "allowed CORS origins, comma-separated (empty = disable check)")
 	allowRefer  = flag.String("allow-referer", "", "required Referer prefix (empty = disable check)")
 	compact     = flag.Bool("compact", false, "compact the data file and exit")
 	apiKey     = flag.String("api-key", "", "required X-Api-Key header for POST /api/run (empty = disable check)")
@@ -355,7 +355,18 @@ func handleRun(store *Store, rl *RateLimiter) http.HandlerFunc {
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if *allowOrigin != "" {
-			w.Header().Set("Access-Control-Allow-Origin", *allowOrigin)
+			origin := r.Header.Get("Origin")
+			if origin != "" {
+				for _, o := range strings.Split(*allowOrigin, ",") {
+					if origin == strings.TrimSpace(o) {
+						w.Header().Set("Access-Control-Allow-Origin", origin)
+						break
+					}
+				}
+			}
+			if w.Header().Get("Access-Control-Allow-Origin") == "" {
+				w.Header().Set("Access-Control-Allow-Origin", strings.Split(*allowOrigin, ",")[0])
+			}
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 			if r.Method == "OPTIONS" {
