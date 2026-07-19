@@ -249,21 +249,21 @@ function finishGame(){
   document.getElementById('summary-overlay').classList.add('on');
   
   // POST to server
-  if(API){try{var payload=JSON.stringify({i:crypto.randomUUID?crypto.randomUUID():String(Date.now()),s:G.s,p:50,r:rel,t:G.pos.reduce(function(a,p,i){if(i===0||p!==G.pos[i-1])a.push(i);return a},[]),d:Math.round(youD-badD),final:Math.round(youD)});fetch(API+'/api/run',{method:'POST',body:payload,keepalive:true,headers:{'X-Api-Key':(document.querySelector('meta[name=api-key]')||{}).content||''}}).then(function(r){return r.json()}).then(function(d){if(d&&d.tierText)document.getElementById('stier').textContent=d.tierText}).catch(function(){})}catch(e){}}else{console.log('no API base, skipping server post')}
+  if(API){try{var payload=JSON.stringify({i:crypto.randomUUID?crypto.randomUUID():String(Date.now()),s:G.s,p:50,r:rel,t:G.pos.reduce(function(a,p,i){if(i===0||p!==G.pos[i-1])a.push(i);return a},[]),d:Math.round(youD-badD),final:Math.round(youD)});fetch(API+'/pump/run',{method:'POST',body:payload,keepalive:true,headers:{'X-Api-Key':(document.querySelector('meta[name=api-key]')||{}).content||''}}).then(function(r){return r.json()}).then(function(d){if(d&&d.tierText)document.getElementById('stier').textContent=d.tierText}).catch(function(){})}catch(e){}}else{console.log('no API base, skipping server post')}
 }
 
 function doToggle(){if(G.done)return;G.inBasket=!G.inBasket;if(G.phase==='live')G.trades++;updateUI()}
 
 function loadLobbyData(){
   if(!API)return;
-  fetch(API+'/api/ledger').then(function(r){return r.json()}).then(function(d){
+  fetch(API+'/pump/ledger').then(function(r){return r.json()}).then(function(d){
     document.getElementById('lg-games').textContent=(d.games||0).toLocaleString();
     document.getElementById('lg-badger').textContent=(d.badger_wins||0).toLocaleString();
     document.getElementById('lg-degen').textContent=(d.degen_wins||0).toLocaleString();
     document.getElementById('lg-lucky').textContent=(d.lucky_wins||0).toLocaleString();
     document.getElementById('lg-don').textContent='$'+Math.round(d.donated||0).toLocaleString();
   }).catch(function(){});
-  fetch(API+'/api/recent').then(function(r){return r.json()}).then(function(d){
+  fetch(API+'/pump/recent').then(function(r){return r.json()}).then(function(d){
     var el=document.getElementById('recent-feed');el.innerHTML='';
     if(!d||!d.games)return;
     for(var i=0;i<d.games.length;i++){

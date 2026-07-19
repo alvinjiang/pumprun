@@ -21,7 +21,7 @@ var (
 	allowOrigin = flag.String("allow-origin", "", "allowed CORS origins, comma-separated (empty = disable check)")
 	allowRefer  = flag.String("allow-referer", "", "required Referer prefix (empty = disable check)")
 	compact     = flag.Bool("compact", false, "compact the data file and exit")
-	apiKey     = flag.String("api-key", "", "required X-Api-Key header for POST /api/run (empty = disable check)")
+	apiKey     = flag.String("api-key", "", "required X-Api-Key header for POST /pump/run (empty = disable check)")
 )
 
 // --- Storage ---
@@ -399,11 +399,11 @@ func main() {
 	rl := NewRateLimiter()
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/api/ledger", handleLedger(store))
-	mux.HandleFunc("/api/recent", handleRecent(store))
-	mux.HandleFunc("/api/tape", handleTape)
-	mux.HandleFunc("/api/run", handleRun(store, rl))
-	mux.HandleFunc("/api/daily-rank", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/pump/ledger", handleLedger(store))
+	mux.HandleFunc("/pump/recent", handleRecent(store))
+	mux.HandleFunc("/pump/tape", handleTape)
+	mux.HandleFunc("/pump/run", handleRun(store, rl))
+	mux.HandleFunc("/pump/daily-rank", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{"total": 0, "worse": 0})
 	})

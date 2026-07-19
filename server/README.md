@@ -78,13 +78,13 @@ Set in `/etc/default/pumprun`:
 PUMPRUN_API_KEY="immadegen"
 ```
 
-The client sends this as `X-Api-Key` header on POST /api/run.
+The client sends this as `X-Api-Key` header on POST /pump/run.
 Leave `-api-key` empty to disable authentication.
 
 ## Shared haproxy Setup
 
 If haproxy already serves other sites on the same hostname, match by URL path
-instead. All requests starting with `/api/` route to pumprun on port 8090.
+instead. All requests starting with `/pump/` route to pumprun on port 8090.
 
 ```
 # In your existing frontend section:
@@ -93,8 +93,8 @@ frontend https
 
   # ... existing ACLs and backends ...
 
-  # pumprun API — match by path (all /api/* requests)
-  acl is_pumprun path_beg /api/
+  # pumprun API — match by path (all /pump/* requests)
+  acl is_pumprun path_beg /pump/
   use_backend pumprun_api if is_pumprun
 
 # At the bottom:
@@ -104,7 +104,7 @@ backend pumprun_api
 
 The client `<meta name="api-base">` should be set to the same origin as the
 web client (e.g., `https://pumprun.apps.fyra.sh`) since the API lives at
-`/api/*` on the same domain.
+`/pump/*` on the same domain.
 
 Validate and reload:
 
@@ -149,10 +149,10 @@ Safe while server is live. Cron-friendly:
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| GET | `/api/ledger` | No | Global stats |
-| GET | `/api/recent?n=N` | No | Last N games |
-| POST | `/api/run` | X-Api-Key | Record game result |
-| GET | `/api/daily-rank?day=N&rel=X` | No | Daily leaderboard |
+| GET | `/pump/ledger` | No | Global stats |
+| GET | `/pump/recent?n=N` | No | Last N games |
+| POST | `/pump/run` | X-Api-Key | Record game result |
+| GET | `/pump/daily-rank?day=N&rel=X` | No | Daily leaderboard |
 
 ## Data
 
