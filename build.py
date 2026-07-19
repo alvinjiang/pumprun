@@ -355,7 +355,7 @@ def build_html_template(js):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="api-base" content="https://api.gridrun.net">
+<meta name="api-base" content="https://api.pumprun.com">
 <meta name="api-key" content="immadegen">
 <title>defihodler</title>
 <style>
