@@ -219,6 +219,33 @@ function bananaTest(){
 
 function finishGame(){
   G.done=true;G.running=false;cancelAnimationFrame(raf);updateUI();drawChart();drawStrip();var youDollarsFinal=G.btcQty*be;
+  // Populate summary (everything except banana test, which runs async)
+  document.getElementById('sdt').textContent=DATES[G.s]+' UTC';
+  document.getElementById('sst').textContent=verdict;
+  document.getElementById('sst').className='stamp '+stampClass;
+  document.getElementById('sds').textContent=fdt(DATES[G.s])+' \u2192 '+fdt(DATES[G.s+WIN-1]);
+  document.getElementById('sss').textContent=snames.length>0?'You traded through the '+snames.join(', '):'';
+  document.getElementById('str').textContent=G.trades;
+  document.getElementById('sti').textContent=pctIn+'%';
+  document.getElementById('sps').textContent='\u2014';
+  if(rel>0.01){oel.innerHTML='You beat the Bitcoin HODLER by <span class="win">'+fmt$(Math.round(youD-badD))+'</span>'}
+  else if(unw&&rel>-0.01){oel.innerHTML='This window was unwinnable. <span class="win">Matching the badger counts as a win.</span>'}
+  else{oel.innerHTML="You'd have been better off by <span class='lose'>"+fmt$(Math.round(badD-youD))+"</span> just HODLing Bitcoin"}
+  document.getElementById('sya').textContent=fmt$(Math.round(youD));
+  document.getElementById('syp').textContent=(yp>=0?'+':'')+yp.toFixed(1)+'%';
+  document.getElementById('syp').className='pct'+(yp>0.1?' up':yp<-0.1?' dn':' eq');
+  document.getElementById('sba').textContent=fmt$(Math.round(badD));
+  document.getElementById('sbp').textContent=(bp>=0?'+':'')+bp.toFixed(1)+'%';
+  document.getElementById('sbp').className='pct'+(bp>0.1?' up':bp<-0.1?' dn':' eq');
+  var tier=TIERS[0][1];for(var ti=0;ti<TIERS.length;ti++){if(youD>=TIERS[ti][0])tier=TIERS[ti][1]}
+  if(unw&&rel>-0.01)tier='At least you survived. The badger is still watching.';
+  document.getElementById('stier').textContent=tier;
+  // Events
+  var evs=[],ws2=new Date(DATES[G.s]),we2=new Date(DATES[G.s+WIN-1]);
+  for(var ei=0;ei<EVENTS.length;ei++){var ed=new Date(EVENTS[ei].date);if(ed>=ws2&&ed<=we2)evs.push(EVENTS[ei])}
+  var ebox=document.getElementById('sum-events-box'),elist=document.getElementById('sum-events-list'),etitle=document.getElementById('sum-events-title');
+  if(evs.length>0){ebox.style.display='block';etitle.textContent=evs.length+' notable event'+(evs.length>1?'s':'')+' during this period';elist.innerHTML='';for(var ej=0;ej<evs.length;ej++){var erow=document.createElement('div');erow.className='event-row';erow.textContent=evs[ej].date.slice(0,7)+' \u2014 '+evs[ej].text;elist.appendChild(erow)}}
+  else{ebox.style.display='none'}
   document.getElementById('summary-overlay').classList.add('on');
   var bs=BTC_PRICE[DATES[G.s]],be=BTC_PRICE[DATES[G.s+WIN-1]];
   var youD=G.btcQty*be,badD=START*be/bs;
@@ -232,7 +259,6 @@ function finishGame(){
   
   var verdict,stampClass;
   if(G.trades===0&&inBt===0){verdict='HODLER';stampClass='hodler'}
-  else if(rel>0.02&&bpct!==null&&bpct>=90){verdict='DEGEN';stampClass='degen'}
   else if(rel>0.02){verdict='LUCKY APE';stampClass='lucky'}
   else if(rel>-0.01){verdict='LUCKY APE';stampClass='lucky'}
   else if(unw&&rel>-0.01){verdict='HODLER';stampClass='hodler'}
