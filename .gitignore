@@ -1,6 +1,4 @@
 # Build output
-server/defihodler-server
-server/defihodler-server-*
 
 # Server data (runtime)
 server/data/
