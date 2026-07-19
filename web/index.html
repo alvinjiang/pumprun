@@ -493,6 +493,7 @@ function bananaTest(){
 
 function finishGame(){
   G.done=true;G.running=false;cancelAnimationFrame(raf);updateUI();drawChart();drawStrip();var youDollarsFinal=G.btcQty*be;
+  document.getElementById('summary-overlay').classList.add('on');
   var bs=BTC_PRICE[DATES[G.s]],be=BTC_PRICE[DATES[G.s+WIN-1]];
   var youD=G.btcQty*be,badD=START*be/bs;
   var rel=youD/badD-1;
@@ -504,7 +505,6 @@ function finishGame(){
   if(rel<-0.01){unw=true;for(var ui=0;ui<WIN;ui++){var cr2=0;for(var uj=0;uj<=ui;uj++){var rr=BASKET[G.s+uj];if(!isNaN(rr))cr2+=rr}if(Math.exp(cr2)*BTC_PRICE[DATES[G.s+ui]]/bs>BTC_PRICE[DATES[G.s+ui]]/bs){unw=false;break}}}
   
   var verdict,stampClass;
-  var bpct=bananaTest();if(bpct!==null)document.getElementById('sps').textContent=bpct===-1?'—':ord(bpct);
   if(G.trades===0&&inBt===0){verdict='HODLER';stampClass='hodler'}
   else if(rel>0.02&&bpct!==null&&bpct>=90){verdict='DEGEN';stampClass='degen'}
   else if(rel>0.02){verdict='LUCKY APE';stampClass='lucky'}
@@ -552,10 +552,8 @@ function finishGame(){
   if(evs.length>0){ebox.style.display='block';etitle.textContent=evs.length+' notable event'+(evs.length>1?'s':'')+' during this period';elist.innerHTML='';for(var ej=0;ej<evs.length;ej++){var erow=document.createElement('div');erow.className='event-row';erow.textContent=evs[ej].date.slice(0,7)+' — '+evs[ej].text;elist.appendChild(erow)}}
   else{ebox.style.display='none'}
   
-  document.getElementById('summary-overlay').classList.add('on');
-  
   // POST to server
-  if(API){try{var payload=JSON.stringify({i:crypto.randomUUID?crypto.randomUUID():String(Date.now()),s:G.s,p:bananaTest()||50,r:rel,t:G.pos.reduce(function(a,p,i){if(i===0||p!==G.pos[i-1])a.push(i);return a},[]),d:Math.round(youD-badD),final:Math.round(youD)});fetch(API+'/pump/run',{method:'POST',body:payload,keepalive:true,headers:{'X-Api-Key':(document.querySelector('meta[name=api-key]')||{}).content||''}}).then(function(r){return r.json()}).then(function(d){if(d&&d.tierText)document.getElementById('stier').textContent=d.tierText}).catch(function(){})}catch(e){}}else{console.log('no API base, skipping server post')}
+  setTimeout(function(){var bp=bananaTest()||50;document.getElementById('sps').textContent=bp===-1?'—':ord(bp);var stampEl=document.getElementById('sst');if(rel>0.02&&bp>=90){stampEl.textContent='DEGEN';stampEl.className='stamp degen'}else if(rel>0.02){stampEl.textContent='LUCKY APE';stampEl.className='stamp lucky'}if(API){try{var payload=JSON.stringify({i:crypto.randomUUID?crypto.randomUUID():String(Date.now()),s:G.s,p:bp,r:rel,t:G.pos.reduce(function(a,p,i){if(i===0||p!==G.pos[i-1])a.push(i);return a},[]),d:Math.round(youD-badD),final:Math.round(youD)});fetch(API+'/pump/run',{method:'POST',body:payload,keepalive:true,headers:{'X-Api-Key':(document.querySelector('meta[name=api-key]')||{}).content||''}}).then(function(r){return r.json()}).then(function(d){if(d&&d.tierText)document.getElementById('stier').textContent=d.tierText}).catch(function(){})}catch(e){}}},150)
 }
 
 function doToggle(){if(G.done)return;G.inBasket=!G.inBasket;if(G.phase==='live')G.trades++;updateUI()}
