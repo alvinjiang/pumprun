@@ -221,7 +221,7 @@ function runBananaTest(callback){
 }
 
 function finishGame(){
-  G.done=true;G.running=false;cancelAnimationFrame(raf);updateUI();drawChart();drawStrip();var youDollarsFinal=G.btcQty*be;
+  G.done=true;G.running=false;cancelAnimationFrame(raf);updateUI();drawChart();drawStrip();var be=BTC_PRICE[DATES[G.s+WIN-1]];var youDollarsFinal=G.btcQty*be;
   // Populate summary (everything except banana test, which runs async)
   document.getElementById('sdt').textContent=DATES[G.s]+' UTC';
   document.getElementById('sst').textContent=verdict;
@@ -250,7 +250,7 @@ function finishGame(){
   if(evs.length>0){ebox.style.display='block';etitle.textContent=evs.length+' notable event'+(evs.length>1?'s':'')+' during this period';elist.innerHTML='';for(var ej=0;ej<evs.length;ej++){var erow=document.createElement('div');erow.className='event-row';erow.textContent=evs[ej].date.slice(0,7)+' \u2014 '+evs[ej].text;elist.appendChild(erow)}}
   else{ebox.style.display='none'}
   document.getElementById('summary-overlay').classList.add('on');
-  var bs=BTC_PRICE[DATES[G.s]],be=BTC_PRICE[DATES[G.s+WIN-1]];
+  var bs=BTC_PRICE[DATES[G.s]];
   var youD=G.btcQty*be,badD=START*be/bs;
   var rel=youD/badD-1;
   var inBt=G.pos.reduce(function(a,b){return a+b},0);
@@ -320,22 +320,26 @@ function loadLobbyData(){
     document.getElementById('lg-badger').textContent=(d.badger_wins||0).toLocaleString();
     document.getElementById('lg-degen').textContent=(d.degen_wins||0).toLocaleString();
     document.getElementById('lg-lucky').textContent=(d.lucky_wins||0).toLocaleString();
-    document.getElementById('lg-don').textContent='$'+Math.round(d.donated||0).toLocaleString();
+    document.getElementById('lg-lost').textContent='$'+Math.round(d.lost||0).toLocaleString();
   }).catch(function(){});
-  fetch(API+'/pump/recent').then(function(r){return r.json()}).then(function(d){
+  fetch(API+'/pump/recent?n=20').then(function(r){return r.json()}).then(function(d){
+    var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     var el=document.getElementById('recent-feed');el.innerHTML='';
-    if(!d||!d.games)return;
+    var tape=document.getElementById('tape'),h='';
+    if(!d||!d.games||!d.games.length){tape.innerHTML='No games played yet. Be the first.';return}
     for(var i=0;i<d.games.length;i++){
-      var g=d.games[i],v=g.verdict||'unknown';
+      var g=d.games[i],ret=g.r||0,vc='',v='BADGER';
+      if(ret>0.02&&g.p>=90){vc='rv-dg';v='DEGEN'}else if(ret>0.01){vc='rv-lk';v='LUCKY APE'}else if(ret>-0.01){vc='rv-dg';v='HODLER'}else{vc='rv-bg';v='BADGER'}
       var row=document.createElement('div');row.className='rrow';
-      row.innerHTML='<span class=\"rv '+(v==='degen'?'rv-dg':v==='lucky ape'?'rv-lk':'rv-bg')+'\">'+v.toUpperCase()+'</span><span class=\"rt\">'+ (g.trades||0)+' trades</span><span class=\"rr\">'+(g.rel>=0?'+':'')+(g.rel*100).toFixed(1)+'%</span>';
+      row.innerHTML='<span class="rv '+vc+'">'+v+'</span><span class="rt">'+ (g.t?g.t.length:0)+' trades</span><span class="rr">vs badger: '+(ret>=0?'+':'')+(ret*100).toFixed(1)+'%</span>';
       el.appendChild(row);
+      var tvc=vc==='rv-dg'?'d':vc==='rv-lk'?'l':vc==='rv-dg'?'h':'b';
+      var vs=parseInt(g.s),ve=vs+364,ds=new Date(DATES[vs]),de=new Date(DATES[ve]||DATES[DATES.length-1]);
+      var wStr=MON[ds.getUTCMonth()]+String(ds.getUTCFullYear()).slice(2)+'\u2192'+MON[de.getUTCMonth()]+String(de.getUTCFullYear()).slice(2);
+      var up=ret>=0,relPct=(ret*100).toFixed(0);
+      h+='<span><span class="vb '+tvc+'">'+(tvc==='d'?'DEGEN':tvc==='l'?'LUCKY APE':tvc==='h'?'HODLER':'BADGER')+'</span> '+wStr+' <span class="'+(up?'up':'dn')+'">'+(up?'+':'')+relPct+'% vs badger</span></span> \u00B7 ';
     }
-  }).catch(function(){});
-  fetch(API+'/api/tape').then(function(r){return r.json()}).then(function(d){
-    var el=document.getElementById('tape');if(!d||!d.coins)return;
-    var h='';for(var i=0;i<d.coins.length;i++){var c=d.coins[i];h+='<span><b>'+c.sym+'</b> '+c.price.toLocaleString()+' <span class=\"'+(c.change24h>=0?'up':'dn')+'\">'+(c.change24h>=0?'+':'')+c.change24h.toFixed(2)+'%</span></span> \\u00B7 '}
-    el.innerHTML=h+h;
+    tape.innerHTML=h+h;
   }).catch(function(){});
 }
 
