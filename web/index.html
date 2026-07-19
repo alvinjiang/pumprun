@@ -305,6 +305,7 @@ var TIERS=[[0,"Beef or Shrimp Ramen?"],[40,"Order yourself a 2010 Bitcoin Pizza.
 var G={s:0,i:0,inBasket:true,running:false,phase:"count",done:false,screen:"lobby",btcQty:0,trades:0,speed:1,pos:new Uint8Array(WIN),altCum:0};
 var raf=null,acc=0,lt=0,btcS=[],altS=[],youS=[];
 function fmt$(v){return'$'+Math.round(v).toLocaleString()}
+function ord(n){var s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0])}
 var EVENTS=[{date:"2017-09-04",text:"China bans ICOs, shuts exchanges"},{date:"2018-01-15",text:"Crypto crash begins — BTC from $19K to $6K"},{date:"2018-11-15",text:"Bitcoin Cash hash war (BCH vs BSV)"},{date:"2019-04-02",text:"Bitcoin surges past $5K — crypto spring"},{date:"2019-06-18",text:"Facebook announces Libra"},{date:"2020-03-12",text:"COVID crash — BTC to $3,800 in 24h"},{date:"2020-05-11",text:"Bitcoin Halving #3 (12.5 → 6.25 BTC)"},{date:"2020-08-15",text:"DeFi Summer peaks — yield farming mania"},{date:"2020-12-16",text:"BTC breaks $20K — institutional wave"},{date:"2021-02-08",text:"Tesla buys $1.5B Bitcoin"},{date:"2021-03-11",text:"Beeple NFT sells for $69.3M"},{date:"2021-04-14",text:"Coinbase IPO — BTC at $64K ATH"},{date:"2021-05-19",text:"China bans mining; Elon tweets; BTC crashes 40%"},{date:"2021-09-07",text:"El Salvador adopts BTC as legal tender"},{date:"2021-10-19",text:"ProShares BTC futures ETF (BITO) launches"},{date:"2021-11-10",text:"BTC ATH #2 at $67,500"},{date:"2022-05-09",text:"Terra/LUNA collapse — $40B erased"},{date:"2022-06-13",text:"3AC insolvent, Celsius halts withdrawals"},{date:"2022-09-15",text:"Ethereum Merge — PoW to PoS"},{date:"2022-11-11",text:"FTX collapses — $8B hole, SBF arrested"},{date:"2023-03-10",text:"Silvergate, SVB, Signature collapse — bank run"},{date:"2023-06-05",text:"SEC sues Binance & Coinbase"},{date:"2024-01-10",text:"BTC spot ETFs approved by SEC"},{date:"2024-03-15",text:"Meme coin spring: WIF, PEPE, BONK"},{date:"2024-04-19",text:"Bitcoin Halving #4 (6.25 → 3.125 BTC)"},{date:"2024-05-23",text:"Ethereum spot ETFs approved"},{date:"2024-11-06",text:"BTC breaks $100K post-election"},{date:"2025-01-20",text:"BTC ATH #3 above $110K"},{date:"2025-03-15",text:"US Strategic Bitcoin Reserve announced"},{date:"2025-10-15",text:"Crypto market cap exceeds $5 trillion"},{date:"2026-02-21",text:"Bybit hacked — $1.5B largest crypto theft"}];
 function fmtPct(v){return(v>=0?'+':'')+v.toFixed(2)+'%'}
 
@@ -461,8 +462,37 @@ function updateUI(){
   document.getElementById('prog-fill').style.width=(G.i/WIN*100)+'%';
 }
 
+function bananaTest(){
+  // Extract YOLO block lengths
+  var blocks=[],cur=0,inB=false;
+  for(var i=0;i<WIN;i++){
+    if(G.pos[i]===1){inB=true;cur++}
+    else{if(inB){blocks.push(cur);inB=false;cur=0}}
+  }
+  if(inB)blocks.push(cur);
+  if(blocks.length===0)return null;
+  var totalB=blocks.reduce(function(a,b){return a+b},0);
+  var totalH=WIN-totalB,N=1000,worse=0;
+  var startIdx=G.s,btcStart=BTC_PRICE[DATES[startIdx]];
+  for(var m=0;m<N;m++){
+    var shuf=blocks.slice();
+    for(var i=shuf.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=shuf[i];shuf[i]=shuf[j];shuf[j]=t}
+    var cuts=new Array(shuf.length+1);for(var i=0;i<=shuf.length;i++)cuts[i]=Math.floor(Math.random()*(totalH+1));
+    cuts.sort(function(a,b){return a-b});
+    var btcQ=START/btcStart,day=startIdx;
+    for(var b=0;b<shuf.length;b++){
+      day+=cuts[b+1]-cuts[b];
+      for(var d=0;d<shuf[b];d++){var r=BASKET[day+d];if(!isNaN(r))btcQ*=Math.exp(r)}
+      day+=shuf[b];
+    }
+    var btcEnd=BTC_PRICE[DATES[startIdx+WIN-1]],permD=btcQ*btcEnd;
+    if(permD<=youDollarsFinal)worse++;
+  }
+  return Math.round(worse/N*100);
+}
+
 function finishGame(){
-  G.done=true;G.running=false;cancelAnimationFrame(raf);updateUI();drawChart();drawStrip();
+  G.done=true;G.running=false;cancelAnimationFrame(raf);updateUI();drawChart();drawStrip();var youDollarsFinal=G.btcQty*be;
   var bs=BTC_PRICE[DATES[G.s]],be=BTC_PRICE[DATES[G.s+WIN-1]];
   var youD=G.btcQty*be,badD=START*be/bs;
   var rel=youD/badD-1;
@@ -474,8 +504,10 @@ function finishGame(){
   if(rel<-0.01){unw=true;for(var ui=0;ui<WIN;ui++){var cr2=0;for(var uj=0;uj<=ui;uj++){var rr=BASKET[G.s+uj];if(!isNaN(rr))cr2+=rr}if(Math.exp(cr2)*BTC_PRICE[DATES[G.s+ui]]/bs>BTC_PRICE[DATES[G.s+ui]]/bs){unw=false;break}}}
   
   var verdict,stampClass;
+  var bpct=bananaTest();if(bpct!==null)document.getElementById('sps').textContent=bpct===-1?'—':ord(bpct);
   if(G.trades===0&&inBt===0){verdict='HODLER';stampClass='hodler'}
-  else if(rel>0.02){verdict='DEGEN';stampClass='degen'}
+  else if(rel>0.02&&bpct!==null&&bpct>=90){verdict='DEGEN';stampClass='degen'}
+  else if(rel>0.02){verdict='LUCKY APE';stampClass='lucky'}
   else if(rel>-0.01){verdict='LUCKY APE';stampClass='lucky'}
   else if(unw&&rel>-0.01){verdict='HODLER';stampClass='hodler'}
   else{verdict='HONEY BADGER WINS';stampClass='badger'}
@@ -523,7 +555,7 @@ function finishGame(){
   document.getElementById('summary-overlay').classList.add('on');
   
   // POST to server
-  if(API){try{var payload=JSON.stringify({i:crypto.randomUUID?crypto.randomUUID():String(Date.now()),s:G.s,p:50,r:rel,t:G.pos.reduce(function(a,p,i){if(i===0||p!==G.pos[i-1])a.push(i);return a},[]),d:Math.round(youD-badD),final:Math.round(youD)});fetch(API+'/pump/run',{method:'POST',body:payload,keepalive:true,headers:{'X-Api-Key':(document.querySelector('meta[name=api-key]')||{}).content||''}}).then(function(r){return r.json()}).then(function(d){if(d&&d.tierText)document.getElementById('stier').textContent=d.tierText}).catch(function(){})}catch(e){}}else{console.log('no API base, skipping server post')}
+  if(API){try{var payload=JSON.stringify({i:crypto.randomUUID?crypto.randomUUID():String(Date.now()),s:G.s,p:bananaTest()||50,r:rel,t:G.pos.reduce(function(a,p,i){if(i===0||p!==G.pos[i-1])a.push(i);return a},[]),d:Math.round(youD-badD),final:Math.round(youD)});fetch(API+'/pump/run',{method:'POST',body:payload,keepalive:true,headers:{'X-Api-Key':(document.querySelector('meta[name=api-key]')||{}).content||''}}).then(function(r){return r.json()}).then(function(d){if(d&&d.tierText)document.getElementById('stier').textContent=d.tierText}).catch(function(){})}catch(e){}}else{console.log('no API base, skipping server post')}
 }
 
 function doToggle(){if(G.done)return;G.inBasket=!G.inBasket;if(G.phase==='live')G.trades++;updateUI()}
