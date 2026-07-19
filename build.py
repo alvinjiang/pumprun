@@ -188,33 +188,36 @@ function updateUI(){
   document.getElementById('prog-fill').style.width=(G.i/WIN*100)+'%';
 }
 
-function bananaTest(){
-  // Extract YOLO block lengths
+function runBananaTest(callback){
   var blocks=[],cur=0,inB=false;
   for(var i=0;i<WIN;i++){
     if(G.pos[i]===1){inB=true;cur++}
     else{if(inB){blocks.push(cur);inB=false;cur=0}}
   }
   if(inB)blocks.push(cur);
-  if(blocks.length===0)return null;
+  if(blocks.length===0){callback(null);return}
   var totalB=blocks.reduce(function(a,b){return a+b},0);
-  var totalH=WIN-totalB,N=1000,worse=0;
-  var startIdx=G.s,btcStart=BTC_PRICE[DATES[startIdx]];
-  for(var m=0;m<N;m++){
-    var shuf=blocks.slice();
-    for(var i=shuf.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=shuf[i];shuf[i]=shuf[j];shuf[j]=t}
-    var cuts=new Array(shuf.length+1);for(var i=0;i<=shuf.length;i++)cuts[i]=Math.floor(Math.random()*(totalH+1));
-    cuts.sort(function(a,b){return a-b});
-    var btcQ=START/btcStart,day=startIdx;
-    for(var b=0;b<shuf.length;b++){
-      day+=cuts[b+1]-cuts[b];
-      for(var d=0;d<shuf[b];d++){var r=BASKET[day+d];if(!isNaN(r))btcQ*=Math.exp(r)}
-      day+=shuf[b];
+  var totalH=WIN-totalB,startIdx=G.s,btcStart=BTC_PRICE[DATES[startIdx]];
+  var N=1000,worse=0,m=0;
+  function chunk(){
+    var end=Math.min(m+50,N);
+    for(;m<end;m++){
+      var shuf=blocks.slice();
+      for(var i=shuf.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=shuf[i];shuf[i]=shuf[j];shuf[j]=t}
+      var cuts=new Array(shuf.length+1);for(var i=0;i<=shuf.length;i++)cuts[i]=Math.floor(Math.random()*(totalH+1));
+      cuts.sort(function(a,b){return a-b});
+      var btcQ=START/btcStart,day=startIdx;
+      for(var b=0;b<shuf.length;b++){
+        day+=cuts[b+1]-cuts[b];
+        for(var d=0;d<shuf[b];d++){var r=BASKET[day+d];if(!isNaN(r))btcQ*=Math.exp(r)}
+        day+=shuf[b];
+      }
+      if(btcQ*BTC_PRICE[DATES[startIdx+WIN-1]]<=youDollarsFinal)worse++;
     }
-    var btcEnd=BTC_PRICE[DATES[startIdx+WIN-1]],permD=btcQ*btcEnd;
-    if(permD<=youDollarsFinal)worse++;
+    if(m>=N)callback(Math.round(worse/N*100));
+    else setTimeout(chunk,1);
   }
-  return Math.round(worse/N*100);
+  chunk();
 }
 
 function finishGame(){
@@ -305,7 +308,7 @@ function finishGame(){
   else{ebox.style.display='none'}
   
   // POST to server
-  setTimeout(function(){var bp=bananaTest()||50;document.getElementById('sps').textContent=bp===-1?'\u2014':ord(bp);var stampEl=document.getElementById('sst');if(rel>0.02&&bp>=90){stampEl.textContent='DEGEN';stampEl.className='stamp degen'}else if(rel>0.02){stampEl.textContent='LUCKY APE';stampEl.className='stamp lucky'}if(API){try{var payload=JSON.stringify({i:crypto.randomUUID?crypto.randomUUID():String(Date.now()),s:G.s,p:bp,r:rel,t:G.pos.reduce(function(a,p,i){if(i===0||p!==G.pos[i-1])a.push(i);return a},[]),d:Math.round(youD-badD),final:Math.round(youD)});fetch(API+'/pump/run',{method:'POST',body:payload,keepalive:true,headers:{'X-Api-Key':(document.querySelector('meta[name=api-key]')||{}).content||''}}).then(function(r){return r.json()}).then(function(d){if(d&&d.tierText)document.getElementById('stier').textContent=d.tierText}).catch(function(){})}catch(e){}}},150)
+  setTimeout(function(){runBananaTest(function(bp){var pct=bp||50;document.getElementById('sps').textContent=pct===-1?'\u2014':ord(pct);var stampEl=document.getElementById('sst');if(rel>0.02&&pct>=90){stampEl.textContent='DEGEN';stampEl.className='stamp degen'}if(API){try{var payload=JSON.stringify({i:crypto.randomUUID?crypto.randomUUID():String(Date.now()),s:G.s,p:pct,r:rel,t:G.pos.reduce(function(a,p,i){if(i===0||p!==G.pos[i-1])a.push(i);return a},[]),d:Math.round(youD-badD),final:Math.round(youD)});fetch(API+'/pump/run',{method:'POST',body:payload,keepalive:true,headers:{'X-Api-Key':(document.querySelector('meta[name=api-key]')||{}).content||''}}).then(function(r){return r.json()}).then(function(d){if(d&&d.tierText)document.getElementById('stier').textContent=d.tierText}).catch(function(){})}catch(e){}}})},150)
 }
 
 function doToggle(){if(G.done)return;G.inBasket=!G.inBasket;if(G.phase==='live')G.trades++;updateUI()}
