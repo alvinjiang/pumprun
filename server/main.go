@@ -200,9 +200,12 @@ func (rl *RateLimiter) Allow(ip string) bool {
 func spamCheck(w http.ResponseWriter, r *http.Request) bool {
 	if *allowOrigin != "" {
 		origin := r.Header.Get("Origin")
-		if origin != "" && origin != *allowOrigin {
-			http.Error(w, "forbidden", 403)
-			return true
+		if origin != "" {
+			allowed := false
+			for _, o := range strings.Split(*allowOrigin, ",") {
+				if origin == strings.TrimSpace(o) { allowed = true; break }
+			}
+			if !allowed { http.Error(w, "forbidden", 403); return true }
 		}
 	}
 	if *allowRefer != "" {
