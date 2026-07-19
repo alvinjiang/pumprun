@@ -198,3 +198,38 @@ See `design/SPEC.md` §7 for full API contract.
 | `r` | Return vs badger |
 | `t` | Trade day indices |
 | `d` | Signed dollar diff |
+
+## Shared haproxy Setup
+
+If haproxy already serves other sites, add an ACL for the pumprun hostname.
+All traffic for `api.gridrun.net` routes to the pumprun backend on `127.0.0.1:8090`.
+
+```
+# In your existing frontend section:
+frontend https
+  bind :443 ssl crt /etc/ssl/
+  
+  # ... your existing ACLs and backends ...
+  
+  # pumprun API — route by hostname
+  acl is_pumprun hdr(host) -i api.gridrun.net
+  use_backend pumprun_api if is_pumprun
+
+# At the bottom:
+backend pumprun_api
+  server s1 127.0.0.1:8090
+```
+
+If you want to match by path instead (e.g., everything under `/api/` goes to pumprun):
+
+```
+  acl is_pumprun path_beg /api/
+  use_backend pumprun_api if is_pumprun
+```
+
+After editing, validate and reload:
+
+```bash
+sudo haproxy -c -f /etc/haproxy/haproxy.cfg
+sudo systemctl reload haproxy
+```
