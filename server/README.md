@@ -40,7 +40,7 @@ cd /opt/pumprun
 exec ./pumprun-server \
   -addr :8090 \
   -data /var/lib/pumprun \
-  -allow-origin https://pumprun.apps.fyra.sh \
+  -allow-origin "https://pumprun.apps.fyra.sh,https://pumprun.fyra.sh" \
   -api-key "${PUMPRUN_API_KEY:-}"
 ```
 
