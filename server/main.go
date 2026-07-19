@@ -21,6 +21,7 @@ var (
 	allowOrigin = flag.String("allow-origin", "", "allowed CORS origin (empty = disable check)")
 	allowRefer  = flag.String("allow-referer", "", "required Referer prefix (empty = disable check)")
 	compact     = flag.Bool("compact", false, "compact the data file and exit")
+	apiKey     = flag.String("api-key", "", "required X-Api-Key header for POST /api/run (empty = disable check)")
 )
 
 // --- Storage ---
@@ -250,6 +251,10 @@ func handleRun(store *Store, rl *RateLimiter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "POST" {
 			http.Error(w, "method not allowed", 405)
+			return
+		}
+		if *apiKey != "" && r.Header.Get("X-Api-Key") != *apiKey {
+			http.Error(w, "unauthorized", 401)
 			return
 		}
 		if spamCheck(w, r) {

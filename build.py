@@ -22,7 +22,7 @@ def build_html():
 var BASKET=new Float32Array(Uint8Array.from(atob("{basket_b64}"),function(c){{return c.charCodeAt(0)}}).buffer);
 var BTC_PRICE={{}},DATES=[];
 for(var i=0;i<BTC.length;i++){{var d=new Date(BTC[i][0]),day=d.toISOString().slice(0,10);BTC_PRICE[day]=BTC[i][1];DATES.push(day)}}
-var WIN=365,START=10000,DPS=8,API=location.protocol.indexOf("http")===0?location.origin:"";
+var WIN=365,START=10000,DPS=8;var API=(function(){{var m=document.querySelector('meta[name="api-base"]');if(m&&m.content){{var u=m.content;while(u[u.length-1]==="/")u=u.slice(0,-1);return u}}return location.protocol.indexOf("http")===0?location.origin:""}})();
 var FP=DATES.indexOf("2017-08-17"),MX=DATES.length-WIN-1;
 var SEASONS=[{{name:"ICO Summer",s:"2017-01-01",e:"2017-12-31"}},{{name:"Crypto Winter",s:"2018-01-01",e:"2019-03-31"}},{{name:"Crypto Spring",s:"2019-04-01",e:"2019-09-30"}},{{name:"COVID Crash",s:"2020-03-01",e:"2020-04-30"}},{{name:"DeFi Summer",s:"2020-06-01",e:"2020-09-30"}},{{name:"Institutional Wave",s:"2020-10-01",e:"2021-03-31"}},{{name:"NFT Mania",s:"2021-01-01",e:"2021-04-30"}},{{name:"China Ban & Recovery",s:"2021-05-01",e:"2021-09-30"}},{{name:"Metaverse Rotation",s:"2021-10-01",e:"2022-01-31"}},{{name:"LUNA Collapse",s:"2022-05-01",e:"2022-06-30"}},{{name:"Crypto Winter II",s:"2022-06-01",e:"2023-01-31"}},{{name:"Banking Crisis",s:"2023-03-01",e:"2023-04-30"}},{{name:"ETF Era",s:"2024-01-01",e:"2024-06-30"}},{{name:"Meme Coin Spring",s:"2024-03-01",e:"2024-05-31"}},{{name:"Post-Halving Rally",s:"2024-10-01",e:"2025-01-31"}},{{name:"Quiet Bull",s:"2025-01-01",e:"2026-07-15"}}];
 var TIERS=[[0,"Beef or Shrimp Ramen?"],[40,"Order yourself a 2010 Bitcoin Pizza."],[100,"You'll want a cold wallet for all that Bitcoin!"],[500,"Rimowa or Rama Works, depending on how active you are."],[1000,"Aeron or Embody?"],[5000,"Antminer or RTX GPU?"],[10000,"A decent APE NFT."],[20000,"Pepsi or Batman?"],[40000,"Fly your friends private for a Vegas whale experience."],[60000,"You'd still need to trade that Daytona in for a Royal Oak."],[100000,"Tesla for your BTC?"],[250000,"If only you had an allocation from RM..."],[350000,"Now Lambo."],[500000,"Not the U.S. Constitution \\u2014 you're a little short of the 2021 $43.2M price."]];
@@ -355,6 +355,7 @@ def build_html_template(js):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="api-base" content="">
 <title>defihodler</title>
 <style>
 :root{--bg:#000;--panel:#0d0d10;--panel2:#111114;--border:#1c1c20;--border2:#242428;--dim:#5c5c60;--mid:#8a8a8e;--bright:#c8c8cc;--green:#00bc00;--red:#c10706;--yellow:#fcff00;--purple:#3c425b;--green-bg:#041604;--red-bg:#160404}

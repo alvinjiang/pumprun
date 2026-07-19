@@ -1,193 +1,200 @@
-# defihodler-server
+# pumprun-server
 
-Single Go binary. Append-only game storage with in-memory stats.
-No external database. Rate-limited. Production-ready behind haproxy or standalone with TLS.
+Single Go binary. Append-only game storage with in-memory stats. No external database.
+Rate-limited. Production-ready behind haproxy or standalone.
 
-## Quick Start
-
-```bash
-# Copy binary to server
-scp defihodler-server user@host:/opt/defihodler/
-
-# Run (HTTP, for use behind haproxy/nginx)
-./defihodler-server -addr :8080 -data /var/lib/defihodler/
-
-# Compact the log (safe to run while server is live, cron-friendly)
-./defihodler-server -compact -data /var/lib/defihodler/
-```
-
-## Building from Source
+## Quick Deploy (Ubuntu/Debian)
 
 ```bash
-# Requires Go 1.21+
-go build -o defihodler-server .
+# 1. Create unprivileged user
+sudo useradd -r -s /bin/false pumprun
+
+# 2. Create directories
+sudo mkdir -p /opt/pumprun /var/lib/pumprun
+sudo chown pumprun:pumprun /opt/pumprun /var/lib/pumprun
+
+# 3. Copy binary
+sudo cp defihodler-server /opt/pumprun/pumprun-server
+sudo chmod +x /opt/pumprun/pumprun-server
+
+# 4. Install startup script
+sudo cp pumprun-server.sh /opt/pumprun/
+sudo chmod +x /opt/pumprun/pumprun-server.sh
+
+# 5. Install and start systemd service
+sudo cp pumprun-server.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now pumprun-server
 ```
 
-No additional dependencies beyond `golang.org/x/time` (fetched automatically by `go mod tidy`).
+## Startup Script
 
-## CLI Flags
-
-| Flag | Default | Description |
-|------|---------|-------------|
-| `-addr` | `:8080` | Listen address |
-| `-data` | `data/` | Data directory for `db.jsonl` |
-| `-compact` | `false` | Compact the data file and exit (does not start server) |
-| `-allow-origin` | `""` | Allowed CORS origin (empty = disable check) |
-| `-allow-referer` | `""` | Required Referer prefix (empty = disable check) |
-
-## API Endpoints
-
-### GET /api/ledger
-Global stats. Computed in-memory from log replay.
-
-```json
-{"games":70108,"badger_wins":48631,"degen_wins":7620,"lucky_wins":13857,"lost":73819812}
-```
-
-### GET /api/recent?n=20
-Last N game results. Default N=10.
-
-```json
-{"games":[{"i":"uuid","s":1234,"p":94,"r":0.22,"t":[0,5,20],"d":2450}]}
-```
-
-### POST /api/run
-Record a game result. Rate-limited: 1 write/sec/IP (burst 3).
-
-Request:
-```json
-{"i":"uuid","s":1234,"p":94,"r":0.22,"t":[0,5,20],"d":2450,"final":14145}
-```
-
-Response:
-```json
-{"tier":"$100,000+","tierText":"Tesla for your BTC?","dailyRank":{"total":0,"worse":0}}
-```
-
-### GET /api/daily-rank?day=N&rel=X
-Daily leaderboard. v1 returns mock data.
-
-## Data Storage
-
-`data/db.jsonl` — append-only JSON lines, one per game. Fsynced after every write.
-No ledger/aggregate entries in the log. Ledger computed in-memory at startup.
-
-### Field Reference
-
-| Key | Meaning |
-|-----|---------|
-| `i` | UUID, client-generated |
-| `s` | Start day index (identifies 365-day window) |
-| `p` | Banana test percentile (0–100) |
-| `r` | Return vs badger (e.g. 0.22 = +22%) |
-| `t` | Array of trade day indices since `s` |
-| `d` | Signed dollar difference vs badger |
-
-### Compaction
+`/opt/pumprun/pumprun-server.sh`:
 
 ```bash
-# Compact the log — removes old key versions, reduces file size
-./defihodler-server -compact -data /var/lib/defihodler/
+#!/bin/bash
+# pumprun game stats server
+# Deployed at /opt/pumprun, data at /var/lib/pumprun
 
-# Cron example: compact daily at 3am
-0 3 * * * /opt/defihodler/defihodler-server -compact -data /var/lib/defihodler/
+cd /opt/pumprun
+exec ./pumprun-server \
+  -addr :8090 \
+  -data /var/lib/pumprun \
+  -allow-origin https://pumprun.com \
+  -api-key "${PUMPRUN_API_KEY:-}"
 ```
 
-Safe to run while server is live. Uses atomic rename — the running server keeps its
-file descriptor; new starts pick up the compacted file.
-
-## Deployment
-
-### Option A: Behind haproxy (recommended)
-
-```
-# haproxy.cfg
-frontend https
-  bind :443 ssl crt /etc/ssl/defihodler.pem
-  use_backend defihodler if { hdr(host) -i defihodler.com }
-
-backend defihodler
-  server s1 127.0.0.1:8080
-
-# Server runs on localhost only
-./defihodler-server -addr 127.0.0.1:8080 -data /var/lib/defihodler/
-```
-
-### Option B: Standalone with Let's Encrypt
-
-Add `golang.org/x/crypto/acme/autocert` to `main.go`:
-
-```go
-import "golang.org/x/crypto/acme/autocert"
-
-m := &autocert.Manager{
-    Cache:      autocert.DirCache("/var/lib/defihodler/certs"),
-    Prompt:     autocert.AcceptTOS,
-    HostPolicy: autocert.HostWhitelist("defihodler.com"),
-}
-server := &http.Server{
-    Addr:      ":443",
-    TLSConfig: m.TLSConfig(),
-    Handler:   handler,
-}
-// Also listen on :80 for ACME challenges
-go http.ListenAndServe(":80", m.HTTPHandler(nil))
-log.Fatal(server.ListenAndServeTLS("", ""))
-```
-
-### Option C: Static cert file
-
-```go
-log.Fatal(http.ListenAndServeTLS(":443", "/etc/ssl/cert.pem", "/etc/ssl/key.pem", handler))
-```
-
-### Cert Renewal
-
-- **haproxy**: use certbot with `--deploy-hook "systemctl reload haproxy"`
-- **autocert**: automatic renewal, no cron needed
-- **static cert**: certbot cron: `0 0 * * * certbot renew --quiet --deploy-hook "systemctl restart defihodler"`
-
-## Spam Prevention
-
-All checks are optional and disabled by default:
+Set the API key in `/etc/default/pumprun`:
 
 ```bash
-# Enable origin check (only accept POSTs from your domain)
-./defihodler-server -allow-origin https://defihodler.com
-
-# Enable referer check
-./defihodler-server -allow-referer https://defihodler.com/
+# /etc/default/pumprun
+PUMPRUN_API_KEY="your-secret-key-here"
 ```
-
-Rate limiting (1 write/sec/IP, burst 3) is always active. In-memory only, resets on restart.
 
 ## Systemd Unit
 
-```
-# /etc/systemd/system/defihodler.service
+`/etc/systemd/system/pumprun-server.service`:
+
+```ini
 [Unit]
-Description=defihodler game server
+Description=pumprun game stats server
 After=network.target
 
 [Service]
 Type=simple
-User=defihodler
-ExecStart=/opt/defihodler/defihodler-server -addr 127.0.0.1:8080 -data /var/lib/defihodler/
+User=pumprun
+Group=pumprun
+EnvironmentFile=/etc/default/pumprun
+ExecStart=/opt/pumprun/pumprun-server.sh
 Restart=always
 RestartSec=5
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/pumprun
 
 [Install]
 WantedBy=multi-user.target
 ```
 
-```bash
-sudo useradd -r -s /bin/false defihodler
-sudo mkdir -p /var/lib/defihodler
-sudo chown defihodler:defihodler /var/lib/defihodler
-sudo systemctl enable --now defihodler
+## Architecture
+
+```
+CDN (pumprun.com)                Server (api.pumprun.com:8090)
+─────────────────                ────────────────────────────
+index.html                       pumprun-server
+<meta name="api-base"            -addr :8090
+  content="https://api.pumprun.com">  -data /var/lib/pumprun
+                                       -api-key "secret"
+POST /api/run  ────────────────→  X-Api-Key: secret
+                 HTTPS (haproxy)
 ```
 
-## File Size
+The client (CDN-hosted HTML) points to the server via the `<meta name="api-base">` tag.
+The server runs on port 8090 behind haproxy which handles TLS and forwards to localhost.
 
-Binary: ~7.7 MB (static, no runtime dependencies). Data file grows ~150 bytes per game.
-At 100K games: ~15 MB. Compact periodically to reclaim space from duplicate keys.
+## haproxy Config
+
+```
+frontend api-https
+  bind :443 ssl crt /etc/ssl/api.pumprun.com.pem
+  use_backend pumprun-api if { hdr(host) -i api.pumprun.com }
+
+backend pumprun-api
+  server s1 127.0.0.1:8090
+```
+
+## CLI Flags
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `-addr` | `:8080` | Listen address. Use `:8090` for production |
+| `-data` | `data/` | Data directory for `db.jsonl` |
+| `-compact` | `false` | Compact the data file and exit (does not start server) |
+| `-allow-origin` | `""` | Allowed CORS origin for POST requests |
+| `-allow-referer` | `""` | Required Referer prefix for POST requests |
+| `-api-key` | `""` | Required `X-Api-Key` header for POST /api/run |
+
+## Building from Source
+
+```bash
+# Requires Go 1.21+
+go build -o pumprun-server .
+```
+
+## Compaction
+
+Safe to run while server is live. Cron-friendly:
+
+```bash
+# /etc/cron.d/pumprun — daily at 3am
+0 3 * * * pumprun /opt/pumprun/pumprun-server -compact -data /var/lib/pumprun
+```
+
+Uses atomic rename — the running server is unaffected.
+
+## Cert Management
+
+### Option A: haproxy (recommended)
+
+```bash
+sudo apt install certbot
+sudo certbot certonly --standalone -d api.pumprun.com
+sudo cat /etc/letsencrypt/live/api.pumprun.com/fullchain.pem \
+         /etc/letsencrypt/live/api.pumprun.com/privkey.pem \
+         > /etc/ssl/api.pumprun.com.pem
+# Auto-renewal
+sudo certbot renew --deploy-hook "systemctl reload haproxy"
+```
+
+### Option B: Built-in autocert
+
+Replace `main.go` listen block with:
+
+```go
+m := &autocert.Manager{
+    Cache:      autocert.DirCache("/var/lib/pumprun/certs"),
+    Prompt:     autocert.AcceptTOS,
+    HostPolicy: autocert.HostWhitelist("api.pumprun.com"),
+}
+go http.ListenAndServe(":80", m.HTTPHandler(nil))
+log.Fatal(http.ListenAndServeTLS(":443", m.TLSConfig(), handler))
+```
+
+## Client Configuration
+
+Set the server URL in the HTML `<meta>` tag before deploying to CDN:
+
+```html
+<meta name="api-base" content="https://api.pumprun.com">
+```
+
+If left empty, the client uses same-origin (only works if client and server share a domain).
+
+To include the API key in client requests, add it to the fetch headers in `build.py`:
+
+```javascript
+fetch(API+'/api/run', {
+  method:'POST',
+  body:payload,
+  keepalive:true,
+  headers: {'X-Api-Key': 'your-secret-here'}
+})
+```
+
+## API Endpoints
+
+See `design/SPEC.md` §7 for full API contract.
+
+## Data Format
+
+`/var/lib/pumprun/db.jsonl` — append-only JSON lines. Six fields per game:
+
+| Key | Meaning |
+|-----|---------|
+| `i` | UUID |
+| `s` | Start day index |
+| `p` | Banana percentile |
+| `r` | Return vs badger |
+| `t` | Trade day indices |
+| `d` | Signed dollar diff |

@@ -60,3 +60,25 @@ See `server/README.md` for full deploy instructions.
 ## License
 
 TBD
+
+## Configuration
+
+### Pointing the client to your server
+
+Set the `<meta name="api-base">` tag in `web/index.html`:
+
+```html
+<meta name="api-base" content="https://api.yourdomain.com">
+```
+
+If left empty, the client uses the same origin as the page.
+
+### Server authentication
+
+Protect the POST endpoint with a shared secret:
+
+```bash
+./defihodler-server -api-key "your-secret-here"
+```
+
+See `server/README.md` for full deploy instructions, TLS setup, and systemd unit.
