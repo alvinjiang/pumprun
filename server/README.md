@@ -117,10 +117,10 @@ sudo systemctl reload haproxy
 
 ```bash
 sudo apt install certbot
-sudo certbot certonly --standalone -d api.gridrun.net
-sudo cat /etc/letsencrypt/live/api.gridrun.net/fullchain.pem \
-         /etc/letsencrypt/live/api.gridrun.net/privkey.pem \
-         > /etc/ssl/api.gridrun.net.pem
+sudo certbot certonly --standalone -d api.pumprun.com
+sudo cat /etc/letsencrypt/live/api.pumprun.com/fullchain.pem \
+         /etc/letsencrypt/live/api.pumprun.com/privkey.pem \
+         > /etc/ssl/api.pumprun.com.pem
 # Auto-renewal
 sudo certbot renew --deploy-hook "systemctl reload haproxy"
 ```
