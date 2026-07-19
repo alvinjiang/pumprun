@@ -83,7 +83,8 @@ Leave `-api-key` empty to disable authentication.
 
 ## Shared haproxy Setup
 
-Add these lines to your existing haproxy config and match by hostname:
+If haproxy already serves other sites on the same hostname, match by URL path
+instead. All requests starting with `/api/` route to pumprun on port 8090.
 
 ```
 # In your existing frontend section:
@@ -92,14 +93,18 @@ frontend https
 
   # ... existing ACLs and backends ...
 
-  # pumprun API — match by hostname
-  acl is_pumprun hdr(host) -i api.gridrun.net
+  # pumprun API — match by path (all /api/* requests)
+  acl is_pumprun path_beg /api/
   use_backend pumprun_api if is_pumprun
 
 # At the bottom:
 backend pumprun_api
   server s1 127.0.0.1:8090
 ```
+
+The client `<meta name="api-base">` should be set to the same origin as the
+web client (e.g., `https://pumprun.apps.fyra.sh`) since the API lives at
+`/api/*` on the same domain.
 
 Validate and reload:
 
