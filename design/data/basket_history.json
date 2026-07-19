@@ -1,0 +1,1135 @@
+[
+  {
+    "date": "2017-08-17",
+    "basket": []
+  },
+  {
+    "date": "2017-09-16",
+    "basket": [
+      "BNB",
+      "ETH",
+      "LTC",
+      "NEO"
+    ]
+  },
+  {
+    "date": "2017-10-16",
+    "basket": [
+      "BNB",
+      "ETH",
+      "NEO",
+      "QTUM",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2017-11-15",
+    "basket": [
+      "DASH",
+      "EOS",
+      "ETC",
+      "IOTA",
+      "LINK"
+    ]
+  },
+  {
+    "date": "2017-12-15",
+    "basket": [
+      "IOTA",
+      "LINK",
+      "LTC",
+      "TRX",
+      "XRP"
+    ]
+  },
+  {
+    "date": "2018-01-14",
+    "basket": [
+      "ADA",
+      "ICX",
+      "QTUM",
+      "TRX",
+      "XRP"
+    ]
+  },
+  {
+    "date": "2018-01-15",
+    "basket": [
+      "ADA",
+      "ICX",
+      "QTUM",
+      "TRX",
+      "XLM"
+    ]
+  },
+  {
+    "date": "2018-02-13",
+    "basket": [
+      "ENJ",
+      "ICX",
+      "LINK",
+      "TRX",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2018-03-15",
+    "basket": [
+      "BNB",
+      "ENJ",
+      "ETC",
+      "LINK",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2018-04-14",
+    "basket": [
+      "EOS",
+      "ICX",
+      "ONT",
+      "QTUM",
+      "TRX"
+    ]
+  },
+  {
+    "date": "2018-05-14",
+    "basket": [
+      "BAT",
+      "EOS",
+      "ONT",
+      "ZIL",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2018-06-13",
+    "basket": [
+      "BNB",
+      "EOS",
+      "IOTA",
+      "ZEC",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2018-07-13",
+    "basket": [
+      "BAT",
+      "ICX",
+      "LINK",
+      "ZIL",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2018-08-12",
+    "basket": [
+      "BAT",
+      "IOTA",
+      "LINK",
+      "XLM",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2018-09-11",
+    "basket": [
+      "HOT",
+      "ICX",
+      "ONT",
+      "VET",
+      "ZIL"
+    ]
+  },
+  {
+    "date": "2018-10-11",
+    "basket": [
+      "ENJ",
+      "HOT",
+      "TRX",
+      "XRP",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2018-11-10",
+    "basket": [
+      "BAT",
+      "ENJ",
+      "HOT",
+      "LINK",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2018-12-10",
+    "basket": [
+      "ENJ",
+      "HOT",
+      "LINK",
+      "WAVES",
+      "ZIL"
+    ]
+  },
+  {
+    "date": "2019-01-09",
+    "basket": [
+      "ENJ",
+      "HOT",
+      "LINK",
+      "ONT",
+      "WAVES"
+    ]
+  },
+  {
+    "date": "2019-02-08",
+    "basket": [
+      "HOT",
+      "LINK",
+      "TRX",
+      "WAVES",
+      "ZIL"
+    ]
+  },
+  {
+    "date": "2019-03-10",
+    "basket": [
+      "ENJ",
+      "EOS",
+      "HOT",
+      "LTC",
+      "ONT"
+    ]
+  },
+  {
+    "date": "2019-04-09",
+    "basket": [
+      "BAT",
+      "ENJ",
+      "ETC",
+      "ONT",
+      "QTUM"
+    ]
+  },
+  {
+    "date": "2019-05-09",
+    "basket": [
+      "BAT",
+      "BNB",
+      "ENJ",
+      "HOT",
+      "LINK"
+    ]
+  },
+  {
+    "date": "2019-06-08",
+    "basket": [
+      "ATOM",
+      "HOT",
+      "LINK",
+      "MATIC",
+      "WAVES"
+    ]
+  },
+  {
+    "date": "2019-07-08",
+    "basket": [
+      "BAT",
+      "HOT",
+      "LINK",
+      "MATIC",
+      "VET"
+    ]
+  },
+  {
+    "date": "2019-08-07",
+    "basket": [
+      "ALGO",
+      "ENJ",
+      "HOT",
+      "LINK",
+      "MATIC"
+    ]
+  },
+  {
+    "date": "2019-09-06",
+    "basket": [
+      "ALGO",
+      "ENJ",
+      "HOT",
+      "ICX",
+      "MATIC"
+    ]
+  },
+  {
+    "date": "2019-10-06",
+    "basket": [
+      "ALGO",
+      "ATOM",
+      "HOT",
+      "XLM",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2019-11-05",
+    "basket": [
+      "HOT",
+      "LINK",
+      "MATIC",
+      "ONT",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2019-12-05",
+    "basket": [
+      "ALGO",
+      "ENJ",
+      "HOT",
+      "MATIC",
+      "VET"
+    ]
+  },
+  {
+    "date": "2020-01-04",
+    "basket": [
+      "ATOM",
+      "ENJ",
+      "HOT",
+      "MATIC",
+      "WAVES"
+    ]
+  },
+  {
+    "date": "2020-02-03",
+    "basket": [
+      "DASH",
+      "ENJ",
+      "ETC",
+      "HOT",
+      "ZEC"
+    ]
+  },
+  {
+    "date": "2020-03-04",
+    "basket": [
+      "ALGO",
+      "ENJ",
+      "HOT",
+      "ICX",
+      "WAVES"
+    ]
+  },
+  {
+    "date": "2020-03-15",
+    "basket": [
+      "ALGO",
+      "FTT",
+      "HOT",
+      "ICX",
+      "MATIC"
+    ]
+  },
+  {
+    "date": "2020-04-03",
+    "basket": [
+      "DASH",
+      "ENJ",
+      "FTT",
+      "HOT",
+      "MATIC"
+    ]
+  },
+  {
+    "date": "2020-05-03",
+    "basket": [
+      "ATOM",
+      "ENJ",
+      "HOT",
+      "SOL",
+      "ZEC"
+    ]
+  },
+  {
+    "date": "2020-06-02",
+    "basket": [
+      "BAT",
+      "HOT",
+      "MATIC",
+      "ZIL",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2020-07-02",
+    "basket": [
+      "HOT",
+      "SOL",
+      "VET",
+      "ZIL",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2020-08-01",
+    "basket": [
+      "DOGE",
+      "HOT",
+      "SNX",
+      "SOL",
+      "VET"
+    ]
+  },
+  {
+    "date": "2020-08-31",
+    "basket": [
+      "HOT",
+      "MANA",
+      "SOL",
+      "WAVES",
+      "YFI"
+    ]
+  },
+  {
+    "date": "2020-09-30",
+    "basket": [
+      "CRV",
+      "HOT",
+      "SOL",
+      "SUSHI",
+      "YFI"
+    ]
+  },
+  {
+    "date": "2020-10-30",
+    "basket": [
+      "CRV",
+      "HOT",
+      "SUSHI",
+      "UNI",
+      "YFI"
+    ]
+  },
+  {
+    "date": "2020-11-29",
+    "basket": [
+      "AAVE",
+      "HOT",
+      "SUSHI",
+      "XLM",
+      "YFI"
+    ]
+  },
+  {
+    "date": "2020-12-29",
+    "basket": [
+      "CRV",
+      "HOT",
+      "SUSHI",
+      "XRP",
+      "ZIL"
+    ]
+  },
+  {
+    "date": "2021-01-28",
+    "basket": [
+      "1INCH",
+      "CRV",
+      "ENJ",
+      "SAND",
+      "SOL"
+    ]
+  },
+  {
+    "date": "2021-02-27",
+    "basket": [
+      "AVAX",
+      "BNB",
+      "DOGE",
+      "GRT",
+      "XRP"
+    ]
+  },
+  {
+    "date": "2021-03-29",
+    "basket": [
+      "CRV",
+      "ENJ",
+      "MANA",
+      "MATIC",
+      "SAND"
+    ]
+  },
+  {
+    "date": "2021-04-28",
+    "basket": [
+      "DOGE",
+      "MATIC",
+      "SOL",
+      "TRX",
+      "XRP"
+    ]
+  },
+  {
+    "date": "2021-05-15",
+    "basket": [
+      "DOGE",
+      "EOS",
+      "ETC",
+      "MATIC",
+      "WAVES"
+    ]
+  },
+  {
+    "date": "2021-05-28",
+    "basket": [
+      "EOS",
+      "ETC",
+      "MATIC",
+      "QTUM",
+      "SAND"
+    ]
+  },
+  {
+    "date": "2021-06-27",
+    "basket": [
+      "1INCH",
+      "CRV",
+      "DOGE",
+      "GRT",
+      "WAVES"
+    ]
+  },
+  {
+    "date": "2021-07-27",
+    "basket": [
+      "COMP",
+      "MANA",
+      "SAND",
+      "SNX",
+      "SUSHI"
+    ]
+  },
+  {
+    "date": "2021-08-26",
+    "basket": [
+      "AVAX",
+      "QTUM",
+      "SOL",
+      "WAVES",
+      "XRP"
+    ]
+  },
+  {
+    "date": "2021-09-25",
+    "basket": [
+      "ALGO",
+      "ATOM",
+      "AVAX",
+      "IOTA",
+      "SOL"
+    ]
+  },
+  {
+    "date": "2021-10-25",
+    "basket": [
+      "1INCH",
+      "CRV",
+      "GALA",
+      "QTUM",
+      "UNI"
+    ]
+  },
+  {
+    "date": "2021-11-24",
+    "basket": [
+      "BAT",
+      "ENJ",
+      "GALA",
+      "MANA",
+      "SAND"
+    ]
+  },
+  {
+    "date": "2021-12-24",
+    "basket": [
+      "BAT",
+      "GALA",
+      "SAND",
+      "SUSHI",
+      "YFI"
+    ]
+  },
+  {
+    "date": "2022-01-23",
+    "basket": [
+      "ATOM",
+      "CRV",
+      "ICX",
+      "PEOPLE",
+      "SUSHI"
+    ]
+  },
+  {
+    "date": "2022-02-22",
+    "basket": [
+      "ATOM",
+      "GALA",
+      "PEOPLE",
+      "SNX",
+      "WAVES"
+    ]
+  },
+  {
+    "date": "2022-03-24",
+    "basket": [
+      "ICX",
+      "PEOPLE",
+      "WAVES",
+      "XMR",
+      "ZEC"
+    ]
+  },
+  {
+    "date": "2022-04-23",
+    "basket": [
+      "AAVE",
+      "SNX",
+      "WAVES",
+      "ZIL",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2022-05-23",
+    "basket": [
+      "GALA",
+      "GRT",
+      "MANA",
+      "PEOPLE",
+      "ZIL"
+    ]
+  },
+  {
+    "date": "2022-06-15",
+    "basket": [
+      "GALA",
+      "LINK",
+      "PEOPLE",
+      "SUSHI",
+      "WAVES"
+    ]
+  },
+  {
+    "date": "2022-06-22",
+    "basket": [
+      "GALA",
+      "PEOPLE",
+      "SNX",
+      "SUSHI",
+      "WAVES"
+    ]
+  },
+  {
+    "date": "2022-07-22",
+    "basket": [
+      "COMP",
+      "CRV",
+      "MATIC",
+      "SNX",
+      "YFI"
+    ]
+  },
+  {
+    "date": "2022-08-21",
+    "basket": [
+      "ETC",
+      "FIL",
+      "PEOPLE",
+      "SNX",
+      "YFI"
+    ]
+  },
+  {
+    "date": "2022-09-20",
+    "basket": [
+      "ATOM",
+      "CRV",
+      "EOS",
+      "ETC",
+      "SNX"
+    ]
+  },
+  {
+    "date": "2022-10-20",
+    "basket": [
+      "LUNC",
+      "PEOPLE",
+      "SUSHI",
+      "XLM",
+      "XRP"
+    ]
+  },
+  {
+    "date": "2022-11-19",
+    "basket": [
+      "DOGE",
+      "FTT",
+      "MATIC",
+      "PEOPLE",
+      "SOL"
+    ]
+  },
+  {
+    "date": "2022-12-19",
+    "basket": [
+      "CRV",
+      "DOGE",
+      "FIL",
+      "PEOPLE",
+      "SUSHI"
+    ]
+  },
+  {
+    "date": "2023-01-18",
+    "basket": [
+      "COMP",
+      "GALA",
+      "MANA",
+      "SOL",
+      "ZIL"
+    ]
+  },
+  {
+    "date": "2023-02-17",
+    "basket": [
+      "CRV",
+      "GALA",
+      "GRT",
+      "SAND",
+      "SNX"
+    ]
+  },
+  {
+    "date": "2023-03-19",
+    "basket": [
+      "FIL",
+      "MKR",
+      "NEO",
+      "SNX",
+      "YFI"
+    ]
+  },
+  {
+    "date": "2023-04-18",
+    "basket": [
+      "DOGE",
+      "ICX",
+      "ONT",
+      "XRP",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2023-05-18",
+    "basket": [
+      "GALA",
+      "ICX",
+      "PEOPLE",
+      "SNX",
+      "ZIL"
+    ]
+  },
+  {
+    "date": "2023-06-17",
+    "basket": [
+      "DASH",
+      "EOS",
+      "NEO",
+      "PEOPLE",
+      "SUSHI"
+    ]
+  },
+  {
+    "date": "2023-07-17",
+    "basket": [
+      "BCH",
+      "COMP",
+      "WAVES",
+      "XLM",
+      "XRP"
+    ]
+  },
+  {
+    "date": "2023-08-16",
+    "basket": [
+      "COMP",
+      "CRV",
+      "GALA",
+      "LINK",
+      "XLM"
+    ]
+  },
+  {
+    "date": "2023-09-15",
+    "basket": [
+      "BCH",
+      "ENJ",
+      "GALA",
+      "MKR",
+      "SNX"
+    ]
+  },
+  {
+    "date": "2023-10-15",
+    "basket": [
+      "COMP",
+      "CRV",
+      "FTT",
+      "MKR",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2023-11-14",
+    "basket": [
+      "FTT",
+      "GRT",
+      "LINK",
+      "SUSHI",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2023-12-14",
+    "basket": [
+      "AVAX",
+      "FTT",
+      "IOTA",
+      "SUSHI",
+      "YFI"
+    ]
+  },
+  {
+    "date": "2024-01-13",
+    "basket": [
+      "FIL",
+      "FTT",
+      "GRT",
+      "ONT",
+      "PEOPLE"
+    ]
+  },
+  {
+    "date": "2024-02-12",
+    "basket": [
+      "FTT",
+      "LINK",
+      "PEOPLE",
+      "XMR",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2024-03-13",
+    "basket": [
+      "BCH",
+      "GALA",
+      "PEOPLE",
+      "UNI",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2024-03-15",
+    "basket": [
+      "BCH",
+      "GALA",
+      "PEOPLE",
+      "UNI",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2024-04-12",
+    "basket": [
+      "DOGE",
+      "NEO",
+      "WAVES",
+      "WIF",
+      "ZRX"
+    ]
+  },
+  {
+    "date": "2024-05-12",
+    "basket": [
+      "FTT",
+      "ONT",
+      "PEOPLE",
+      "SUSHI",
+      "WIF"
+    ]
+  },
+  {
+    "date": "2024-06-11",
+    "basket": [
+      "ENJ",
+      "PEOPLE",
+      "UNI",
+      "WAVES",
+      "WIF"
+    ]
+  },
+  {
+    "date": "2024-07-11",
+    "basket": [
+      "CRV",
+      "FTT",
+      "PEOPLE",
+      "UNI",
+      "WIF"
+    ]
+  },
+  {
+    "date": "2024-08-10",
+    "basket": [
+      "CRV",
+      "PEOPLE",
+      "WIF",
+      "XRP",
+      "ZEC"
+    ]
+  },
+  {
+    "date": "2024-09-09",
+    "basket": [
+      "1INCH",
+      "AAVE",
+      "CRV",
+      "PEOPLE",
+      "WIF"
+    ]
+  },
+  {
+    "date": "2024-10-09",
+    "basket": [
+      "FTT",
+      "PEOPLE",
+      "SUSHI",
+      "WIF",
+      "ZIL"
+    ]
+  },
+  {
+    "date": "2024-11-08",
+    "basket": [
+      "FTT",
+      "PEOPLE",
+      "SUSHI",
+      "UNI",
+      "WIF"
+    ]
+  },
+  {
+    "date": "2024-12-08",
+    "basket": [
+      "ALGO",
+      "SAND",
+      "TRX",
+      "VET",
+      "XLM"
+    ]
+  },
+  {
+    "date": "2025-01-07",
+    "basket": [
+      "1INCH",
+      "AAVE",
+      "FTT",
+      "GALA",
+      "SUSHI"
+    ]
+  },
+  {
+    "date": "2025-02-06",
+    "basket": [
+      "CRV",
+      "FTT",
+      "PEOPLE",
+      "QTUM",
+      "ZIL"
+    ]
+  },
+  {
+    "date": "2025-03-08",
+    "basket": [
+      "ADA",
+      "MKR",
+      "PEOPLE",
+      "WIF",
+      "XRP"
+    ]
+  },
+  {
+    "date": "2025-04-07",
+    "basket": [
+      "CRV",
+      "EOS",
+      "PEOPLE",
+      "WIF",
+      "ZIL"
+    ]
+  },
+  {
+    "date": "2025-05-07",
+    "basket": [
+      "ENJ",
+      "ICX",
+      "PEOPLE",
+      "WIF",
+      "ZIL"
+    ]
+  },
+  {
+    "date": "2025-06-06",
+    "basket": [
+      "PEOPLE",
+      "SUSHI",
+      "UNI",
+      "WIF",
+      "ZIL"
+    ]
+  },
+  {
+    "date": "2025-07-06",
+    "basket": [
+      "ICX",
+      "UNI",
+      "VET",
+      "WIF",
+      "ZIL"
+    ]
+  },
+  {
+    "date": "2025-08-05",
+    "basket": [
+      "1INCH",
+      "CRV",
+      "PEOPLE",
+      "WIF",
+      "XLM"
+    ]
+  },
+  {
+    "date": "2025-09-04",
+    "basket": [
+      "GALA",
+      "ONT",
+      "PEOPLE",
+      "QTUM",
+      "SNX"
+    ]
+  },
+  {
+    "date": "2025-10-04",
+    "basket": [
+      "DASH",
+      "FTT",
+      "GALA",
+      "SNX",
+      "ZEC"
+    ]
+  },
+  {
+    "date": "2025-11-03",
+    "basket": [
+      "BAT",
+      "DASH",
+      "PEOPLE",
+      "SNX",
+      "ZEC"
+    ]
+  },
+  {
+    "date": "2025-12-03",
+    "basket": [
+      "DASH",
+      "FIL",
+      "PEOPLE",
+      "UNI",
+      "ZEC"
+    ]
+  },
+  {
+    "date": "2026-01-02",
+    "basket": [
+      "BAT",
+      "ONT",
+      "PEOPLE",
+      "VET",
+      "ZEC"
+    ]
+  },
+  {
+    "date": "2026-02-01",
+    "basket": [
+      "DASH",
+      "GALA",
+      "PEOPLE",
+      "SAND",
+      "VET"
+    ]
+  },
+  {
+    "date": "2026-03-03",
+    "basket": [
+      "DOT",
+      "GALA",
+      "PEOPLE",
+      "VET",
+      "ZEC"
+    ]
+  },
+  {
+    "date": "2026-04-02",
+    "basket": [
+      "GALA",
+      "ONT",
+      "PEOPLE",
+      "VET",
+      "ZEC"
+    ]
+  },
+  {
+    "date": "2026-05-02",
+    "basket": [
+      "DASH",
+      "GALA",
+      "ONT",
+      "PEOPLE",
+      "ZEC"
+    ]
+  },
+  {
+    "date": "2026-06-01",
+    "basket": [
+      "DASH",
+      "FIL",
+      "FTT",
+      "GALA",
+      "ZEC"
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "basket": [
+      "AAVE",
+      "DASH",
+      "FTT",
+      "PEOPLE",
+      "ZEC"
+    ]
+  }
+]

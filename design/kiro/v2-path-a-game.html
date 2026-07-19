@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>v2 Path A — Hybrid · Game</title>
+<style>
+/* Path A colors, Path B structure */
+:root{
+  --bg:#000;--panel:#0d0d10;--panel2:#111114;--border:#1c1c20;--border2:#242428;
+  --dim:#5c5c60;--mid:#8a8a8e;--bright:#c8c8cc;
+  --green:#00bc00;--red:#c10706;--yellow:#fcff00;--purple:#3c425b;
+  --green-bg:#041604;--red-bg:#160404;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--bright);font-family:'SF Mono','Monaco','Menlo','Consolas',monospace;font-size:13px;-webkit-font-smoothing:antialiased}
+body::before{content:'';display:block;height:2px;background:linear-gradient(90deg,#1a1a2e 0%,var(--purple) 30%,#5a6080 50%,var(--purple) 70%,#1a1a2e 100%)}
+.app{max-width:920px;margin:0 auto;padding:12px 20px 24px}
+
+/* HEADER — scoreboard in the bar itself */
+.header{border:1px solid var(--border);background:var(--panel);padding:9px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.logo{display:flex;align-items:baseline;gap:10px}
+.logo-name{font-size:14px;font-weight:700;letter-spacing:.06em}
+.logo-name .g{color:var(--green)}
+.logo-sub{font-size:9px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+.header-scores{display:flex;gap:22px;align-items:center}
+.hscore{text-align:center}
+.hscore .n{font-size:18px;font-weight:700;line-height:1}
+.hscore .n.up{color:var(--green)}.hscore .n.dn{color:var(--red)}.hscore .n.mid{color:var(--mid)}
+.hscore .l{font-size:8px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase;margin-top:1px}
+.header-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.day-tag{font-size:9px;letter-spacing:.1em;color:var(--dim);border:1px solid var(--border);padding:2px 7px;text-transform:uppercase}
+.date-tag{font-size:9px;color:var(--dim)}
+
+/* DUEL ROW */
+.duel{display:grid;grid-template-columns:1fr 100px 1fr;gap:6px;margin-bottom:7px}
+.fighter{border:1px solid var(--border);background:var(--panel);padding:10px 14px}
+.fighter.you{border-color:rgba(0,188,0,.2)}
+.fighter.badger{border-color:rgba(193,7,6,.15);text-align:right}
+.f-tag{font-size:8px;letter-spacing:.16em;color:var(--dim);text-transform:uppercase;margin-bottom:3px}
+.f-name{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--yellow);text-transform:uppercase;margin-bottom:5px}
+.f-val{font-size:30px;font-weight:700;line-height:1;letter-spacing:-.01em}
+.fighter.you .f-val{color:var(--green)}.fighter.you .f-val.dn{color:var(--red)}
+.fighter.badger .f-val{color:var(--mid)}
+.f-sub{font-size:10px;color:var(--dim);margin-top:3px}
+.f-sub .up{color:var(--green)}.f-sub .dn{color:var(--red)}
+.vs-col{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.vs-lbl{font-size:10px;font-weight:700;color:var(--dim)}
+.vs-num{font-size:22px;font-weight:700;padding:2px 7px;border:1px solid}
+.vs-num.ahead{color:var(--green);border-color:rgba(0,188,0,.3)}
+.vs-num.behind{color:var(--red);border-color:rgba(193,7,6,.3)}
+
+/* POSITION BANNER */
+.pos-banner{border:1px solid;padding:8px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;font-weight:700;letter-spacing:.04em}
+.pos-banner.fomo{background:var(--red-bg);border-color:rgba(193,7,6,.4);color:var(--red)}
+.pos-banner.safu{background:var(--green-bg);border-color:rgba(0,188,0,.4);color:var(--green)}
+.pos-main{display:flex;align-items:center;gap:12px;font-size:14px}
+.pos-desc{font-size:9px;letter-spacing:.12em;color:var(--mid);text-transform:uppercase;font-weight:400}
+
+/* CHART */
+.chart-wrap{border:1px solid var(--border);background:#000;position:relative;margin-bottom:5px}
+canvas{width:100%;height:360px;display:block}
+.countdown{position:absolute;inset:0;background:rgba(0,0,0,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;display:none}
+.c-lbl{font-size:9px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;margin-bottom:12px}
+.c-num{font-size:80px;font-weight:700;color:var(--bright);line-height:1}
+
+/* STRIP + META */
+.strip{height:4px;display:flex;margin-bottom:7px}
+.sg{background:var(--green);opacity:.55}.sr{background:var(--red);opacity:.2}.sf{background:rgba(255,255,255,.04)}
+.meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:9px}
+.legend{display:flex;gap:14px;color:var(--dim)}
+.li{display:flex;align-items:center;gap:5px}
+.sw{width:18px;height:2px;display:inline-block}
+.sw-g{background:var(--green)}.sw-y{background:var(--yellow);opacity:.8}.sw-r{background:var(--red)}
+.prog-wrap{display:flex;align-items:center;gap:8px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+.prog{flex:1;height:2px;background:var(--panel2);min-width:180px;border:1px solid var(--border)}
+.prog-fill{height:100%;background:var(--purple)}
+
+/* CONTROLS */
+.ctrl{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ctrl-lbl{font-size:8px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+.spd{display:flex;gap:2px}
+.spd-btn{background:var(--purple);border:1px solid rgba(255,255,255,.07);color:var(--dim);font-family:inherit;font-size:9px;padding:3px 9px;cursor:pointer;text-transform:uppercase;letter-spacing:.06em}
+.spd-btn.on{color:var(--bright);border-color:rgba(255,255,255,.18);background:#4a5270}
+.kbd{margin-left:auto;font-size:8px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+
+/* TOGGLE */
+.toggle{width:100%;padding:15px;font-family:inherit;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:1px solid;display:flex;justify-content:center;align-items:center;gap:12px}
+.toggle.hodl{background:var(--red-bg);border-color:var(--red);color:var(--red)}
+.toggle.yolo{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="logo">
+      <div class="logo-name">DEGEN<span class="g">TERMINAL</span></div>
+      <div class="logo-sub" style="align-self:flex-end">No Fees · No Spread · No Mercy</div>
+    </div>
+  </div>
+
+  <div class="duel">
+    <div class="fighter you">
+      <div class="f-name">You</div>
+      <div class="f-val dn">$8,611</div>
+      <div class="f-sub"><span class="dn">−$1,389</span> · <span>0 trades</span></div>
+    </div>
+    <div class="vs-col">
+      <div class="vs-lbl">VS</div>
+      <div class="vs-num behind">−$1,639</div>
+    </div>
+    <div class="fighter badger">
+      <div class="f-name">🦡 Honey Badger</div>
+      <div class="f-val">$10,250</div>
+      <div class="f-sub"><span class="up">+$250 today</span></div>
+    </div>
+  </div>
+
+  <div class="pos-banner fomo" id="pos-banner">
+    <div class="pos-main"><span>FOMO</span><span class="pos-desc">Altcoin Bags Full</span></div>
+  </div>
+
+  <div class="chart-wrap">
+    <div class="countdown" id="cd">
+      <div class="c-lbl">The next block confirms in...</div>
+      <div class="c-num" id="cn">3</div>
+    </div>
+    <canvas id="chart"></canvas>
+  </div>
+
+  <div class="strip" id="strip"></div>
+
+  <div class="meta">
+    <div class="legend">
+      <div class="li"><span class="sw sw-g"></span>You (Alts)</div>
+      <div class="li"><span class="sw sw-y"></span>You (BTC)</div>
+      <div class="li"><span class="sw sw-r"></span>Honey Badger</div>
+    </div>
+    <div class="prog-wrap">
+      <span>Day 19</span>
+      <div class="prog"><div class="prog-fill" style="width:5.2%"></div></div>
+      <span>365</span>
+    </div>
+  </div>
+
+  <div class="ctrl">
+    <span class="ctrl-lbl">SPEED</span>
+    <div class="spd">
+      <button class="spd-btn">0.5×</button>
+      <button class="spd-btn on">1×</button>
+      <button class="spd-btn">2×</button>
+      <button class="spd-btn">4×</button>
+    </div>
+    <span class="kbd">SPACE: TOGGLE &nbsp;·&nbsp; P: PAUSE</span>
+  </div>
+
+  <button class="toggle yolo" id="toggle" onclick="tp()">
+    HODL · SWITCH TO BITCOIN
+  </button>
+</div>
+
+<script>
+const D=19,pos=Array(365).fill(0).map((_,i)=>i<D?1:0);
+const bad=[],you=[];
+for(let i=0;i<365;i++){const t=i/364;bad.push(15*Math.sin(t*Math.PI*1.5)*t-5*t+20*t*t);you.push(bad[i]+(pos[i]===1?5*Math.sin(i*.3)*Math.sqrt(i+1)-8:0))}
+function draw(){
+  const cv=document.getElementById('chart'),cx=cv.getContext('2d');
+  const W=cv.parentElement.clientWidth*2,H=720;cv.width=W;cv.height=H;const r=2;
+  cx.clearRect(0,0,W,H);
+  const p={t:20*r,b:24*r,l:48*r,r:16*r};
+  const pw=W-p.l-p.r,ph=H-p.t-p.b;
+  const vs=[...bad.slice(0,D),...you.slice(0,D)];
+  let mn=Math.min(...vs),mx=Math.max(...vs);
+  const yd=(mx-mn)*.15||15;mn=Math.floor(mn-yd);mx=Math.ceil(mx+yd);
+  const Y=v=>p.t+ph-((v-mn)/(mx-mn))*ph;
+  const X=i=>p.l+pw*i/364;
+  // position bands — green in basket, red in BTC
+  let bs=-1,bt=-1;for(let i=0;i<D;i++){const p=pos[i];if(bs<0){bs=i;bt=p}else if(p!==bt){cx.fillStyle=bt===1?'rgba(0,188,0,.08)':'rgba(193,7,6,.08)';cx.fillRect(X(bs),p.t,X(i)-X(bs),ph);bs=i;bt=p}}
+  if(bs>=0){cx.fillStyle=bt===1?'rgba(0,188,0,.08)':'rgba(193,7,6,.08)';cx.fillRect(X(bs),p.t,X(D)-X(bs),ph)}
+  cx.fillStyle='rgba(255,255,255,.012)';cx.fillRect(X(D),p.t,pw-(X(D)-p.l),ph);
+  // grid
+  cx.strokeStyle='#111116';cx.lineWidth=1;
+  for(let i=0;i<=5;i++){cx.beginPath();cx.moveTo(p.l,p.t+ph*i/5);cx.lineTo(W-p.r,p.t+ph*i/5);cx.stroke()}
+  for(let i=0;i<=12;i++){cx.beginPath();cx.moveTo(p.l+pw*i/12,p.t);cx.lineTo(p.l+pw*i/12,H-p.b);cx.stroke()}
+  // zero
+  cx.strokeStyle='rgba(255,255,255,.07)';cx.setLineDash([3*r,8*r]);
+  cx.beginPath();cx.moveTo(p.l,Y(0));cx.lineTo(W-p.r,Y(0));cx.stroke();cx.setLineDash([]);
+  // y labels
+  cx.font=`${8*r}px 'SF Mono',monospace`;cx.fillStyle='#5c5c60';cx.textAlign='right';
+  const st=Math.max(5,Math.ceil((mx-mn)/6/5)*5);
+  for(let pv=Math.ceil(mn/st)*st;pv<=mx;pv+=st)cx.fillText(`${pv>0?'+':''}${pv}%`,p.l-4*r,Y(pv)+3*r);
+  // badger
+  cx.strokeStyle='rgba(193,7,6,.75)';cx.lineWidth=2*r;
+  cx.beginPath();for(let i=0;i<D;i++){if(i===0)cx.moveTo(X(i),Y(bad[i]));else cx.lineTo(X(i),Y(bad[i]))}cx.stroke();
+  cx.strokeStyle='rgba(193,7,6,.15)';cx.lineWidth=1.5*r;cx.setLineDash([4*r,8*r]);
+  cx.beginPath();for(let i=D;i<365;i++){if(i===D)cx.moveTo(X(i),Y(bad[i]));else cx.lineTo(X(i),Y(bad[i]))}cx.stroke();cx.setLineDash([]);
+  // you
+  cx.lineWidth=2.5*r;let ss=0,inB=pos[0]===1;
+  for(let i=1;i<=D;i++){const p2=i<D?pos[i]:-1;if(p2!==(inB?1:0)||i===D){cx.strokeStyle=inB?'rgba(0,188,0,.9)':'rgba(252,255,0,.6)';cx.beginPath();for(let j=ss;j<i;j++){if(j===ss)cx.moveTo(X(j),Y(you[j]));else cx.lineTo(X(j),Y(you[j]))}cx.stroke();ss=i;if(i<D)inB=p2===1}}
+  cx.strokeStyle='rgba(255,255,255,.1)';cx.lineWidth=.5*r;cx.beginPath();cx.moveTo(X(D),p.t);cx.lineTo(X(D),H-p.b);cx.stroke();
+}
+draw();window.addEventListener('resize',draw);
+(function(){const s=document.getElementById('strip');s.innerHTML='';let ss=0,c=pos[0];for(let i=1;i<=D;i++){if(i===D||pos[i]!==c){const d=document.createElement('div');d.className=c===1?'sg':'sr';d.style.width=((i-ss)/365*100)+'%';s.appendChild(d);ss=i;if(i<D)c=pos[i]}}const r2=document.createElement('div');r2.className='sf';r2.style.width=((365-D)/365*100)+'%';s.appendChild(r2)})();
+let ib=true;
+function tp(){ib=!ib;const bn=document.getElementById('pos-banner'),tg=document.getElementById('toggle');if(ib){bn.className='pos-banner fomo';bn.innerHTML='<div class="pos-main"><span>FOMO</span><span class="pos-desc">Altcoin Bags Full</span></div>';tg.className='toggle yolo';tg.textContent='HODL · SWITCH TO BITCOIN'}else{bn.className='pos-banner safu';bn.innerHTML='<div class="pos-main"><span>SAFU</span><span class="pos-desc">Hodling Only Bitcoin</span></div>';tg.className='toggle hodl';tg.textContent='YOLO · SWITCH TO ALTCOINS'}}
+</script>
+</body>
+</html>

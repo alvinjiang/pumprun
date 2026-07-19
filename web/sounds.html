@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>defihodler — Sound Samples</title>
+<style>
+  body { background:#0a0a0c; color:#c8c8cc; font-family:'SF Mono','Monaco','Menlo',monospace; padding:40px; max-width:600px; margin:0 auto; }
+  h1 { font-size:16px; font-weight:600; margin-bottom:8px; }
+  .sub { font-size:10px; color:#5c5c60; margin-bottom:32px; }
+  .sound-row { display:flex; align-items:center; gap:16px; padding:10px 0; border-bottom:1px solid #1c1c20; }
+  .sound-row .label { flex:1; font-size:13px; }
+  .sound-row .desc { font-size:11px; color:#5c5c60; }
+  button { background:#111114; border:1px solid #1c1c20; color:#c8c8cc; font-family:inherit; font-size:11px; padding:6px 14px; cursor:pointer; text-transform:uppercase; letter-spacing:.08em; }
+  button:hover { border-color:#3C425B; }
+  button:active { background:#1a1a20; }
+  .section { margin-top:32px; font-size:10px; color:#5c5c60; letter-spacing:.12em; text-transform:uppercase; border-bottom:1px solid #1c1c20; padding-bottom:6px; margin-bottom:8px; }
+</style>
+</head>
+<body>
+<h1>defihodler · Sound Samples</h1>
+<div class="sub">Web Audio API, no external files. Click to play.</div>
+
+<div class="section">Game Flow</div>
+<div class="sound-row"><span class="label">Countdown tick</span><span class="desc">Short blip, ascending</span><button onclick="tick()">Play</button></div>
+<div class="sound-row"><span class="label">Market open</span><span class="desc">Block confirmation chime</span><button onclick="open()">Play</button></div>
+
+<div class="section">Position Toggle</div>
+<div class="sound-row"><span class="label">YOLO · buy basket</span><span class="desc">Quick ascending arp</span><button onclick="yolo()">Play</button></div>
+<div class="sound-row"><span class="label">HODL · sell to BTC</span><span class="desc">Deep vault thud</span><button onclick="hodl()">Play</button></div>
+
+<div class="section">Verdicts</div>
+<div class="sound-row"><span class="label">DEGEN</span><span class="desc">Cheap slot jackpot</span><button onclick="degen()">Play</button></div>
+<div class="sound-row"><span class="label">LUCKY APE</span><span class="desc">Casino ding, trailing off</span><button onclick="lucky()">Play</button></div>
+<div class="sound-row"><span class="label">HONEY BADGER WINS</span><span class="desc">Single deep drum</span><button onclick="badger()">Play</button></div>
+<div class="sound-row"><span class="label">HODLER</span><span class="desc">Zen bell</span><button onclick="hodler()">Play</button></div>
+
+<script>
+var ctx = null;
+function ac() { if (!ctx) ctx = new (window.AudioContext||window.webkitAudioContext)(); return ctx; }
+function tone(f, t, dur, type, vol) {
+  type = type || 'square'; vol = vol || 0.08;
+  var c = ac(), o = c.createOscillator(), g = c.createGain();
+  o.type = type; o.frequency.value = f; g.gain.value = vol;
+  g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + t + dur);
+  o.connect(g).connect(c.destination);
+  o.start(c.currentTime + t); o.stop(c.currentTime + t + dur);
+}
+
+function tick() { tone(660, 0, 0.08, 'square', 0.06); }
+function open() { tone(880, 0, 0.06, 'square', 0.06); tone(1320, 0.06, 0.08, 'square', 0.05); }
+function yolo() {
+  [523,659,784].forEach(function(f,i){ tone(f, i*0.05, 0.05, 'square', 0.05); });
+}
+function hodl() { tone(95, 0, 0.12, 'sine', 0.1); tone(52, 0.03, 0.2, 'sine', 0.08); }
+function degen() {
+  [523,659,784,1047,1318].forEach(function(f,i){ tone(f, i*0.04, 0.04, 'square', 0.04); });
+}
+function lucky() {
+  [523,659,784].forEach(function(f,i){ tone(f, i*0.08, 0.06, 'square', 0.03); });
+}
+function badger() { tone(60, 0, 0.3, 'sine', 0.12); }
+function hodler() { tone(528, 0, 0.6, 'sine', 0.06); }
+</script>
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Path A — Refined Terminal · Game</title>
+<style>
+:root{
+  --bg:#000;--panel:#0d0d10;--panel2:#111114;--border:#1c1c20;--border2:#242428;
+  --dim:#4a4a50;--mid:#7a7a80;--bright:#c8c8cc;
+  --green:#00bc00;--red:#c10706;--yellow:#fcff00;--purple:#3c425b;
+  --green-bg:#041604;--red-bg:#160404;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--bright);font-family:'SF Mono','Monaco','Menlo','Consolas',monospace;font-size:13px;-webkit-font-smoothing:antialiased}
+/* top accent bar — borrowed from cryptowat.ch purple stripe */
+body::before{content:'';display:block;height:2px;background:linear-gradient(90deg,var(--purple) 0%,#5a6080 50%,var(--purple) 100%)}
+.app{max-width:960px;margin:0 auto;padding:14px 20px 28px}
+
+/* HEADER */
+.header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding-bottom:9px;margin-bottom:12px}
+.header-left{display:flex;align-items:baseline;gap:14px}
+.logo{font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--bright)}
+.logo span{color:var(--green)}
+.tagline{font-size:9px;letter-spacing:.15em;color:var(--dim);text-transform:uppercase}
+.header-right{display:flex;gap:16px;font-size:9px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase;align-items:center}
+.header-right .day-badge{color:var(--mid);border:1px solid var(--border);padding:2px 8px}
+
+/* MAIN GRID: 3 columns */
+.stats-row{display:grid;grid-template-columns:1fr 180px 160px;gap:8px;margin-bottom:10px}
+.stat-panel{border:1px solid var(--border);background:var(--panel);padding:10px 14px}
+
+/* YOU panel */
+.you-panel{border-color:rgba(0,188,0,.18)}
+.you-label{font-size:9px;letter-spacing:.14em;color:var(--yellow);text-transform:uppercase;margin-bottom:4px}
+.you-val{font-size:38px;font-weight:700;line-height:1;color:var(--green);letter-spacing:-.01em}
+.you-val.dn{color:var(--red)}
+.you-sub{display:flex;gap:16px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.you-sub-item{display:flex;flex-direction:column;gap:2px}
+.you-sub-item .lbl{font-size:8px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+.you-sub-item .val{font-size:16px;font-weight:600}
+.you-sub-item .val.up{color:var(--green)}
+.you-sub-item .val.dn{color:var(--red)}
+.you-sub-item .val.neu{color:var(--mid)}
+
+/* POSITION panel (FOMO/SAFU) */
+.pos-panel{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.pos-panel.fomo{background:var(--red-bg);border-color:rgba(193,7,6,.3)}
+.pos-panel.safu{background:var(--green-bg);border-color:rgba(0,188,0,.3)}
+.pos-name{font-size:30px;font-weight:700;color:var(--yellow);letter-spacing:.04em}
+.pos-desc{font-size:9px;letter-spacing:.12em;color:var(--mid);text-transform:uppercase;margin-top:4px}
+
+/* BADGER panel */
+.badger-panel{display:flex;flex-direction:column;justify-content:space-between}
+.badger-label{font-size:9px;letter-spacing:.14em;color:var(--yellow);text-transform:uppercase}
+.badger-val{font-size:22px;font-weight:600;color:var(--mid);margin-top:4px}
+.badger-vs{font-size:9px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;margin-top:auto;padding-top:8px;border-top:1px solid var(--border)}
+.badger-vs .vs-num{font-size:13px;font-weight:600}
+.badger-vs .vs-num.ahead{color:var(--green)}
+.badger-vs .vs-num.behind{color:var(--red)}
+
+/* CHART */
+.chart-wrap{border:1px solid var(--border);background:#000;position:relative;margin-bottom:5px}
+canvas{width:100%;height:420px;display:block}
+.countdown-overlay{position:absolute;inset:0;background:rgba(0,0,0,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10}
+.count-lbl{font-size:9px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;margin-bottom:12px}
+.count-n{font-size:72px;font-weight:700;color:var(--bright);line-height:1}
+
+/* STRIP + LEGEND */
+.strip{height:4px;display:flex;margin-bottom:7px}
+.seg-green{background:var(--green);opacity:.6}
+.seg-red{background:var(--red);opacity:.25}
+.seg-future{background:rgba(255,255,255,.04)}
+.legend{display:flex;gap:16px;font-size:10px;color:var(--dim);margin-bottom:10px;align-items:center}
+.legend-item{display:flex;align-items:center;gap:5px}
+.swatch{width:20px;height:2px;display:inline-block}
+.sw-green{background:var(--green)}
+.sw-yellow{background:var(--yellow);opacity:.7}
+.sw-red{background:var(--red)}
+
+/* PROGRESS */
+.progress-row{display:flex;align-items:center;gap:8px;font-size:9px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase;margin-bottom:10px}
+.prog-bar{flex:1;height:3px;background:var(--panel2);border:1px solid var(--border)}
+.prog-fill{height:100%;background:var(--purple)}
+
+/* CONTROLS */
+.ctrl-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ctrl-label{font-size:9px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase;white-space:nowrap}
+.speed-group{display:flex;gap:2px}
+.speed-btn{background:var(--purple);border:1px solid rgba(255,255,255,.07);color:var(--dim);font-family:inherit;font-size:9px;padding:3px 9px;cursor:pointer;text-transform:uppercase;letter-spacing:.06em;transition:.1s}
+.speed-btn.on{color:var(--bright);border-color:rgba(255,255,255,.2);background:#4a5270}
+.kbd-hints{margin-left:auto;font-size:9px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+
+/* TOGGLE BUTTON */
+.toggle-btn{width:100%;padding:14px;font-family:inherit;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:1px solid;display:flex;justify-content:center;align-items:center;gap:12px;transition:.15s}
+.toggle-btn.hodl{background:var(--red-bg);border-color:var(--red);color:var(--red)}
+.toggle-btn.yolo{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+.toggle-btn .arrow{font-size:16px;opacity:.7}
+.toggle-btn .sub-txt{font-size:9px;letter-spacing:.14em;color:var(--mid);font-weight:400;display:none}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-left">
+      <div class="logo">DEGEN<span>TERMINAL</span></div>
+      <div class="tagline">No Fees · No Spread · No Mercy</div>
+    </div>
+    <div class="header-right">
+      <span class="day-badge">DAY 19 / 365</span>
+      <span>SPEED 1×</span>
+      <span style="color:var(--mid)">2019–08–17 → 2020–08–16</span>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <!-- YOU -->
+    <div class="stat-panel you-panel">
+      <div class="you-label">YOU</div>
+      <div class="you-val dn" id="you-val">$8,611</div>
+      <div class="you-sub">
+        <div class="you-sub-item">
+          <span class="lbl">Total P&amp;L</span>
+          <span class="val dn" id="pnl">−$1,389</span>
+        </div>
+        <div class="you-sub-item">
+          <span class="lbl">Today</span>
+          <span class="val dn" id="today">−0.02%</span>
+        </div>
+        <div class="you-sub-item">
+          <span class="lbl">Trades</span>
+          <span class="val neu" id="trades">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- POSITION STATUS -->
+    <div class="stat-panel pos-panel fomo" id="pos-box">
+      <div class="pos-name" id="pos-name">FOMO</div>
+      <div class="pos-desc" id="pos-desc">ALTCOIN BAGS FULL</div>
+    </div>
+
+    <!-- HONEY BADGER -->
+    <div class="stat-panel badger-panel">
+      <div class="badger-label">HONEY BADGER</div>
+      <div class="badger-val">$10,250</div>
+      <div class="badger-vs">
+        <span>YOU ARE </span><span class="vs-num behind" id="vs-text">$1,639 BEHIND</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHART -->
+  <div class="chart-wrap">
+    <div class="countdown-overlay" id="countdown" style="display:none">
+      <div class="count-lbl">The next block confirms in...</div>
+      <div class="count-n" id="count-n">3</div>
+    </div>
+    <canvas id="chart"></canvas>
+  </div>
+
+  <!-- STRIP -->
+  <div class="strip" id="strip"></div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item"><span class="swatch sw-green"></span>YOU in Alts</div>
+    <div class="legend-item"><span class="swatch sw-yellow"></span>YOU in BTC</div>
+    <div class="legend-item"><span class="swatch sw-red"></span>Honey Badger</div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-row">
+    <span>DAY 19</span>
+    <div class="prog-bar"><div class="prog-fill" style="width:5.2%"></div></div>
+    <span>365</span>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="ctrl-row">
+    <span class="ctrl-label">SPEED</span>
+    <div class="speed-group">
+      <button class="speed-btn">0.5×</button>
+      <button class="speed-btn on">1×</button>
+      <button class="speed-btn">2×</button>
+      <button class="speed-btn">4×</button>
+    </div>
+    <span class="kbd-hints">SPACE: TOGGLE &nbsp;·&nbsp; P: PAUSE</span>
+  </div>
+
+  <!-- TOGGLE -->
+  <button class="toggle-btn hodl" id="toggle-btn" onclick="togglePos()">
+    <span class="arrow">↓</span> HODL · SWITCH TO BITCOIN
+  </button>
+</div>
+
+<script>
+// Reuse chart data from v30 mockup (day 19 state, slightly adapted)
+const DAY = 19;
+const positions = Array(365).fill(0).map((_,i)=> i < 19 ? 1 : 0); // all basket so far
+const badger = [], you = [];
+for(let i=0;i<365;i++){
+  const t = i/364;
+  // Synthetic realistic-ish data for mockup
+  badger.push(15*Math.sin(t*Math.PI*1.5)*t - 5*t + 20*t*t);
+  you.push(badger[i] + (positions[i]===1 ? 5*Math.sin(i*0.3)*Math.sqrt(i+1) - 8 : 0));
+}
+
+function drawChart(){
+  const cv=document.getElementById('chart'), cx=cv.getContext('2d');
+  const W=cv.parentElement.clientWidth*2, H=840;
+  cv.width=W; cv.height=H;
+  const dpr=2;
+  cx.clearRect(0,0,W,H);
+
+  const pad={top:28*dpr,bottom:28*dpr,left:50*dpr,right:20*dpr};
+  const pw=W-pad.left-pad.right, ph=H-pad.top-pad.bottom;
+
+  const vals=[...badger.slice(0,DAY),...you.slice(0,DAY)];
+  let yMin=Math.min(...vals), yMax=Math.max(...vals);
+  const yPad=(yMax-yMin)*.15||15;
+  yMin=Math.floor(yMin-yPad); yMax=Math.ceil(yMax+yPad);
+  const Y=v=>pad.top+ph-((v-yMin)/(yMax-yMin))*ph;
+  const X=i=>pad.left+pw*i/364;
+
+  // BTC period bands
+  let bs=-1;
+  for(let i=0;i<DAY;i++){
+    if(positions[i]===0){if(bs<0)bs=i}
+    else if(bs>=0){cx.fillStyle='rgba(252,255,0,0.07)';cx.fillRect(X(bs),pad.top,X(i)-X(bs),ph);bs=-1}
+  }
+  if(bs>=0){cx.fillStyle='rgba(252,255,0,0.07)';cx.fillRect(X(bs),pad.top,X(DAY)-X(bs),ph)}
+
+  // Future area
+  cx.fillStyle='rgba(255,255,255,0.013)';cx.fillRect(X(DAY),pad.top,pw-X(DAY)+pad.left,ph);
+
+  // Grid
+  cx.strokeStyle='#111118';cx.lineWidth=1;
+  for(let i=0;i<6;i++){cx.beginPath();cx.moveTo(pad.left,pad.top+ph*i/5);cx.lineTo(W-pad.right,pad.top+ph*i/5);cx.stroke()}
+  for(let i=0;i<13;i++){cx.beginPath();cx.moveTo(pad.left+pw*i/12,pad.top);cx.lineTo(pad.left+pw*i/12,H-pad.bottom);cx.stroke()}
+
+  // Zero line
+  cx.strokeStyle='rgba(255,255,255,0.08)';cx.setLineDash([4*dpr,10*dpr]);
+  cx.beginPath();cx.moveTo(pad.left,Y(0));cx.lineTo(W-pad.right,Y(0));cx.stroke();
+  cx.setLineDash([]);
+
+  // Y labels
+  cx.font=`${9*dpr}px 'SF Mono',monospace`;cx.fillStyle='#4a4a50';cx.textAlign='right';
+  const step=Math.max(5,Math.ceil((yMax-yMin)/6/5)*5);
+  for(let p=Math.ceil(yMin/step)*step;p<=yMax;p+=step)
+    cx.fillText(`${p>0?'+':''}${p}%`,pad.left-5*dpr,Y(p)+3*dpr);
+
+  // Badger line
+  cx.strokeStyle='rgba(193,7,6,0.75)';cx.lineWidth=2*dpr;
+  cx.beginPath();
+  for(let i=0;i<DAY;i++){if(i===0)cx.moveTo(X(i),Y(badger[i]));else cx.lineTo(X(i),Y(badger[i]))}
+  cx.stroke();
+
+  // Future badger dashed
+  cx.strokeStyle='rgba(193,7,6,0.18)';cx.lineWidth=1.5*dpr;cx.setLineDash([4*dpr,8*dpr]);
+  cx.beginPath();
+  for(let i=DAY;i<365;i++){if(i===DAY)cx.moveTo(X(i),Y(badger[i]));else cx.lineTo(X(i),Y(badger[i]))}
+  cx.stroke();cx.setLineDash([]);
+
+  // YOU line (segmented by position)
+  cx.lineWidth=2.5*dpr;
+  let ss=0,inB=positions[0]===1;
+  for(let i=1;i<=DAY;i++){
+    const pos=i<DAY?positions[i]:-1;
+    if(pos!==(inB?1:0)||i===DAY){
+      cx.strokeStyle=inB?'rgba(0,188,0,0.9)':'rgba(252,255,0,0.6)';
+      cx.beginPath();
+      for(let j=ss;j<i;j++){if(j===ss)cx.moveTo(X(j),Y(you[j]));else cx.lineTo(X(j),Y(you[j]))}
+      cx.stroke();ss=i;if(i<DAY)inB=pos===1;
+    }
+  }
+
+  // Current day line
+  cx.strokeStyle='rgba(255,255,255,0.1)';cx.lineWidth=.5*dpr;
+  cx.beginPath();cx.moveTo(X(DAY),pad.top);cx.lineTo(X(DAY),H-pad.bottom);cx.stroke();
+}
+drawChart();
+window.addEventListener('resize',drawChart);
+
+// Strip
+(function(){
+  const s=document.getElementById('strip');s.innerHTML='';
+  let ss=0,cur=positions[0];
+  for(let i=1;i<=DAY;i++){
+    if(i===DAY||positions[i]!==cur){
+      const d=document.createElement('div');
+      d.className=cur===1?'seg-green':'seg-red';
+      d.style.width=((i-ss)/365*100)+'%';s.appendChild(d);ss=i;
+      if(i<DAY)cur=positions[i];
+    }
+  }
+  const rem=document.createElement('div');rem.className='seg-future';
+  rem.style.width=((365-DAY)/365*100)+'%';s.appendChild(rem);
+})();
+
+let inBasket=true;
+function togglePos(){
+  inBasket = __omp_shell("inBasket;")
+  const pos=document.getElementById('pos-box');
+  const btn=document.getElementById('toggle-btn');
+  if(inBasket){
+    pos.className='stat-panel pos-panel fomo';
+    document.getElementById('pos-name').textContent='FOMO';
+    document.getElementById('pos-desc').textContent='ALTCOIN BAGS FULL';
+    btn.className='toggle-btn hodl';
+    btn.innerHTML='<span class="arrow">↓</span> HODL · SWITCH TO BITCOIN';
+  } else {
+    pos.className='stat-panel pos-panel safu';
+    document.getElementById('pos-name').textContent='SAFU';
+    document.getElementById('pos-desc').textContent='HODLING ONLY BITCOIN';
+    btn.className='toggle-btn yolo';
+    btn.innerHTML='<span class="arrow">↑</span> YOLO · SWITCH TO ALTCOINS';
+  }
+}
+</script>
+</body>
+</html>

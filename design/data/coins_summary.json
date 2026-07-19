@@ -1,0 +1,326 @@
+[
+  {
+    "symbol": "ETHBTC",
+    "name": "ETH",
+    "count": 3291,
+    "start": "2017-07-14"
+  },
+  {
+    "symbol": "LTCBTC",
+    "name": "LTC",
+    "count": 3291,
+    "start": "2017-07-14"
+  },
+  {
+    "symbol": "BNBBTC",
+    "name": "BNB",
+    "count": 3291,
+    "start": "2017-07-14"
+  },
+  {
+    "symbol": "NEOBTC",
+    "name": "NEO",
+    "count": 3214,
+    "start": "2017-07-14"
+  },
+  {
+    "symbol": "QTUMBTC",
+    "name": "QTUM",
+    "count": 3015,
+    "start": "2017-09-04"
+  },
+  {
+    "symbol": "ZRXBTC",
+    "name": "ZRX",
+    "count": 3013,
+    "start": "2017-09-13"
+  },
+  {
+    "symbol": "LINKBTC",
+    "name": "LINK",
+    "count": 3215,
+    "start": "2017-09-28"
+  },
+  {
+    "symbol": "IOTABTC",
+    "name": "IOTA",
+    "count": 3157,
+    "start": "2017-09-30"
+  },
+  {
+    "symbol": "EOSBTC",
+    "name": "EOS",
+    "count": 2785,
+    "start": "2017-10-11"
+  },
+  {
+    "symbol": "ETCBTC",
+    "name": "ETC",
+    "count": 3201,
+    "start": "2017-10-12"
+  },
+  {
+    "symbol": "DASHBTC",
+    "name": "DASH",
+    "count": 3193,
+    "start": "2017-10-20"
+  },
+  {
+    "symbol": "TRXBTC",
+    "name": "TRX",
+    "count": 3182,
+    "start": "2017-10-31"
+  },
+  {
+    "symbol": "XRPBTC",
+    "name": "XRP",
+    "count": 3180,
+    "start": "2017-11-02"
+  },
+  {
+    "symbol": "ENJBTC",
+    "name": "ENJ",
+    "count": 2962,
+    "start": "2017-11-03"
+  },
+  {
+    "symbol": "XMRBTC",
+    "name": "XMR",
+    "count": 2294,
+    "start": "2017-11-10"
+  },
+  {
+    "symbol": "BATBTC",
+    "name": "BAT",
+    "count": 3092,
+    "start": "2017-11-13"
+  },
+  {
+    "symbol": "ZECBTC",
+    "name": "ZEC",
+    "count": 3168,
+    "start": "2017-11-14"
+  },
+  {
+    "symbol": "ADABTC",
+    "name": "ADA",
+    "count": 3152,
+    "start": "2017-11-30"
+  },
+  {
+    "symbol": "XLMBTC",
+    "name": "XLM",
+    "count": 3088,
+    "start": "2017-12-08"
+  },
+  {
+    "symbol": "WAVESBTC",
+    "name": "WAVES",
+    "count": 2377,
+    "start": "2017-12-15"
+  },
+  {
+    "symbol": "ICXBTC",
+    "name": "ICX",
+    "count": 2977,
+    "start": "2017-12-18"
+  },
+  {
+    "symbol": "ZILBTC",
+    "name": "ZIL",
+    "count": 2672,
+    "start": "2018-03-05"
+  },
+  {
+    "symbol": "ONTBTC",
+    "name": "ONT",
+    "count": 3054,
+    "start": "2018-03-08"
+  },
+  {
+    "symbol": "HOTBTC",
+    "name": "HOT",
+    "count": 906,
+    "start": "2018-07-24"
+  },
+  {
+    "symbol": "VETBTC",
+    "name": "VET",
+    "count": 2803,
+    "start": "2018-07-25"
+  },
+  {
+    "symbol": "MATICBTC",
+    "name": "MATIC",
+    "count": 1965,
+    "start": "2019-04-26"
+  },
+  {
+    "symbol": "ATOMBTC",
+    "name": "ATOM",
+    "count": 2637,
+    "start": "2019-04-29"
+  },
+  {
+    "symbol": "ALGOBTC",
+    "name": "ALGO",
+    "count": 2583,
+    "start": "2019-06-22"
+  },
+  {
+    "symbol": "DOGEBTC",
+    "name": "DOGE",
+    "count": 2570,
+    "start": "2019-07-05"
+  },
+  {
+    "symbol": "BCHBTC",
+    "name": "BCH",
+    "count": 2424,
+    "start": "2019-11-28"
+  },
+  {
+    "symbol": "FTTUSDT",
+    "name": "FTT",
+    "count": 2092,
+    "start": "2019-12-20"
+  },
+  {
+    "symbol": "SOLBTC",
+    "name": "SOL",
+    "count": 2290,
+    "start": "2020-04-10"
+  },
+  {
+    "symbol": "COMPBTC",
+    "name": "COMP",
+    "count": 2043,
+    "start": "2020-06-25"
+  },
+  {
+    "symbol": "SNXBTC",
+    "name": "SNX",
+    "count": 2036,
+    "start": "2020-07-09"
+  },
+  {
+    "symbol": "MKRBTC",
+    "name": "MKR",
+    "count": 1881,
+    "start": "2020-07-23"
+  },
+  {
+    "symbol": "MANAUSDT",
+    "name": "MANA",
+    "count": 2172,
+    "start": "2020-08-06"
+  },
+  {
+    "symbol": "YFIBTC",
+    "name": "YFI",
+    "count": 1993,
+    "start": "2020-08-10"
+  },
+  {
+    "symbol": "SANDUSDT",
+    "name": "SAND",
+    "count": 2164,
+    "start": "2020-08-14"
+  },
+  {
+    "symbol": "CRVBTC",
+    "name": "CRV",
+    "count": 2121,
+    "start": "2020-08-15"
+  },
+  {
+    "symbol": "DOTBTC",
+    "name": "DOT",
+    "count": 2160,
+    "start": "2020-08-18"
+  },
+  {
+    "symbol": "SUSHIBTC",
+    "name": "SUSHI",
+    "count": 1985,
+    "start": "2020-09-01"
+  },
+  {
+    "symbol": "UNIBTC",
+    "name": "UNI",
+    "count": 2130,
+    "start": "2020-09-17"
+  },
+  {
+    "symbol": "AVAXBTC",
+    "name": "AVAX",
+    "count": 2125,
+    "start": "2020-09-22"
+  },
+  {
+    "symbol": "FILBTC",
+    "name": "FIL",
+    "count": 2102,
+    "start": "2020-10-15"
+  },
+  {
+    "symbol": "AAVEBTC",
+    "name": "AAVE",
+    "count": 2102,
+    "start": "2020-10-15"
+  },
+  {
+    "symbol": "GRTBTC",
+    "name": "GRT",
+    "count": 1941,
+    "start": "2020-12-17"
+  },
+  {
+    "symbol": "1INCHBTC",
+    "name": "1INCH",
+    "count": 1947,
+    "start": "2020-12-25"
+  },
+  {
+    "symbol": "GALAUSDT",
+    "name": "GALA",
+    "count": 1769,
+    "start": "2021-09-13"
+  },
+  {
+    "symbol": "PEOPLEUSDT",
+    "name": "PEOPLE",
+    "count": 1668,
+    "start": "2021-12-23"
+  },
+  {
+    "symbol": "LUNCUSDT",
+    "name": "LUNC",
+    "count": 1408,
+    "start": "2022-09-09"
+  },
+  {
+    "symbol": "FLOKIUSDT",
+    "name": "FLOKI",
+    "count": 1170,
+    "start": "2023-05-05"
+  },
+  {
+    "symbol": "PEPEUSDT",
+    "name": "PEPE",
+    "count": 1170,
+    "start": "2023-05-05"
+  },
+  {
+    "symbol": "BONKUSDT",
+    "name": "BONK",
+    "count": 946,
+    "start": "2023-12-15"
+  },
+  {
+    "symbol": "WIFUSDT",
+    "name": "WIF",
+    "count": 865,
+    "start": "2024-03-05"
+  }
+]

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>defihodler — Font Mockups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { background: #000; color: #C8C8C8; padding: 40px 60px; font-family: 'Inter', sans-serif; }
+  h1 { font-size: 18px; font-weight: 400; color: #C8C8C8; margin-bottom: 8px; }
+  h2 { color: #646464; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; margin: 48px 0 16px; border-bottom: 1px solid #1A1A1A; padding-bottom: 6px; }
+  .row { display: flex; gap: 48px; margin-bottom: 24px; }
+  .col { flex: 1; }
+  .label { font-size: 8px; color: #646464; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 6px; }
+
+  /* Font stacks */
+  .f-sf     .mono { font-family: 'SF Mono', 'Monaco', 'Menlo', 'Consolas', monospace; font-size: 13px; line-height: 1.7; }
+  .f-jet    .mono { font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7; }
+  .f-jet-z  .mono { font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7; font-feature-settings: 'zero'; }
+
+  .mono-sm { font-size: 10px; }
+  .mono-lg { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; }
+  .mono-xl { font-size: 48px; font-weight: 600; }
+
+  /* Small caps labels — cryptowatch style */
+  .sc { font-family: 'SF Mono', 'Monaco', 'Menlo', monospace; font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #646464; }
+  .sc-jet { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #646464; }
+
+  .price-up { color: #5A7660; }
+  .price-dn { color: #9D0A27; }
+  .dim { color: #646464; }
+
+  /* Stat rows */
+  .stat-block { border: 1px solid #1A1A1A; padding: 14px 18px; margin-top: 10px; }
+  .stat-row { display: flex; justify-content: space-between; align-items: baseline; margin: 6px 0; }
+  .stat-row .key { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #646464; }
+  .stat-row .val { font-size: 13px; color: #C8C8C8; }
+
+  /* HUD */
+  .hud { display: flex; gap: 12px; margin-top: 14px; }
+  .ticket { flex: 1; border: 1px solid #1A1A1A; padding: 14px 16px; }
+  .ticket .name { font-family: 'Inter', sans-serif; font-size: 8px; letter-spacing: 0.14em; color: #646464; text-transform: uppercase; margin-bottom: 6px; }
+  .ticket .val { font-size: 24px; font-weight: 600; }
+  .ticket .pct { font-size: 13px; margin-top: 2px; }
+
+  /* Zero grid */
+  .zero-grid { display: flex; gap: 4px; }
+  .zero-cell { font-size: 52px; width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; background: #0A0A0A; }
+
+  /* Candle grid */
+  .candle-grid { display: flex; gap: 3px; align-items: flex-end; height: 80px; margin-top: 10px; }
+  .candle { width: 6px; }
+  .candle-up { background: #015019; }
+  .candle-dn { background: #9D0A27; }
+</style>
+</head>
+<body>
+
+<h1>defihodler · font mockups</h1>
+
+<!-- ZERO COMPARISON -->
+<h2>Digit Zero — SF Mono vs JetBrains</h2>
+<div class="row">
+  <div class="col"><div class="label">SF Mono (system)</div><div class="zero-cell f-sf mono">0 1 2 3 4 5 6 7 8 9</div></div>
+  <div class="col"><div class="label">JetBrains (default)</div><div class="zero-cell f-jet mono">0 1 2 3 4 5 6 7 8 9</div></div>
+  <div class="col"><div class="label">JetBrains (zero=plain)</div><div class="zero-cell f-jet-z mono">0 1 2 3 4 5 6 7 8 9</div></div>
+</div>
+
+<!-- SMALL CAPS — cryptowatch labels -->
+<h2>Small Caps Labels — SF Mono</h2>
+<div class="f-sf">
+  <div class="sc">INSTRUMENT &nbsp; LAST PRICE &nbsp; 24H CHANGE &nbsp; VOLUME</div>
+  <div class="mono">BTC/USD &nbsp; &nbsp; &nbsp; &nbsp; <span class="price-up">64,892.35</span> &nbsp; <span class="price-up">+2.41%</span> &nbsp; &nbsp; <span class="dim">1,234.5K</span></div>
+  <div class="mono">ETH/BTC &nbsp; &nbsp; &nbsp; &nbsp; <span class="price-dn">0.05124</span> &nbsp; <span class="price-dn">-1.83%</span> &nbsp; &nbsp; <span class="dim">892.1K</span></div>
+  <div class="mono">PEPE/BTC &nbsp; &nbsp; &nbsp; &nbsp;<span class="price-up">0.00000012</span> &nbsp; <span class="price-up">+14.7%</span> &nbsp; &nbsp; <span class="dim">3,456.2K</span></div>
+  <div class="mono-sm dim" style="margin-top:4px">SF Mono · 0O 1lI 5S 8B — glyph discrimination</div>
+</div>
+
+<h2>Small Caps Labels — JetBrains Mono</h2>
+<div class="f-jet-z">
+  <div class="sc-jet">INSTRUMENT &nbsp; LAST PRICE &nbsp; 24H CHANGE &nbsp; VOLUME</div>
+  <div class="mono">BTC/USD &nbsp; &nbsp; &nbsp; &nbsp; <span class="price-up">64,892.35</span> &nbsp; <span class="price-up">+2.41%</span> &nbsp; &nbsp; <span class="dim">1,234.5K</span></div>
+  <div class="mono">ETH/BTC &nbsp; &nbsp; &nbsp; &nbsp; <span class="price-dn">0.05124</span> &nbsp; <span class="price-dn">-1.83%</span> &nbsp; &nbsp; <span class="dim">892.1K</span></div>
+  <div class="mono">PEPE/BTC &nbsp; &nbsp; &nbsp; &nbsp;<span class="price-up">0.00000012</span> &nbsp; <span class="price-up">+14.7%</span> &nbsp; &nbsp; <span class="dim">3,456.2K</span></div>
+  <div class="mono-sm dim" style="margin-top:4px">JetBrains Mono · 0O 1lI 5S 8B — glyph discrimination</div>
+</div>
+
+<!-- STATS PANEL -->
+<h2>Stats Panel — SF Mono</h2>
+<div class="stat-block f-sf">
+  <div class="stat-row"><span class="key" style="font-family:'SF Mono','Monaco','Menlo',monospace">TRADES</span><span class="val mono">14</span></div>
+  <div class="stat-row"><span class="key" style="font-family:'SF Mono','Monaco','Menlo',monospace">TIME IN BASKET</span><span class="val mono">47.3%</span></div>
+  <div class="stat-row"><span class="key" style="font-family:'SF Mono','Monaco','Menlo',monospace">BEST DAYS CAUGHT</span><span class="val mono">7/10</span></div>
+  <div class="stat-row"><span class="key" style="font-family:'SF Mono','Monaco','Menlo',monospace">BANANA %ILE</span><span class="val mono">92nd</span></div>
+</div>
+
+<h2>Stats Panel — JetBrains Mono</h2>
+<div class="stat-block f-jet-z">
+  <div class="stat-row"><span class="key" style="font-family:'JetBrains Mono',monospace">TRADES</span><span class="val mono">14</span></div>
+  <div class="stat-row"><span class="key" style="font-family:'JetBrains Mono',monospace">TIME IN BASKET</span><span class="val mono">47.3%</span></div>
+  <div class="stat-row"><span class="key" style="font-family:'JetBrains Mono',monospace">BEST DAYS CAUGHT</span><span class="val mono">7/10</span></div>
+  <div class="stat-row"><span class="key" style="font-family:'JetBrains Mono',monospace">BANANA %ILE</span><span class="val mono">92nd</span></div>
+</div>
+
+<!-- HUD -->
+<h2>HUD — SF Mono</h2>
+<div class="hud f-sf">
+  <div class="ticket">
+    <div class="name">YOU · THE APE</div>
+    <div class="val mono price-up">$12,451</div>
+    <div class="pct mono price-up">+24.51%</div>
+  </div>
+  <div class="ticket">
+    <div class="name">THE BADGER</div>
+    <div class="val mono">$10,892</div>
+    <div class="pct mono price-up">+8.92%</div>
+  </div>
+</div>
+
+<h2>HUD — JetBrains Mono</h2>
+<div class="hud f-jet-z">
+  <div class="ticket">
+    <div class="name">YOU · THE APE</div>
+    <div class="val mono price-up">$12,451</div>
+    <div class="pct mono price-up">+24.51%</div>
+  </div>
+  <div class="ticket">
+    <div class="name">THE BADGER</div>
+    <div class="val mono">$10,892</div>
+    <div class="pct mono price-up">+8.92%</div>
+  </div>
+</div>
+
+<!-- LARGE NUMBERS -->
+<h2>Large Numerals — Verdict Stamps</h2>
+<div class="row">
+  <div class="col">
+    <div class="label">SF Mono</div>
+    <div class="f-sf mono mono-xl price-dn">−$4,892</div>
+    <div class="f-sf mono mono-xl price-up" style="margin-top:12px">+$23,451</div>
+  </div>
+  <div class="col">
+    <div class="label">JetBrains Mono</div>
+    <div class="f-jet-z mono mono-xl price-dn">−$4,892</div>
+    <div class="f-jet-z mono mono-xl price-up" style="margin-top:12px">+$23,451</div>
+  </div>
+</div>
+
+<!-- BAR CHART (ASCII style) -->
+<h2>Mini Candles / Bar Chart</h2>
+<div class="f-sf">
+  <div class="sc">PORTFOLIO VALUE (BTC)</div>
+  <div class="mono-sm dim" style="margin-top:6px">█ ▁ ▂ ▃ ▄ ▅ ▆ ▇ █ ▆ ▅ ▄ ▃ ▂ ▁ ▂ ▃ ▄ ▅ ▆ ▇ █ ▇ ▆ ▅ ▄ ▃ ▂ ▁</div>
+</div>
+
+<h2 style="margin-top:48px; color:#646464">Verdict tiers: HODLER / DEGEN / LUCKY APE / MAXI BADGER WINS</h2>
+
+</body>
+</html>

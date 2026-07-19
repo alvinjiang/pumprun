@@ -1,0 +1,218 @@
+{
+  "ETHBTC": {
+    "count": 3291,
+    "start": "2017-07-14"
+  },
+  "LTCBTC": {
+    "count": 3291,
+    "start": "2017-07-14"
+  },
+  "BNBBTC": {
+    "count": 3291,
+    "start": "2017-07-14"
+  },
+  "NEOBTC": {
+    "count": 3214,
+    "start": "2017-07-14"
+  },
+  "QTUMBTC": {
+    "count": 3015,
+    "start": "2017-09-04"
+  },
+  "LINKBTC": {
+    "count": 3215,
+    "start": "2017-09-28"
+  },
+  "IOTABTC": {
+    "count": 3157,
+    "start": "2017-09-30"
+  },
+  "EOSBTC": {
+    "count": 2785,
+    "start": "2017-10-11"
+  },
+  "ETCBTC": {
+    "count": 3201,
+    "start": "2017-10-12"
+  },
+  "DASHBTC": {
+    "count": 3193,
+    "start": "2017-10-20"
+  },
+  "TRXBTC": {
+    "count": 3182,
+    "start": "2017-10-31"
+  },
+  "XRPBTC": {
+    "count": 3180,
+    "start": "2017-11-02"
+  },
+  "XMRBTC": {
+    "count": 2294,
+    "start": "2017-11-10"
+  },
+  "ZECBTC": {
+    "count": 3168,
+    "start": "2017-11-14"
+  },
+  "ADABTC": {
+    "count": 3152,
+    "start": "2017-11-30"
+  },
+  "XLMBTC": {
+    "count": 3088,
+    "start": "2017-12-08"
+  },
+  "WAVESBTC": {
+    "count": 2377,
+    "start": "2017-12-15"
+  },
+  "ICXBTC": {
+    "count": 2977,
+    "start": "2017-12-18"
+  },
+  "ZILBTC": {
+    "count": 2672,
+    "start": "2018-03-05"
+  },
+  "ONTBTC": {
+    "count": 3054,
+    "start": "2018-03-08"
+  },
+  "VETBTC": {
+    "count": 2803,
+    "start": "2018-07-25"
+  },
+  "ATOMBTC": {
+    "count": 2637,
+    "start": "2019-04-29"
+  },
+  "ALGOBTC": {
+    "count": 2583,
+    "start": "2019-06-22"
+  },
+  "BCHBTC": {
+    "count": 2424,
+    "start": "2019-11-28"
+  },
+  "SOLBTC": {
+    "count": 2290,
+    "start": "2020-04-10"
+  },
+  "DOTBTC": {
+    "count": 2160,
+    "start": "2020-08-18"
+  },
+  "AVAXBTC": {
+    "count": 2125,
+    "start": "2020-09-22"
+  },
+  "MATICBTC": {
+    "count": 1965,
+    "start": "2019-04-26"
+  },
+  "FILBTC": {
+    "count": 2102,
+    "start": "2020-10-15"
+  },
+  "UNIBTC": {
+    "count": 2130,
+    "start": "2020-09-17"
+  },
+  "AAVEBTC": {
+    "count": 2102,
+    "start": "2020-10-15"
+  },
+  "DOGEBTC": {
+    "count": 2570,
+    "start": "2019-07-05"
+  },
+  "SUSHIBTC": {
+    "count": 1985,
+    "start": "2020-09-01"
+  },
+  "COMPBTC": {
+    "count": 2043,
+    "start": "2020-06-25"
+  },
+  "MKRBTC": {
+    "count": 1881,
+    "start": "2020-07-23"
+  },
+  "SNXBTC": {
+    "count": 2036,
+    "start": "2020-07-09"
+  },
+  "YFIBTC": {
+    "count": 1993,
+    "start": "2020-08-10"
+  },
+  "ENJBTC": {
+    "count": 2962,
+    "start": "2017-11-03"
+  },
+  "HOTBTC": {
+    "count": 906,
+    "start": "2018-07-24"
+  },
+  "BATBTC": {
+    "count": 3092,
+    "start": "2017-11-13"
+  },
+  "ZRXBTC": {
+    "count": 3013,
+    "start": "2017-09-13"
+  },
+  "GRTBTC": {
+    "count": 1941,
+    "start": "2020-12-17"
+  },
+  "1INCHBTC": {
+    "count": 1947,
+    "start": "2020-12-25"
+  },
+  "CRVBTC": {
+    "count": 2121,
+    "start": "2020-08-15"
+  },
+  "SANDUSDT": {
+    "count": 2164,
+    "start": "2020-08-14"
+  },
+  "MANAUSDT": {
+    "count": 2172,
+    "start": "2020-08-06"
+  },
+  "GALAUSDT": {
+    "count": 1769,
+    "start": "2021-09-13"
+  },
+  "PEOPLEUSDT": {
+    "count": 1668,
+    "start": "2021-12-23"
+  },
+  "FTTUSDT": {
+    "count": 2092,
+    "start": "2019-12-20"
+  },
+  "FLOKIUSDT": {
+    "count": 1170,
+    "start": "2023-05-05"
+  },
+  "PEPEUSDT": {
+    "count": 1170,
+    "start": "2023-05-05"
+  },
+  "BONKUSDT": {
+    "count": 946,
+    "start": "2023-12-15"
+  },
+  "WIFUSDT": {
+    "count": 865,
+    "start": "2024-03-05"
+  },
+  "LUNCUSDT": {
+    "count": 1408,
+    "start": "2022-09-09"
+  }
+}

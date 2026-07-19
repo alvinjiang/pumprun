@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>v2 Path A — Summary Screen</title>
+<style>
+:root{
+  --bg:#000;--panel:#0d0d10;--panel2:#111114;--border:#1c1c20;--border2:#242428;
+  --dim:#5c5c60;--mid:#8a8a8e;--bright:#c8c8cc;
+  --green:#00bc00;--red:#c10706;--yellow:#fcff00;--purple:#3c425b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:var(--bg);color:var(--bright);
+  font-family:'SF Mono','Monaco','Menlo','Consolas',monospace;
+  font-size:13px;-webkit-font-smoothing:antialiased;
+  min-height:100vh;display:flex;justify-content:center;align-items:center;
+  /* simulate game behind the overlay */
+  background-image:repeating-linear-gradient(90deg,transparent,transparent 80px,rgba(255,255,255,.005) 80px,rgba(255,255,255,.005) 81px);
+}
+body::before{content:'';display:block;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:0}
+
+.card{
+  position:relative;z-index:1;
+  width:420px;max-height:94vh;overflow-y:auto;
+  background:#080810;
+  border:1px solid var(--border2);
+  border-radius:24px;
+  padding:18px 20px 28px;
+  display:flex;flex-direction:column;gap:12px;
+  box-shadow:0 0 80px rgba(0,0,0,.8);
+}
+
+/* Scrollbar styling */
+.card::-webkit-scrollbar{width:3px}
+.card::-webkit-scrollbar-track{background:transparent}
+.card::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* TOP ROW */
+.top-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.top-label{color:var(--bright);font-weight:700}
+.top-date{color:var(--dim)}
+
+/* VERDICT BOX */
+.verdict-box{border:1px solid var(--border2);border-radius:10px;background:var(--panel2);padding:20px 16px;text-align:center}
+.verdict-stamp{font-size:32px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px}
+.vs-degen{color:var(--green)}.vs-lucky{color:#c8a020}.vs-badger{color:var(--red)}.vs-hodler{color:var(--green)}
+.verdict-sub{font-size:11px;color:var(--dim);margin-bottom:4px}
+.verdict-season{font-size:12px;color:var(--mid);font-style:italic;line-height:1.5}
+
+/* STAT ROW */
+.stat-row{display:flex;gap:6px}
+.stat-box{
+  flex:1;border:1px solid var(--border2);border-radius:8px;
+  background:var(--panel2);padding:10px 8px;text-align:center;
+}
+.stat-n{font-size:20px;font-weight:700;color:var(--bright);line-height:1;margin-bottom:3px}
+.stat-n.green{color:var(--green)}.stat-n.red{color:var(--red)}.stat-n.yellow{color:var(--yellow)}
+.stat-l{font-size:10px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+
+/* OUTCOME BOX */
+.outcome-box{border:1px solid var(--border2);border-radius:10px;background:var(--panel2);padding:14px 16px}
+.outcome-line{font-size:12px;color:var(--mid);line-height:1.6;margin-bottom:12px}
+.outcome-line .win{color:var(--green)}.outcome-line .lose{color:var(--red)}
+.result-row{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:9px 0;border-top:1px solid rgba(255,255,255,.04);
+}
+.rr-who{font-size:14px;font-weight:700;color:var(--bright)}
+.rr-right{text-align:right}
+.rr-val{font-size:14px;font-weight:700;color:var(--bright)}
+.rr-pct{font-size:11px;margin-left:6px}
+.rr-pct.up{color:var(--green)}.rr-pct.dn{color:var(--red)}.rr-pct.eq{color:var(--yellow)}
+.rr-buy{font-size:12px;color:var(--dim);font-style:italic;margin-top:2px}
+
+/* EVENTS BOX */
+.events-box{border:1px solid var(--border2);border-radius:10px;background:var(--panel2);padding:12px 14px}
+.events-head{font-size:11px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;margin-bottom:8px}
+.event-row{font-size:11px;color:var(--mid);padding:4px 0;border-top:1px solid rgba(255,255,255,.03);line-height:1.4}
+.event-row .edate{color:var(--dim)}
+
+/* BANANA TEST */
+.banana-box{border:1px solid var(--border2);border-radius:10px;background:var(--panel2);padding:12px 14px}
+.banana-head{font-size:11px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between}
+.banana-bar-wrap{height:6px;background:var(--border2);border-radius:3px;margin-bottom:6px;position:relative;overflow:hidden}
+.banana-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--red),var(--yellow) 60%,var(--green));width:92%}
+.banana-marker{position:absolute;top:-2px;width:2px;height:10px;background:var(--bright);left:92%}
+.banana-desc{font-size:12px;color:var(--mid)}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:8px}
+.btn{
+  flex:1;padding:12px;font-family:inherit;font-size:11px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;cursor:pointer;
+  border:1px solid var(--border2);background:var(--panel2);color:var(--mid);
+  border-radius:8px;text-align:center;
+}
+.btn.primary{color:var(--bright);border-color:#2a2a36}
+.btn.primary:hover{background:#16161e}
+.btn:hover{border-color:var(--mid)}
+.btn-lobby{
+  font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  cursor:pointer;border:none;background:transparent;color:var(--dim);
+  padding:6px;width:100%;text-align:center;
+}
+.btn-lobby:hover{color:var(--mid)}
+</style>
+</head>
+<body>
+<div class="card">
+
+  <div class="top-row">
+    <span class="top-label">DEGEN OR HODLER?</span>
+    <span class="top-date">2021-02-02 14:32 UTC</span>
+  </div>
+
+  <div class="verdict-box">
+    <div class="verdict-stamp vs-degen">DEGEN</div>
+    <div class="verdict-sub">Feb 2, 2021 → Feb 1, 2022</div>
+    <div class="verdict-season">You traded through the Institutional Wave,<br>NFT Mania &amp; Metaverse Rotation</div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-box">
+      <div class="stat-n">14</div>
+      <div class="stat-l">TRADES</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-n yellow">42%</div>
+      <div class="stat-l">TIME IN ALTS</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-n green">92nd</div>
+      <div class="stat-l">% VS APES</div>
+    </div>
+  </div>
+
+  <div class="outcome-box">
+    <div class="outcome-line">You beat the Honey Badger by <span class="win">$4,235</span> &mdash; and the banana test says it wasn't luck.</div>
+    <div class="result-row">
+      <span class="rr-who">YOU</span>
+      <div class="rr-right">
+        <span class="rr-val">$14,235</span><span class="rr-pct up">+42.4%</span>
+        <div class="rr-buy">That's a decent APE NFT.</div>
+      </div>
+    </div>
+    <div class="result-row">
+      <span class="rr-who">HONEY BADGER</span>
+      <div class="rr-right">
+        <span class="rr-val">$10,000</span><span class="rr-pct eq">+0.0%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="banana-box">
+    <div class="banana-head">
+      <span>BANANA TEST</span>
+      <span style="color:var(--green)">PASSED · 92nd PERCENTILE</span>
+    </div>
+    <div class="banana-bar-wrap">
+      <div class="banana-bar"></div>
+      <div class="banana-marker"></div>
+    </div>
+    <div class="banana-desc">You beat 92% of 1,000 random apes with identical trade counts and timing. Skill, not luck.</div>
+  </div>
+
+  <div class="events-box">
+    <div class="events-head">3 notable events during this period</div>
+    <div class="event-row"><span class="edate">May 2021 — </span>China bans mining; Elon tweets; BTC crashes 40%</div>
+    <div class="event-row"><span class="edate">Sep 2021 — </span>El Salvador adopts BTC as legal tender</div>
+    <div class="event-row"><span class="edate">Nov 2021 — </span>BTC all-time high at $67,500</div>
+  </div>
+
+  <div class="btn-row">
+    <div class="btn primary">COPY LINK</div>
+    <div class="btn">PLAY AGAIN</div>
+  </div>
+  <button class="btn-lobby">BACK TO LOBBY</button>
+
+</div>
+</body>
+</html>
