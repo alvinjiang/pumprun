@@ -249,7 +249,7 @@ function finishGame(){
   document.getElementById('summary-overlay').classList.add('on');
   
   // POST to server
-  if(API){try{var payload=JSON.stringify({i:crypto.randomUUID?crypto.randomUUID():String(Date.now()),s:G.s,p:50,r:rel,t:G.pos.reduce(function(a,p,i){if(i===0||p!==G.pos[i-1])a.push(i);return a},[]),d:Math.round(youD-badD),final:Math.round(youD)});fetch(API+'/api/run',{method:'POST',body:payload,keepalive:true}).then(function(r){return r.json()}).then(function(d){if(d&&d.tierText)document.getElementById('stier').textContent=d.tierText}).catch(function(){})}catch(e){}}else{console.log('no API base, skipping server post')}
+  if(API){try{var payload=JSON.stringify({i:crypto.randomUUID?crypto.randomUUID():String(Date.now()),s:G.s,p:50,r:rel,t:G.pos.reduce(function(a,p,i){if(i===0||p!==G.pos[i-1])a.push(i);return a},[]),d:Math.round(youD-badD),final:Math.round(youD)});fetch(API+'/api/run',{method:'POST',body:payload,keepalive:true,headers:{'X-Api-Key':(document.querySelector('meta[name=api-key]')||{}).content||''}}).then(function(r){return r.json()}).then(function(d){if(d&&d.tierText)document.getElementById('stier').textContent=d.tierText}).catch(function(){})}catch(e){}}else{console.log('no API base, skipping server post')}
 }
 
 function doToggle(){if(G.done)return;G.inBasket=!G.inBasket;if(G.phase==='live')G.trades++;updateUI()}
@@ -356,6 +356,7 @@ def build_html_template(js):
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="api-base" content="https://api.gridrun.net:8090">
+<meta name="api-key" content="">
 <title>defihodler</title>
 <style>
 :root{--bg:#000;--panel:#0d0d10;--panel2:#111114;--border:#1c1c20;--border2:#242428;--dim:#5c5c60;--mid:#8a8a8e;--bright:#c8c8cc;--green:#00bc00;--red:#c10706;--yellow:#fcff00;--purple:#3c425b;--green-bg:#041604;--red-bg:#160404}
