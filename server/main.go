@@ -404,8 +404,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/pump/ledger", handleLedger(store))
 	mux.HandleFunc("/pump/recent", handleRecent(store))
-	mux.HandleFunc("/pump/tape", handleTape)
-	mux.HandleFunc("/pump/run", handleRun(store, rl))
+		mux.HandleFunc("/pump/run", handleRun(store, rl))
 	mux.HandleFunc("/pump/daily-rank", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{"total": 0, "worse": 0})
