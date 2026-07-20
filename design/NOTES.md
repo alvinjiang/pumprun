@@ -1,17 +1,20 @@
 # pumprun — Implementation Notes
 
-## State at session end (2026-07-19)
+## State at session end (2026-07-20)
 
-### Active bugs
-1. **Summary not showing after game end** — **[FIXED 2026-07-19]** Root cause: `finishGame()` had a duplicate summary-population block (lines 225-252) that used `verdict`, `stampClass`, `youD`, `badD`, `rel`, `snames`, `oel`, `yp`, `bp`, `pctIn` before they were assigned. The correct block (lines 276-308) computed values first then populated DOM, but was missing `classList.add('on')`. Fix: deleted the broken duplicate block; added `classList.add('on')` to the correct block. Verified in browser — all summary fields populate correctly.
+### All known bugs fixed
+- Summary overlay — fixed duplicate population block + missing `.on` class
+- `youDollarsFinal` scope — computed inside `runBananaTest` from global state
+- Ticker tape — restored `loadLobbyData()` 
+- Recent games ordering — now shows newest 8 first (server returns oldest-first, client inserts at top)
+- Horizontal scroll — `overflow-x:hidden` on body
+- CSS corruption — multiple accidental deletions restored (`.sw-g/y/r`, `.pos-banner.safu`, `.summary-card`, `.day-bar`, `.events-title`, `.event-row`)
 
-2. **Ticker tape shows "Loading recent games..."** — `loadLobbyData()` function was lost during a `git checkout build.py` operation. The function needs to fetch `/pump/recent?n=20` and render game results into the `#tape` div. The recent feed (`#recent-feed`) also stopped working.
-
-### Last working state
-- Game runs correctly (Space toggles, P pauses, chart renders 3 lines)
-- Server API works (POST /pump/run stores games, GET /pump/recent returns them)
-- Tape was working earlier in the session (browser test showed "LUCKY APE Apr20→Apr21 +190%")
-- The `be` scope bug was fixed (btcEnd now computed inside finishGame)
+### Deploy workflow (gRPC, no TTY)
+- Auth: `AgentAuthService/AgentRequestLogin` → user provides OTP → `AgentConfirmLogin` → token
+- Deploy: tarball `web/` → base64 chunk as JSON lines → stream to `DeployService/Push`
+- Token saved to `/tmp/fyra_token.txt` — reuse until expired (~15 min)
+- Email: `ajiang@gmail.com`
 
 ### Files that matter
 
