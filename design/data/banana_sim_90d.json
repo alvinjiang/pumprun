@@ -1,0 +1,12 @@
+{
+  "WIN": 90,
+  "N": 2000,
+  "badger_wins": 1210,
+  "badger_win_pct": 60.5,
+  "degen_win_pct": 39.5,
+  "median_vs_badger": "-6.5%",
+  "p90": "36.2%",
+  "p10": "-32.7%",
+  "best": "295.1%",
+  "worst": "-68.4%"
+}

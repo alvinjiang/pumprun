@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>v2 Path B — Exchange Floor · Game</title>
+<style>
+/* Bloomberg Terminal aesthetic:
+   - Amber/orange primary text on near-black
+   - Dense paned layout with hard borders, no padding waste
+   - Field:value label style (e.g. "PX_LAST", "CHG_PCT_1D")
+   - Function key bar at bottom (F1-F12 style)
+   - Everything in ALLCAPS monospace, no humanising touches
+   - Color used ONLY for data signal (green bid, red ask, amber neutral)
+   - No icons, no emojis — pure data display
+*/
+:root{
+  --bg:#0a0800;       /* near-black, ever so slightly amber-warm */
+  --panel:#0f0c00;
+  --panel2:#141000;
+  --border:#2a2200;
+  --border2:#332900;
+  --amber:#ffaa00;    /* primary text color — Bloomberg amber */
+  --amber-dim:#7a5200;
+  --amber-bright:#ffcc44;
+  --green:#00aa44;    /* bid/positive */
+  --red:#cc2200;      /* ask/negative */
+  --cyan:#00aacc;     /* secondary accent */
+  --white:#e8e0cc;    /* high-emphasis */
+  --dim:#4a3a00;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg);color:var(--amber);
+  font-family:'Courier New','Courier',monospace;
+  font-size:12px;-webkit-font-smoothing:none; /* intentionally aliased — CRT feel */
+  display:flex;flex-direction:column;height:100vh;overflow:hidden;
+}
+
+/* TOP BAR — Bloomberg style header with time/session info */
+.topbar{
+  background:var(--amber);color:#000;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1px 8px;font-size:11px;font-weight:700;letter-spacing:.04em;flex-shrink:0;
+}
+.topbar-left{display:flex;gap:16px;align-items:center}
+.tb-product{font-size:13px;letter-spacing:.02em}
+.tb-session{opacity:.7;font-size:10px}
+.topbar-right{display:flex;gap:16px;font-size:10px;opacity:.8}
+
+/* MAIN LAYOUT — three vertical panes */
+.main{display:flex;flex:1;overflow:hidden}
+
+/* LEFT PANE — position data */
+.pane-left{
+  width:240px;flex-shrink:0;border-right:1px solid var(--border2);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+/* CENTER PANE — chart */
+.pane-center{flex:1;display:flex;flex-direction:column;border-right:1px solid var(--border2)}
+/* RIGHT PANE — badger / market data */
+.pane-right{width:220px;flex-shrink:0;display:flex;flex-direction:column}
+
+/* PANE HEADERS */
+.pane-head{
+  background:var(--panel2);border-bottom:1px solid var(--border2);
+  padding:2px 8px;font-size:10px;font-weight:700;letter-spacing:.1em;
+  color:var(--amber-bright);display:flex;justify-content:space-between;
+}
+.ph-tag{color:var(--amber-dim);font-weight:400}
+
+/* FIELD:VALUE display */
+.fv-block{padding:6px 8px;border-bottom:1px solid var(--border);flex-shrink:0}
+.fv-row{display:flex;justify-content:space-between;align-items:baseline;padding:1px 0}
+.fv-field{font-size:9px;color:var(--amber-dim);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.fv-val{font-size:13px;font-weight:700;color:var(--white);text-align:right;font-family:'Courier New',monospace}
+.fv-val.up{color:var(--green)}.fv-val.dn{color:var(--red)}.fv-val.amb{color:var(--amber)}
+.fv-val.sm{font-size:11px}
+
+/* BIG PRICE display */
+.big-price{padding:8px 8px 4px;border-bottom:1px solid var(--border)}
+.bp-label{font-size:9px;color:var(--amber-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
+.bp-val{font-size:28px;font-weight:700;letter-spacing:-.01em;line-height:1;font-family:'Courier New',monospace}
+.bp-val.up{color:var(--green)}.bp-val.dn{color:var(--red)}.bp-val.amb{color:var(--amber)}
+.bp-chg{font-size:11px;margin-top:2px;font-family:'Courier New',monospace}
+.bp-chg.up{color:var(--green)}.bp-chg.dn{color:var(--red)}
+
+/* POSITION STATUS BLOCK */
+.pos-block{
+  padding:6px 8px;border-bottom:1px solid var(--border2);flex-shrink:0;
+}
+.pos-block .pos-head{font-size:9px;color:var(--amber-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
+.pos-line{
+  font-size:13px;font-weight:700;letter-spacing:.04em;padding:4px 6px;border:1px solid;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.pos-line.fomo{color:var(--red);border-color:var(--red);background:rgba(204,34,0,.06)}
+.pos-line.safu{color:var(--green);border-color:var(--green);background:rgba(0,170,68,.06)}
+.pos-sub{font-size:9px;color:var(--amber-dim);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+.cur{animation:blink .9s step-end infinite;color:var(--amber-dim)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* CHART AREA */
+.chart-wrap{flex:1;position:relative;background:var(--bg)}
+canvas{width:100%;height:100%;display:block}
+.countdown{
+  position:absolute;inset:0;background:rgba(10,8,0,.96);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:10;display:none;
+}
+.c-lbl{font-size:9px;letter-spacing:.2em;color:var(--amber-dim);text-transform:uppercase;margin-bottom:10px}
+.c-num{font-size:80px;font-weight:700;color:var(--amber);line-height:1;font-family:'Courier New',monospace}
+
+/* CHART FOOTER — progress + legend */
+.chart-foot{
+  border-top:1px solid var(--border2);padding:3px 8px;flex-shrink:0;
+  display:flex;justify-content:space-between;align-items:center;font-size:9px;
+}
+.cf-legend{display:flex;gap:12px;color:var(--amber-dim)}
+.cf-li{display:flex;align-items:center;gap:4px}
+.sw{width:14px;height:2px;display:inline-block}
+.sw-g{background:var(--green)}.sw-r{background:var(--red)}.sw-a{background:var(--amber)}
+.cf-prog{display:flex;align-items:center;gap:6px;color:var(--amber-dim)}
+.prog{width:140px;height:2px;background:var(--panel2);border:1px solid var(--border2)}
+.prog-fill{height:100%;background:var(--amber-dim)}
+
+/* STRIP */
+.strip{height:3px;border-top:1px solid var(--border);flex-shrink:0;display:flex}
+.sg{background:var(--green);opacity:.5}.sr{background:var(--red);opacity:.25}.sf{background:rgba(255,255,255,.03)}
+
+/* SPEED ROW */
+.speed-row{
+  border-top:1px solid var(--border2);padding:3px 8px;flex-shrink:0;
+  display:flex;align-items:center;gap:8px;font-size:9px;
+}
+.sp-lbl{color:var(--amber-dim);letter-spacing:.1em;text-transform:uppercase}
+.sp-group{display:flex;gap:1px}
+.sp-btn{background:var(--panel2);border:1px solid var(--border2);color:var(--amber-dim);font-family:'Courier New',monospace;font-size:9px;padding:2px 7px;cursor:pointer;text-transform:uppercase;letter-spacing:.04em}
+.sp-btn.on{background:var(--amber-dim);color:#000;border-color:var(--amber-dim)}
+.sp-kbd{margin-left:auto;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
+
+/* FUNCTION KEY BAR */
+.fkbar{
+  background:var(--panel2);border-top:1px solid var(--border2);
+  display:flex;padding:2px 4px;gap:2px;flex-shrink:0;
+}
+.fk{
+  flex:1;padding:3px 2px;text-align:center;border:1px solid var(--border);
+  font-size:9px;letter-spacing:.04em;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:1px;
+}
+.fk:hover{background:var(--border2)}
+.fk .fk-num{font-size:8px;color:var(--amber-dim);font-weight:700}
+.fk .fk-lbl{font-size:8px;color:var(--amber);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.fk.active .fk-lbl{color:var(--amber-bright)}
+.fk.toggle-fk{background:rgba(204,34,0,.1);border-color:var(--red)}
+.fk.toggle-fk .fk-lbl{color:var(--red)}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="tb-product">DEGEN TERMINAL 1.0</span>
+    <span class="tb-session">SESSION: 2019-08-17 → 2020-08-16</span>
+  </div>
+  <div class="topbar-right">
+    <span>USD MODE</span>
+    <span>SIM DAY 19/365</span>
+    <span id="topbar-time">06:42:31</span>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- LEFT PANE: Your position -->
+  <div class="pane-left">
+    <div class="pane-head"><span>YOUR POSITION</span><span class="ph-tag">APE</span></div>
+
+    <div class="big-price">
+      <div class="bp-label">MKT_VAL</div>
+      <div class="bp-val dn">$8,611</div>
+      <div class="bp-chg dn">CHG: −$1,389 (−13.9%)</div>
+    </div>
+
+    <div class="fv-block">
+      <div class="fv-row"><span class="fv-field">PX_LAST</span><span class="fv-val dn">8,611.00</span></div>
+      <div class="fv-row"><span class="fv-field">CHG_1D</span><span class="fv-val dn">−0.02%</span></div>
+      <div class="fv-row"><span class="fv-field">TRADE_CNT</span><span class="fv-val amb">0</span></div>
+      <div class="fv-row"><span class="fv-field">DAYS_ELAPSED</span><span class="fv-val amb">19</span></div>
+      <div class="fv-row"><span class="fv-field">DAYS_REM</span><span class="fv-val amb">346</span></div>
+    </div>
+
+    <div class="pos-block">
+      <div class="pos-head">CURRENT POSITION</div>
+      <div class="pos-line fomo" id="pos-line">
+        <span>LONG ALTS</span>
+        <span class="cur">█</span>
+      </div>
+      <div class="pos-sub" id="pos-sub">BASKET: TOP-5 VOL · REBAL DAILY</div>
+    </div>
+
+    <div class="fv-block">
+      <div class="fv-row"><span class="fv-field">BASKET_D1</span><span class="fv-val dn">−0.08%</span></div>
+      <div class="fv-row"><span class="fv-field">BTC_D1</span><span class="fv-val up">+0.24%</span></div>
+      <div class="fv-row"><span class="fv-field">TIME_IN_ALT</span><span class="fv-val amb">100%</span></div>
+    </div>
+
+    <div style="flex:1"></div>
+
+    <div class="fv-block" style="border-top:1px solid var(--border2);border-bottom:none">
+      <div class="fv-row"><span class="fv-field">START_VAL</span><span class="fv-val sm amb">$10,000</span></div>
+      <div class="fv-row"><span class="fv-field">WINDOW_START</span><span class="fv-val sm amb">2019-08-17</span></div>
+      <div class="fv-row"><span class="fv-field">WINDOW_END</span><span class="fv-val sm amb">2020-08-16</span></div>
+    </div>
+  </div>
+
+  <!-- CENTER PANE: Chart -->
+  <div class="pane-center">
+    <div class="pane-head"><span>PORTFOLIO PERFORMANCE</span><span class="ph-tag">% FROM ENTRY · 365D WINDOW</span></div>
+    <div class="chart-wrap">
+      <div class="countdown" id="cd">
+        <div class="c-lbl">NEXT BLOCK CONFIRMS IN</div>
+        <div class="c-num" id="cn">3</div>
+      </div>
+      <canvas id="chart"></canvas>
+    </div>
+    <div class="strip" id="strip"></div>
+    <div class="chart-foot">
+      <div class="cf-legend">
+        <div class="cf-li"><span class="sw sw-g"></span>APE (ALTS)</div>
+        <div class="cf-li"><span class="sw sw-a"></span>APE (BTC)</div>
+        <div class="cf-li"><span class="sw sw-r"></span>BADGER (HODL)</div>
+      </div>
+      <div class="cf-prog">
+        <span>D1</span>
+        <div class="prog"><div class="prog-fill" style="width:5.2%"></div></div>
+        <span>D365</span>
+      </div>
+    </div>
+    <div class="speed-row">
+      <span class="sp-lbl">SIM SPD</span>
+      <div class="sp-group">
+        <button class="sp-btn">0.5X</button>
+        <button class="sp-btn on">1X</button>
+        <button class="sp-btn">2X</button>
+        <button class="sp-btn">4X</button>
+      </div>
+      <span class="sp-kbd">SPC:TOGGLE &nbsp; P:PAUSE &nbsp; Q:SUMMARY</span>
+    </div>
+  </div>
+
+  <!-- RIGHT PANE: Badger / market -->
+  <div class="pane-right">
+    <div class="pane-head"><span>HONEY BADGER</span><span class="ph-tag">HODL BTC</span></div>
+
+    <div class="big-price">
+      <div class="bp-label">MKT_VAL</div>
+      <div class="bp-val amb">$10,250</div>
+      <div class="bp-chg up">CHG: +$250 (+2.5%)</div>
+    </div>
+
+    <div class="fv-block">
+      <div class="fv-row"><span class="fv-field">PX_LAST</span><span class="fv-val amb">10,250.00</span></div>
+      <div class="fv-row"><span class="fv-field">CHG_1D</span><span class="fv-val up">+0.24%</span></div>
+      <div class="fv-row"><span class="fv-field">STRATEGY</span><span class="fv-val amb sm">BUY_HOLD</span></div>
+      <div class="fv-row"><span class="fv-field">TRADES</span><span class="fv-val amb">0</span></div>
+    </div>
+
+    <div class="fv-block" style="border-top:1px solid var(--border2)">
+      <div class="fv-row"><span class="fv-field">YOU vs BADGER</span><span class="fv-val dn">−$1,639</span></div>
+      <div class="fv-row"><span class="fv-field">REL_PERF</span><span class="fv-val dn">−15.99%</span></div>
+    </div>
+
+    <div class="pane-head" style="margin-top:auto"><span>BTC PRICE</span><span class="ph-tag">SPOT</span></div>
+    <div class="fv-block">
+      <div class="fv-row"><span class="fv-field">BTCUSD</span><span class="fv-val amb">9,250.00</span></div>
+      <div class="fv-row"><span class="fv-field">CHG_1D</span><span class="fv-val up">+0.24%</span></div>
+      <div class="fv-row"><span class="fv-field">CHG_30D</span><span class="fv-val dn">−8.42%</span></div>
+      <div class="fv-row"><span class="fv-field">SEASON</span><span class="fv-val amb sm">CRYPTO_WINTER</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- FUNCTION KEY BAR -->
+<div class="fkbar">
+  <div class="fk active"><div class="fk-num">F1</div><div class="fk-lbl">HELP</div></div>
+  <div class="fk active"><div class="fk-num">F2</div><div class="fk-lbl">EQUITY</div></div>
+  <div class="fk active"><div class="fk-num">F3</div><div class="fk-lbl">BASKET</div></div>
+  <div class="fk active"><div class="fk-num">F4</div><div class="fk-lbl">EVENTS</div></div>
+  <div class="fk active"><div class="fk-num">F5</div><div class="fk-lbl">HISTORY</div></div>
+  <div class="fk active"><div class="fk-num">F6</div><div class="fk-lbl">PERMS</div></div>
+  <div class="fk active"><div class="fk-num">F7</div><div class="fk-lbl">LORE</div></div>
+  <div class="fk active"><div class="fk-num">F8</div><div class="fk-lbl">SETTINGS</div></div>
+  <div class="fk toggle-fk" id="fk-toggle" onclick="tp()"><div class="fk-num">F9</div><div class="fk-lbl" id="fk-lbl">LONG BTC</div></div>
+  <div class="fk active"><div class="fk-num">F10</div><div class="fk-lbl">PAUSE</div></div>
+  <div class="fk active"><div class="fk-num">F11</div><div class="fk-lbl">SUMMARY</div></div>
+  <div class="fk active"><div class="fk-num">F12</div><div class="fk-lbl">EXIT</div></div>
+</div>
+
+<script>
+const D=19,pos=Array(365).fill(0).map((_,i)=>i<D?1:0);
+const bad=[],you=[];
+for(let i=0;i<365;i++){const t=i/364;bad.push(15*Math.sin(t*Math.PI*1.5)*t-5*t+20*t*t);you.push(bad[i]+(pos[i]===1?5*Math.sin(i*.3)*Math.sqrt(i+1)-8:0))}
+
+function draw(){
+  const cv=document.getElementById('chart'),cx=cv.getContext('2d');
+  const W=cv.parentElement.clientWidth*2,H=cv.parentElement.clientHeight*2;
+  cv.width=W;cv.height=H;const r=2;
+  cx.clearRect(0,0,W,H);
+  const p={t:14*r,b:18*r,l:44*r,r:12*r};
+  const pw=W-p.l-p.r,ph=H-p.t-p.b;
+  const vs=[...bad.slice(0,D),...you.slice(0,D)];
+  let mn=Math.min(...vs),mx=Math.max(...vs);
+  const yd=(mx-mn)*.12||12;mn=Math.floor(mn-yd);mx=Math.ceil(mx+yd);
+  const Y=v=>p.t+ph-((v-mn)/(mx-mn))*ph;
+  const X=i=>p.l+pw*i/364;
+  // BTC shading — amber, not yellow
+  let bs=-1;for(let i=0;i<D;i++){if(pos[i]===0){if(bs<0)bs=i}else if(bs>=0){cx.fillStyle='rgba(255,170,0,0.05)';cx.fillRect(X(bs),p.t,X(i)-X(bs),ph);bs=-1}}
+  if(bs>=0){cx.fillStyle='rgba(255,170,0,0.05)';cx.fillRect(X(bs),p.t,X(D)-X(bs),ph)}
+  cx.fillStyle='rgba(255,255,255,.008)';cx.fillRect(X(D),p.t,pw-(X(D)-p.l),ph);
+  // Grid — amber-dim lines
+  cx.strokeStyle='#1a1400';cx.lineWidth=1;
+  for(let i=0;i<=5;i++){cx.beginPath();cx.moveTo(p.l,p.t+ph*i/5);cx.lineTo(W-p.r,p.t+ph*i/5);cx.stroke()}
+  for(let i=0;i<=12;i++){cx.beginPath();cx.moveTo(p.l+pw*i/12,p.t);cx.lineTo(p.l+pw*i/12,H-p.b);cx.stroke()}
+  // Zero line
+  cx.strokeStyle='rgba(255,170,0,.1)';cx.setLineDash([3*r,7*r]);
+  cx.beginPath();cx.moveTo(p.l,Y(0));cx.lineTo(W-p.r,Y(0));cx.stroke();cx.setLineDash([]);
+  // Y labels — amber
+  cx.font=`${8*r}px 'Courier New',monospace`;cx.fillStyle='#7a5200';cx.textAlign='right';
+  const st=Math.max(5,Math.ceil((mx-mn)/6/5)*5);
+  for(let pv=Math.ceil(mn/st)*st;pv<=mx;pv+=st)cx.fillText(`${pv>0?'+':''}${pv}`,p.l-3*r,Y(pv)+3*r);
+  // Badger — red line
+  cx.strokeStyle='rgba(204,34,0,.8)';cx.lineWidth=1.5*r;
+  cx.beginPath();for(let i=0;i<D;i++){if(i===0)cx.moveTo(X(i),Y(bad[i]));else cx.lineTo(X(i),Y(bad[i]))}cx.stroke();
+  cx.strokeStyle='rgba(204,34,0,.18)';cx.lineWidth=r;cx.setLineDash([3*r,6*r]);
+  cx.beginPath();for(let i=D;i<365;i++){if(i===D)cx.moveTo(X(i),Y(bad[i]));else cx.lineTo(X(i),Y(bad[i]))}cx.stroke();cx.setLineDash([]);
+  // You — green / amber depending on position
+  cx.lineWidth=2*r;let ss=0,inB=pos[0]===1;
+  for(let i=1;i<=D;i++){const p2=i<D?pos[i]:-1;if(p2!==(inB?1:0)||i===D){cx.strokeStyle=inB?'rgba(0,170,68,.9)':'rgba(255,170,0,.7)';cx.beginPath();for(let j=ss;j<i;j++){if(j===ss)cx.moveTo(X(j),Y(you[j]));else cx.lineTo(X(j),Y(you[j]))}cx.stroke();ss=i;if(i<D)inB=p2===1}}
+  // Day marker
+  cx.strokeStyle='rgba(255,170,0,.12)';cx.lineWidth=r;cx.beginPath();cx.moveTo(X(D),p.t);cx.lineTo(X(D),H-p.b);cx.stroke();
+}
+draw();window.addEventListener('resize',draw);
+
+// Strip
+(function(){const s=document.getElementById('strip');s.innerHTML='';let ss=0,c=pos[0];for(let i=1;i<=D;i++){if(i===D||pos[i]!==c){const d=document.createElement('div');d.className=c===1?'sg':'sr';d.style.width=((i-ss)/365*100)+'%';s.appendChild(d);ss=i;if(i<D)c=pos[i]}}const r2=document.createElement('div');r2.className='sf';r2.style.width=((365-D)/365*100)+'%';s.appendChild(r2)})();
+
+// Live clock
+setInterval(()=>{const n=new Date();document.getElementById('topbar-time').textContent=n.toTimeString().slice(0,8)},1000);
+
+let ib=true;
+function tp(){
+  ib = __omp_shell("ib;")
+  const pl=document.getElementById('pos-line'),ps=document.getElementById('pos-sub'),fk=document.getElementById('fk-lbl');
+  if(ib){pl.className='pos-line fomo';pl.innerHTML='<span>LONG ALTS</span><span class="cur">█</span>';ps.textContent='BASKET: TOP-5 VOL · REBAL DAILY';fk.textContent='LONG BTC'}
+  else{pl.className='pos-line safu';pl.innerHTML='<span>LONG BTC</span><span class="cur">█</span>';ps.textContent='POSITION: STATIC BTC · HODL MODE';fk.textContent='LONG ALTS'}
+}
+document.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();tp()}});
+</script>
+</body>
+</html>

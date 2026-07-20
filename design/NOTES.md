@@ -3,7 +3,7 @@
 ## State at session end (2026-07-19)
 
 ### Active bugs
-1. **Summary not showing after game end** — `finishGame()` throws "Cannot read properties of undefined (reading '8')". The error occurs somewhere in finishGame. The function computes values then populates the summary DOM. The browser test shows `G.done=true, G.i=365` but `summary-overlay` class lacks `on`. Need to trace the exact line causing the error.
+1. **Summary not showing after game end** — **[FIXED 2026-07-19]** Root cause: `finishGame()` had a duplicate summary-population block (lines 225-252) that used `verdict`, `stampClass`, `youD`, `badD`, `rel`, `snames`, `oel`, `yp`, `bp`, `pctIn` before they were assigned. The correct block (lines 276-308) computed values first then populated DOM, but was missing `classList.add('on')`. Fix: deleted the broken duplicate block; added `classList.add('on')` to the correct block. Verified in browser — all summary fields populate correctly.
 
 2. **Ticker tape shows "Loading recent games..."** — `loadLobbyData()` function was lost during a `git checkout build.py` operation. The function needs to fetch `/pump/recent?n=20` and render game results into the `#tape` div. The recent feed (`#recent-feed`) also stopped working.
 
@@ -24,17 +24,38 @@
 | `design/SPEC.md` | Product spec | Yes |
 | `design/data/` | 54-coin dataset | Read by build.py |
 
-### Build & Deploy
+### Build &amp; Deploy
 
 ```bash
-# Client
+# Build client
 python3 build.py                          # generates web/index.html (verifies JS syntax)
-cd web && fyra push --non-interactive --appname pumprun  # deploys to pumprun.apps.fyra.sh
 
-# Server  
+# Deploy via gRPC (preferred — no TTY needed)
+# Step 1: Auth via AgentAuthService (passwordless OTP)
+grpcurl -import-path /tmp -proto /tmp/fyra.proto \
+  -d '{"email":"ajiang@gmail.com"}' \
+  server.fyra.sh:50052 fyra.v1.AgentAuthService/AgentRequestLogin
+# → user provides OTP from email
+grpcurl -import-path /tmp -proto /tmp/fyra.proto \
+  -d '{"email":"ajiang@gmail.com","otp_code":"NNNNNN"}' \
+  server.fyra.sh:50052 fyra.v1.AgentAuthService/AgentConfirmLogin
+# → returns {"token":"dep_..."}
+
+# Step 2: Tarball &amp; push
+cd web && tar --exclude='.deploy.yaml' -czf /tmp/pumprun-deploy.tar.gz .
+# Then chunk + base64-encode as JSON lines, stream to Push RPC:
+# First msg: {"slug_name":"pumprun","domain":"apps.fyra.sh","chunk":"<base64>","config":{},"manifest":{...}}
+# Subsequent: {"chunk":"<base64>"}
+cat /tmp/push-msgs.jsonl | grpcurl -import-path /tmp -proto /tmp/fyra.proto \
+  -H "authorization: Bearer <token>" -d @ \
+  server.fyra.sh:50052 fyra.v1.DeployService/Push
+# → {"url":"pumprun.apps.fyra.sh"}
+
+# CLI fallback (needs TTY — use only if gRPC unavailable):
+cd web && fyra push --non-interactive --appname pumprun
+
+# Server
 cd server && go build -o pumprun-server . # rebuild binary
-# Then commit + push to GitHub. User deploys manually to /opt/pumprun/
-```
 
 ### JS template structure (in build.py)
 The JS is an f-string `f"""..."""` with `{{` for literal braces. Data is embedded via Python variables:
@@ -55,6 +76,12 @@ API key set via `<meta name="api-key" content="immadegen">`
 - Flags: `-addr :8090 -data /opt/pumprun -allow-origin "https://pumprun.apps.fyra.sh,https://pumprun.fyra.sh" -api-key immadegen`
 - Behind haproxy with `path_beg /pump/` ACL
 
+### Mockup server
+- Serves design mockups for review at `http://10.44.2.26:8901/`
+- Binary: `python3 -m http.server 8901 --directory design/mockup --bind 10.44.2.26`
+- Run from: `/home/alvin/aicode/pumprun/`
+- Managed via `hub` as `mockup-server`
+
 ### Data stored per game (db.jsonl)
 ```jsonl
 {"key":"run:<uuid>","value":{"i":"<uuid>","s":1005,"p":50,"r":1.9,"t":[0,17,125,283,311],"d":175923}}
@@ -69,6 +96,15 @@ Fields: i=UUID, s=start day, p=banana percentile, r=return vs badger, t=trade da
 - Banana test: 1,000 permutations, chunked (50/tick), runs async after game end
 - `p` field in POST uses banana test result (hardcoded 50 if test fails/not run)
 
+
+### Basket composition spec (confirmed 2026-07-20)
+- Baskets always have exactly 5 coins (equal-weighted, rebalanced daily)
+- Exception: first ~1 month (2017-09-08 to ~2017-10-15) used fixed basket of BNB, ETH, LTC, NEO (only 4 coins — Binance had just launched, no other altcoins available)
+- After the fixed period: 14-day consecutive persistence filter (must be in top 5 by 30-day annualized vol for 14 straight days to enter)
+- Rotations take effect the day AFTER they're detected (returns on rotation day use the OLD basket)
+- USDT pairs (memes): BTC price computed via BTCUSDT cross-rate from the same timestamp
+- `basket_returns.bin` is the ground truth for historical data — never overwrite
+- Pipeline (`pipeline.py`) appends new data beyond 2026-07-15 using vol-based computation
 ### UX quirks to preserve
 - Countdown defaults to YOLO (FOMO), free toggling during countdown
 - Button colors: green=HODL, red=YOLO (opposite of what you'd expect)

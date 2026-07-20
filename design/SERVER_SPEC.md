@@ -1,25 +1,24 @@
-# defihodler — Server Spec
+# pumprun — Server Spec
 
 ## Architecture
 
-Single Go binary. Append-only JSON-lines file for persistence. In-memory index
-(Go map) for reads. In-memory token-bucket rate limiter for writes. No external
-dependencies beyond Go stdlib + `golang.org/x/time/rate`.
+Single Go binary (`pumprun-server`). Append-only JSON-lines file for persistence.
+In-memory index (Go map) for reads. In-memory token-bucket rate limiter for writes.
+No external dependencies beyond Go stdlib + `golang.org/x/time/rate`.
 
 ```
-haproxy (TLS) → defihodler-server (:8080)
-                   ├── data/db.jsonl     (append-only log)
-                   ├── in-memory index   (map[string]Entry)
+haproxy (TLS) → pumprun-server (:8090)
+                   ├── /var/lib/pumprun/db.jsonl     (append-only log)
+                   ├── in-memory index               (map[string]json.RawMessage)
                    └── in-memory rate limiter
 ```
 
 ## Storage Format
 
-File: `data/db.jsonl` — one JSON object per line, appended.
+File: `db.jsonl` — one JSON object per line, appended. Short field names.
 
 ```jsonl
-{"key":"ledger","value":{"games":70108,"badger_wins":48631,"degen_wins":7620,"lucky_wins":13857,"donated":73819812.84}}
-{"key":"run:uuid-123","value":{"verdict":"degen","trades":8,"rel":0.15,"s":1234,"inPct":0.42,"pct":92,"don":0,"date":"2026-07-19T14:32:01Z"}}
+{"key":"run:uuid-123","value":{"i":"uuid-123","s":1005,"p":50,"r":1.9,"t":[0,17,125],"d":175923}}
 ```
 
 ### File Operations
@@ -27,9 +26,8 @@ File: `data/db.jsonl` — one JSON object per line, appended.
 - **Write**: append JSON line + `\n`, then `f.Sync()` (fsync). No buffering.
 - **Read (startup)**: scan file line by line, build `map[string]json.RawMessage` in memory.
   Last write per key wins.
-- **Compaction**: write new file with only latest value per key, atomically rename.
-  Triggered manually via `SIGUSR1` or `POST /admin/compact`.
-- **Key pattern**: `ledger` for global stats, `run:<uuid>` for individual game results.
+- **Compaction**: `./pumprun-server -compact` writes new file with only latest value per key,
+  atomically renames. Safe against running instance.
 
 ### Resilience
 
@@ -39,97 +37,110 @@ File: `data/db.jsonl` — one JSON object per line, appended.
 
 ## API Endpoints
 
-### `GET /api/ledger`
-Returns global stats from key `ledger`.
+All under `/pump/` path prefix, served behind haproxy with `path_beg /pump/` ACL.
+
+### `GET /pump/ledger`
+Returns global stats from in-memory ledger.
 
 ```json
-{"games":70108,"badger_wins":48631,"degen_wins":7620,"lucky_wins":13857,"donated":73819812.84}
+{"games": 72140, "badger_wins": 48631, "degen_wins": 7620, "lucky_wins": 13857, "lost": 73819812}
 ```
 
-### `GET /api/recent`
-Returns last N game results. Scans log for `run:*` keys, returns most recent by insertion order.
-Default N=10, configurable via `?n=20`.
+### `GET /pump/recent?n=N`
+Returns last N game results. Scans index for `run:*` keys, returns most recent by insertion order.
+Default N=10.
 
 ```json
-{"games":[{"verdict":"degen","trades":8,"rel":0.15,"date":"2026-07-19T14:32:01Z"}]}
+{"games": [{"i": "uuid", "s": 1234, "p": 94, "r": 0.22, "t": [0, 5, 20], "d": 2450}]}
 ```
 
-### `GET /api/tape`
-Returns current top coin ticker data. In v1, returns static data from embedded fixture.
-In production, fetches from Binance API and caches for 60s.
+### `POST /pump/run`
+Records a single game result. Body: JSON. Stores to key `run:<i>`.
+Rate-limited (1/sec/IP). Requires `X-Api-Key` header matching `-api-key` flag.
 
+Request (client sends 7 fields, server stores 6):
 ```json
-{"coins":[{"sym":"BTC","price":64892.35,"change24h":2.41}]}
-```
-
-### `POST /api/run`
-Records a single game result. Body: JSON. Stores to key `run:<id>`.
-Rate-limited. Returns price tier + events.
-
-Request:
-```json
-{"id":"uuid","verdict":"degen","trades":8,"rel":0.15,"s":1234,"inPct":0.42,"pct":92,"don":0}
+{"i": "uuid", "s": 1234, "p": 94, "r": 0.22, "t": [0, 5, 20], "d": 2450, "final": 14145}
 ```
 
 Response:
 ```json
-{"tier":"$100,000+","tierText":"Tesla for your BTC?","dailyRank":{"total":342,"worse":287}}
+{"tierText": "Tesla for your BTC?"}
 ```
 
-### `GET /api/daily-rank?day=N&rel=X`
-Returns daily leaderboard for given day number and player's relative performance.
-In v1, returns mock data.
+Tier text from price tier lookup using `final` field. Falls back to client-side TIERS
+array if server doesn't match.
+
+### `GET /pump/daily-rank?day=N&rel=X`
+Returns daily leaderboard for given start day and player's return vs badger.
+
+```json
+{"total": 342, "worse": 287}
+```
+
+## Ledger Computation
+
+In-memory only (`Ledger` struct), computed at startup by replaying log, updated with each POST:
+
+| Field | Derivation |
+|-------|-----------|
+| `games` | count of `run:*` keys |
+| `degen_wins` | `r > 0.02 AND p >= 90` |
+| `lucky_wins` | `r > -0.01 AND NOT degen` |
+| `badger_wins` | `r < -0.01` |
+| `lost` | sum of `abs(d)` for all games where `d < 0` |
+
+No BTC price data needed server-side. Verdict derived from `r` + `p` alone.
 
 ## Rate Limiting
 
 - Token bucket per IP, 1 write per second, burst 3.
-- Only applies to `POST /api/run` and `POST /admin/compact`.
+- Only applies to `POST /pump/run`.
 - In-memory, resets on restart.
-- Uses `golang.org/x/time/rate` (stdlib-adjacent).
-
-## Admin Endpoints
-
-### `POST /admin/compact`
-Rewrites `data/db.jsonl` with only latest value per key. Rate-limited.
-Requires `Authorization: Bearer <token>` header (configurable via env var).
+- Uses `golang.org/x/time/rate`.
 
 ## Spam Prevention
 
 Layered, simple:
 
-1. **Referer check**: rejects POSTs without `Referer: https://<your-domain>/` (configurable).
-2. **Origin check**: rejects cross-origin POSTs.
-3. **Rate limit**: 1 write/sec/IP.
-4. **Authorization header**: for admin endpoints (`/admin/*`).
+1. **CORS**: `-allow-origin` flag (comma-separated origins). Rejects cross-origin POSTs.
+2. **Rate limit**: 1 write/sec/IP.
+3. **API key**: `-api-key` flag — POSTs require matching `X-Api-Key` header.
 
-All checks are optional and configurable via environment variables:
-- `ALLOW_ORIGIN`: allowed origin (default: empty = check disabled)
-- `ALLOW_REFERER`: required referer prefix (default: empty = check disabled)
-- `ADMIN_TOKEN`: bearer token for /admin/* (default: empty = admin disabled)
+## CLI Flags
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `-addr` | `:8080` | Listen address |
+| `-data` | `data/` | Data directory |
+| `-compact` | `false` | Compact and exit |
+| `-allow-origin` | `""` | Allowed origins (comma-separated) |
+| `-api-key` | `""` | Required `X-Api-Key` header for POST |
+
+Production: `-addr :8090 -data /var/lib/pumprun -allow-origin "https://pumprun.apps.fyra.sh,https://pumprun.fyra.sh" -api-key immadegen`
 
 ## Deployment
 
 ```bash
 # Build
-go build -o defihodler-server .
+cd server && go build -o pumprun-server .
 
 # Run (HTTP only, behind haproxy)
-./defihodler-server -addr :8080 -data data/
+./pumprun-server -addr :8090 -data /var/lib/pumprun -allow-origin "https://pumprun.apps.fyra.sh" -api-key immadegen
 
-# Run (HTTPS with Let's Encrypt, no proxy needed)
-# Requires ACME_EMAIL and DOMAIN env vars
-ACME_EMAIL=admin@example.com DOMAIN=defihodler.com ./defihodler-server -addr :443 -data data/
+# Compaction (cron-friendly)
+./pumprun-server -compact -data /var/lib/pumprun
 ```
 
-TLS via `golang.org/x/crypto/acme/autocert`. Automatic renewal. Serve HTTP on :80 for
-ACME challenges when TLS is enabled.
+See `server/README.md` for full systemd unit and haproxy configuration.
 
 ## File Structure
 
 ```
 server/
-├── main.go           # Server binary (~300 lines)
+├── main.go              # Server binary (~400 lines)
 ├── go.mod
-└── data/              # Created at runtime
-    └── db.jsonl       # Append-only log
+├── go.sum
+└── data/                 # Created at runtime
+    └── db.jsonl          # Append-only log
 ```

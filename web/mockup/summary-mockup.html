@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>defihodler — summary mockup</title>
+<style>
+  :root {
+    --bg: #0a0a0c; --text-dim: #5c5c60; --text-mid: #8a8a8e; --text-bright: #c8c8cc;
+    --hl-red: #c10706; --hl-green: #00bc00; --hl-yellow: #FCFF00;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text-bright);
+    font-family: 'SF Mono', 'Monaco', 'Menlo', 'Consolas', monospace;
+    font-size: 13px; min-height: 100vh; display: flex; justify-content: center; align-items: center;
+    -webkit-font-smoothing: antialiased;
+  }
+  .overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    display: flex; justify-content: center; align-items: center; z-index: 100;
+  }
+  .card {
+    width: 390px; max-height: 95vh; overflow-y: auto;
+    background: #0e0e10; border: 1px solid #1c1c20;
+    padding: 24px 20px 28px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+
+  .top-row {
+    display: flex; justify-content: space-between;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .top-row .verdict-label { color: var(--text-bright); }
+  .top-row .datetime { color: var(--text-dim); }
+
+  .verdict-box {
+    border: 1px solid #1c1c20; border-radius: 6px;
+    padding: 20px 16px; text-align: center;
+  }
+  .verdict-box .stamp {
+    font-size: 30px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase;
+  }
+  .verdict-box .stamp.degen { color: var(--hl-green); }
+  .verdict-box .stamp.lucky { color: #8a6d10; }
+  .verdict-box .stamp.hodler { color: var(--hl-green); }
+  .verdict-box .stamp.badger { color: var(--hl-red); }
+  .verdict-box .window-dates {
+    font-size: 12px; color: var(--text-dim); margin-top: 8px;
+  }
+
+  .stat-row {
+    display: flex; gap: 8px;
+  }
+  .stat-box {
+    flex: 1; border: 1px solid #1c1c20; border-radius: 4px;
+    padding: 10px 8px; text-align: center;
+    display: flex; flex-direction: column; justify-content: center; gap: 4px;
+  }
+  .stat-box .num {
+    font-size: 22px; font-weight: 600; color: var(--text-bright);
+  }
+  .stat-box .label {
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim);
+  }
+
+  .summary-box {
+    border: 1px solid #1c1c20; border-radius: 6px; padding: 16px;
+  }
+  .summary-box .outcome {
+    font-size: 13px; color: var(--text-mid); margin-bottom: 14px; line-height: 1.5;
+  }
+  .summary-box .outcome .amt { color: var(--text-bright); }
+  .summary-box .outcome .win { color: var(--hl-green); }
+  .summary-box .outcome .lose { color: var(--hl-red); }
+
+  .player-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 8px 0; border-top: 1px solid rgba(255,255,255,0.04);
+  }
+  .player-row .who {
+    font-size: 15px; font-weight: 600; color: var(--text-bright);
+  }
+  .player-row .amount {
+    font-size: 15px; font-weight: 600; color: var(--text-bright); text-align: right;
+  }
+  .player-row .pct {
+    font-size: 12px; margin-left: 6px;
+  }
+  .player-row .pct.up { color: var(--hl-green); }
+  .player-row .pct.dn { color: var(--hl-red); }
+  .player-row .pct.eq { color: var(--hl-yellow); }
+
+  .btn-row { display: flex; gap: 10px; }
+  .btn {
+    flex: 1; padding: 12px; font-family: inherit; font-size: 12px;
+    font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    text-align: center; cursor: pointer; border: 1px solid #1c1c20;
+    background: #111114; color: var(--text-mid);
+    border-radius: 4px;
+  }
+  .btn.primary { background: #111114; color: var(--text-bright); border-color: #2a2a30; }
+</style>
+</head>
+<body>
+<div class="overlay">
+  <div class="card">
+
+    <!-- Top labels -->
+    <div class="top-row">
+      <span class="verdict-label">DEGEN</span>
+      <span class="datetime">2021-02-02 14:32 UTC</span>
+    </div>
+
+    <!-- Verdict stamp -->
+    <div class="verdict-box">
+      <div class="stamp degen">DEGEN</div>
+      <div class="window-dates">Feb 2, 2021 → Feb 1, 2022</div>
+    </div>
+
+    <!-- Three stats -->
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="num">14</div>
+        <div class="label">TRADES</div>
+      </div>
+      <div class="stat-box">
+        <div class="num">42%</div>
+        <div class="label">TIME IN ALTS</div>
+      </div>
+      <div class="stat-box">
+        <div class="num">92nd</div>
+        <div class="label">VS APES</div>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary-box">
+      <div class="outcome">
+        You beat the Bitcoin HODLER by <span class="win">$4,235</span>
+      </div>
+      <div class="player-row">
+        <span class="who">YOU</span>
+        <span>
+          <span class="amount">$14,235</span>
+          <span class="pct up">+42.4%</span>
+        </span>
+      </div>
+      <div class="player-row">
+        <span class="who">HONEY BADGER</span>
+        <span>
+          <span class="amount">$10,000</span>
+          <span class="pct eq">+0.0%</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="btn-row">
+      <div class="btn primary">SHARE</div>
+      <div class="btn">GO AGAIN</div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

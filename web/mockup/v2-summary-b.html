@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>v2 Path B — Summary Screen</title>
+<style>
+:root{
+  --bg:#0a0800;--panel:#0f0c00;--panel2:#141000;
+  --border:#2a2200;--border2:#332900;
+  --amber:#ffaa00;--amber-dim:#7a5200;--amber-bright:#ffcc44;
+  --green:#00aa44;--red:#cc2200;--white:#e8e0cc;--dim:#4a3a00;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:var(--bg);color:var(--amber);
+  font-family:'Courier New','Courier',monospace;
+  font-size:12px;-webkit-font-smoothing:none;
+  min-height:100vh;display:flex;justify-content:center;align-items:center;
+  background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.1) 3px,rgba(0,0,0,.1) 4px);
+}
+body::before{content:'';position:fixed;inset:0;background:rgba(10,8,0,.9);z-index:0}
+
+/* The "slip" — Bloomberg trade confirmation receipt style */
+.slip{
+  position:relative;z-index:1;
+  width:420px;max-height:96vh;overflow-y:auto;
+  background:var(--panel);
+  border:1px solid var(--border2);
+  display:flex;flex-direction:column;
+}
+
+/* slip header bar — amber background, black text */
+.slip-head{
+  background:var(--amber);color:#000;
+  padding:6px 12px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.sh-title{font-size:12px;font-weight:700;letter-spacing:.06em}
+.sh-sub{font-size:9px;opacity:.7;letter-spacing:.06em}
+
+/* SECTION */
+.sec{border-bottom:1px solid var(--border2)}
+.sec-head{
+  background:var(--panel2);border-bottom:1px solid var(--border);
+  padding:3px 10px;font-size:8px;font-weight:700;letter-spacing:.12em;
+  color:var(--amber-bright);display:flex;justify-content:space-between;
+}
+.sh-tag{color:var(--amber-dim);font-weight:400}
+
+/* FIELD:VALUE */
+.fv-grid{padding:8px 10px;display:grid;grid-template-columns:1fr 1fr;gap:2px 12px}
+.fv-grid.wide{grid-template-columns:1fr}
+.fv-row{display:flex;justify-content:space-between;padding:2px 0}
+.fv-f{font-size:9px;color:var(--amber-dim);letter-spacing:.06em;text-transform:uppercase}
+.fv-v{font-size:12px;font-weight:700;font-family:'Courier New',monospace;text-align:right}
+.fv-v.up{color:var(--green)}.fv-v.dn{color:var(--red)}.fv-v.amb{color:var(--amber)}.fv-v.wh{color:var(--white)}
+
+/* VERDICT BANNER */
+.verdict-banner{
+  padding:14px 12px;text-align:center;border-bottom:1px solid var(--border2);
+  position:relative;
+}
+.vb-stamp{font-size:28px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;font-family:'Courier New',monospace}
+.vb-stamp.degen{color:var(--green)}.vb-stamp.lucky{color:var(--amber)}.vb-stamp.badger{color:var(--red)}.vb-stamp.hodler{color:var(--amber-bright)}
+.vb-window{font-size:10px;color:var(--amber-dim);margin-bottom:3px}
+.vb-season{font-size:9px;color:var(--amber-dim);font-style:italic}
+/* "CONFIRMED" stamp watermark */
+.stamp-watermark{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-12deg);
+  font-size:48px;font-weight:700;letter-spacing:.04em;
+  opacity:.04;pointer-events:none;color:var(--green);
+  border:3px solid;padding:4px 10px;
+}
+
+/* COMPARISON TABLE */
+.cmp-table{width:100%;border-collapse:collapse;font-size:11px}
+.cmp-table th{font-size:8px;letter-spacing:.12em;color:var(--amber-dim);text-transform:uppercase;padding:4px 10px;border-bottom:1px solid var(--border);font-weight:400;text-align:right}
+.cmp-table th:first-child{text-align:left}
+.cmp-table td{padding:6px 10px;border-bottom:1px solid rgba(255,170,0,.04);font-family:'Courier New',monospace}
+.cmp-table td:not(:first-child){text-align:right}
+.cmp-table .win-row td{background:rgba(0,170,68,.04)}
+.up{color:var(--green)}.dn{color:var(--red)}.amb{color:var(--amber)}.wh{color:var(--white)}
+
+/* BANANA BAR */
+.banana-section{padding:8px 10px;border-bottom:1px solid var(--border2)}
+.bn-row{display:flex;justify-content:space-between;font-size:9px;letter-spacing:.06em;color:var(--amber-dim);margin-bottom:5px}
+.bn-bar-wrap{height:5px;background:var(--dim);position:relative;overflow:hidden;margin-bottom:4px}
+.bn-bar{height:100%;background:linear-gradient(90deg,var(--red) 0%,var(--amber) 55%,var(--green) 80%);width:92%}
+.bn-marker{position:absolute;top:-2px;left:92%;width:2px;height:9px;background:var(--white)}
+.bn-desc{font-size:9px;color:var(--amber-dim)}
+
+/* EVENTS */
+.events-section{padding:8px 10px;border-bottom:1px solid var(--border2)}
+.ev-head{font-size:8px;letter-spacing:.1em;color:var(--amber-dim);text-transform:uppercase;margin-bottom:5px}
+.ev-row{font-size:10px;color:var(--amber-dim);padding:3px 0;border-top:1px solid rgba(255,170,0,.04)}
+.ev-date{color:var(--amber-bright)}
+
+/* BUTTONS */
+.btn-section{padding:10px;display:flex;gap:6px;border-bottom:1px solid var(--border2)}
+.btn{
+  flex:1;padding:9px;font-family:'Courier New',monospace;font-size:10px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;cursor:pointer;
+  border:1px solid var(--border2);background:var(--panel2);color:var(--amber-dim);text-align:center;
+}
+.btn.primary{background:var(--amber);color:#000;border-color:var(--amber)}
+.btn.primary:hover{background:var(--amber-bright)}
+.btn:hover{border-color:var(--amber-dim);color:var(--amber)}
+.btn-back{
+  font-family:'Courier New',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  cursor:pointer;background:transparent;border:none;color:var(--amber-dim);
+  padding:6px;width:100%;text-align:center;
+}
+.btn-back:hover{color:var(--amber)}
+</style>
+</head>
+<body>
+<div class="slip">
+
+  <!-- SLIP HEADER -->
+  <div class="slip-head">
+    <div>
+      <div class="sh-title">EXECUTION CONFIRMATION</div>
+      <div class="sh-sub">DEGEN TERMINAL · TRADE SUMMARY REPORT</div>
+    </div>
+    <div style="text-align:right;font-size:9px;opacity:.7">
+      <div>REF: DT-20210202-0042</div>
+      <div>2021-02-02 14:32 UTC</div>
+    </div>
+  </div>
+
+  <!-- VERDICT -->
+  <div class="verdict-banner">
+    <div class="stamp-watermark">DEGEN</div>
+    <div class="vb-stamp degen">DEGEN</div>
+    <div class="vb-window">WINDOW: FEB 02 2021 → FEB 01 2022</div>
+    <div class="vb-season">Institutional Wave · NFT Mania · Metaverse Rotation</div>
+  </div>
+
+  <!-- SESSION STATS -->
+  <div class="sec">
+    <div class="sec-head"><span>SESSION STATISTICS</span><span class="sh-tag">SIM_ID: 0042</span></div>
+    <div class="fv-grid">
+      <div class="fv-row"><span class="fv-f">TRADE_CNT</span><span class="fv-v wh">14</span></div>
+      <div class="fv-row"><span class="fv-f">TIME_IN_ALTS</span><span class="fv-v amb">42.3%</span></div>
+      <div class="fv-row"><span class="fv-f">DAYS_ELAPSED</span><span class="fv-v amb">365</span></div>
+      <div class="fv-row"><span class="fv-f">BANANA_PCT</span><span class="fv-v up">92nd</span></div>
+      <div class="fv-row"><span class="fv-f">PERMUTATIONS</span><span class="fv-v amb">1,000</span></div>
+      <div class="fv-row"><span class="fv-f">VERDICT</span><span class="fv-v up">DEGEN</span></div>
+    </div>
+  </div>
+
+  <!-- COMPARISON TABLE -->
+  <div class="sec">
+    <div class="sec-head"><span>PERFORMANCE COMPARISON</span><span class="sh-tag">USD TERMS</span></div>
+    <table class="cmp-table">
+      <thead><tr><th>PARTICIPANT</th><th>START</th><th>FINAL</th><th>P&L</th><th>RETURN</th></tr></thead>
+      <tbody>
+        <tr class="win-row">
+          <td class="wh">⚡ THE APE</td>
+          <td class="amb">$10,000</td>
+          <td class="wh">$14,235</td>
+          <td class="up">+$4,235</td>
+          <td class="up">+42.4%</td>
+        </tr>
+        <tr>
+          <td class="amb">🦡 HONEY BADGER</td>
+          <td class="amb">$10,000</td>
+          <td class="amb">$10,000</td>
+          <td class="amb">+$0</td>
+          <td class="amb">+0.0%</td>
+        </tr>
+        <tr style="border-top:1px solid var(--border)">
+          <td colspan="3" class="fv-f">APE ADVANTAGE</td>
+          <td class="up">+$4,235</td>
+          <td class="up">+42.4pp</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="padding:6px 10px;font-size:9px;color:var(--amber-dim);font-style:italic">
+      That's a decent APE NFT. At the floor. The community is... present.
+    </div>
+  </div>
+
+  <!-- BANANA TEST -->
+  <div class="banana-section">
+    <div class="sec-head" style="margin:-8px -10px 8px;border-top:none"><span>PERMUTATION TEST (BANANA)</span><span class="sh-tag">N=1000</span></div>
+    <div class="bn-row"><span>RANDOM APE (0th pct)</span><span>YOUR RESULT (92nd pct)</span><span>PURE LUCK (100th pct)</span></div>
+    <div class="bn-bar-wrap"><div class="bn-bar"></div><div class="bn-marker"></div></div>
+    <div class="bn-desc">You outperformed 920 of 1,000 random apes with identical trade counts. STATUS: SKILL CONFIRMED.</div>
+  </div>
+
+  <!-- EVENTS -->
+  <div class="events-section">
+    <div class="ev-head">NOTABLE EVENTS IN WINDOW (3)</div>
+    <div class="ev-row"><span class="ev-date">MAY 2021 — </span>China bans mining; Elon tweets; BTC −40%</div>
+    <div class="ev-row"><span class="ev-date">SEP 2021 — </span>El Salvador adopts BTC as legal tender</div>
+    <div class="ev-row"><span class="ev-date">NOV 2021 — </span>BTC all-time high at $67,500</div>
+  </div>
+
+  <!-- BUTTONS -->
+  <div class="btn-section">
+    <div class="btn primary">COPY LINK</div>
+    <div class="btn">NEW GAME</div>
+  </div>
+  <button class="btn-back">← RETURN TO TERMINAL</button>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>defihodler — Design Proposals by Kiro</title>
+<style>
+:root{--bg:#000;--panel:#0d0d10;--border:#1c1c20;--dim:#4a4a50;--mid:#7a7a80;--bright:#c8c8cc;--green:#00bc00;--red:#c10706;--yellow:#fcff00;--purple:#3c425b}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--bright);font-family:'SF Mono','Monaco','Menlo',monospace;font-size:13px;-webkit-font-smoothing:antialiased;min-height:100vh;padding:32px 24px}
+body::before{content:'';display:block;height:2px;background:linear-gradient(90deg,var(--purple) 0%,#5a6080 50%,var(--purple) 100%);margin:-32px -24px 32px}
+h1{font-size:16px;font-weight:700;letter-spacing:.06em;margin-bottom:6px}
+h1 span{color:var(--green)}
+.sub{font-size:10px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-bottom:36px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:900px}
+.path-card{border:1px solid var(--border);background:var(--panel);padding:20px 22px}
+.path-card h2{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.path-card h2.a{color:var(--green)}.path-card h2.b{color:var(--yellow)}
+.path-card p{font-size:11px;color:var(--mid);line-height:1.65;margin-bottom:16px}
+.links{display:flex;flex-direction:column;gap:6px}
+.link-item{display:flex;align-items:center;gap:10px;border:1px solid var(--border);padding:8px 12px;text-decoration:none;color:var(--bright);transition:.1s}
+.link-item:hover{border-color:var(--mid);background:rgba(255,255,255,.02)}
+.link-item .ltype{font-size:9px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase;width:48px;flex-shrink:0}
+.link-item .lname{font-size:12px;font-weight:600}
+.link-item .larrow{margin-left:auto;color:var(--dim);font-size:11px}
+.notes-link{margin-top:20px;max-width:900px;font-size:10px;color:var(--dim);border-top:1px solid var(--border);padding-top:12px}
+.notes-link a{color:var(--mid);text-decoration:none}.notes-link a:hover{color:var(--bright)}
+</style>
+</head>
+<body>
+<h1>DEGEN<span>TERMINAL</span> — Design Proposals</h1>
+<div class="sub">Prepared by Kiro · 2026-07-19 · Two paths, four mockups</div>
+
+<div class="grid">
+  <div class="path-card">
+    <h2 class="a">PATH A — Refined Terminal</h2>
+    <p>Keeps the cryptowat.ch aesthetic but fixes the layout issues: cleaner information hierarchy, a proper duel structure in the ticker row, a 2px purple accent bar, tighter controls, and a scrolling tape on the lobby.</p>
+    <div class="links">
+      <a class="link-item" href="v2-path-a-game.html">
+        <span class="ltype">GAME v2</span>
+        <span class="lname">Path A · Game Screen</span>
+        <span class="larrow">→</span>
+      </a>
+      <a class="link-item" href="v2-path-a-lobby.html">
+        <span class="ltype">LOBBY v2</span>
+        <span class="lname">Path A · Landing Page</span>
+        <span class="larrow">→</span>
+      </a>
+      <a class="link-item" href="path-a-game.html">
+        <span class="ltype">GAME</span>
+        <span class="lname">Path A · Game (v1)</span>
+        <span class="larrow">→</span>
+      </a>
+      <a class="link-item" href="path-a-lobby.html">
+        <span class="ltype">LOBBY</span>
+        <span class="lname">Path A · Lobby (v1)</span>
+        <span class="larrow">→</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="path-card">
+    <h2 class="b">PATH B — Degen Arcade</h2>
+    <p>Same terminal DNA but with more personality — a purple-tinted dark palette, scanline texture, phosphor-glow chart lines, explicit "APE vs HONEY BADGER" duel framing, chunky typography, and a hero lobby that leads with the narrative.</p>
+    <div class="links">
+      <a class="link-item" href="v2-path-b-game.html">
+        <span class="ltype">GAME v2</span>
+        <span class="lname">Path B · Game Screen</span>
+        <span class="larrow">→</span>
+      </a>
+      <a class="link-item" href="v2-path-b-lobby.html">
+        <span class="ltype">LOBBY v2</span>
+        <span class="lname">Path B · Landing Page</span>
+        <span class="larrow">→</span>
+      </a>
+      <a class="link-item" href="path-b-game.html">
+        <span class="ltype">GAME</span>
+        <span class="lname">Path B · Game (v1)</span>
+        <span class="larrow">→</span>
+      </a>
+      <a class="link-item" href="path-b-lobby.html">
+        <span class="ltype">LOBBY</span>
+        <span class="lname">Path B · Lobby (v1)</span>
+        <span class="larrow">→</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="grid" style="margin-top:20px">
+  <div class="path-card">
+    <h2 style="color:var(--yellow)">SUMMARY SCREENS</h2>
+    <p>End-game result modals — the DeFi wallet receipt style.</p>
+    <div class="links">
+      <a class="link-item" href="v2-summary-a.html">
+        <span class="ltype">SUMMARY</span>
+        <span class="lname">Path A · Summary Screen</span>
+        <span class="larrow">→</span>
+      </a>
+      <a class="link-item" href="v2-summary-b.html">
+        <span class="ltype">SUMMARY</span>
+        <span class="lname">Path B · Summary Screen</span>
+        <span class="larrow">→</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="grid" style="margin-top:20px">
+  <div class="path-card">
+    <h2 style="color:var(--green)">WORKING PROTOTYPE — Path A</h2>
+    <p>Tweaked per spec: VS box wider, chart shading, button colors swapped, player labels removed, text sizing.</p>
+    <div class="links">
+      <a class="link-item" href="v2-path-a-game.html">
+        <span class="ltype">GAME</span>
+        <span class="lname">Game Screen</span>
+        <span class="larrow">→</span>
+      </a>
+      <a class="link-item" href="v2-path-a-lobby.html">
+        <span class="ltype">LOBBY</span>
+        <span class="lname">Landing Page</span>
+        <span class="larrow">→</span>
+      </a>
+      <a class="link-item" href="v2-summary-a.html">
+        <span class="ltype">SUMMARY</span>
+        <span class="lname">Result Screen</span>
+        <span class="larrow">→</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="notes-link">
+  Design rationale: <a href="DESIGN-PROPOSAL.md">DESIGN-PROPOSAL.md</a> &nbsp;·&nbsp;
+  Original game: <a href="http://10.44.2.26:8900/" target="_blank">http://10.44.2.26:8900/</a> &nbsp;·&nbsp;
+  Favicon proposals: <a href="/favicon-proposals.html">favicon-proposals.html</a>
+</div>
+</body>
+</html>

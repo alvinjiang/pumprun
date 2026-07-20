@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Path B — Degen Arcade · Game</title>
+<style>
+/* PATH B: "Degen Arcade" — keeps the terminal soul but adds personality.
+   Think: Bloomberg terminal crossed with a 90s arcade machine crossed with
+   a Teletext weather report. Scanlines, chunky type, blinking cursors,
+   phosphor glow. The seriousness is still there but it wears a costume. */
+:root{
+  --bg:#040408;--panel:#080810;--border:#16162a;--border2:#1e1e38;
+  --dim:#3a3a5a;--mid:#6a6a9a;--bright:#d0d0f0;--brighter:#eeeeff;
+  --green:#00ff88;--red:#ff2244;--yellow:#ffdd00;--cyan:#00ccff;
+  --purple:#5533cc;--purple2:#7755ee;
+  --green-dim:#001a0e;--red-dim:#1a0008;
+  /* phosphor green for terminal text feel */
+  --phosphor:#39ff14;
+  --phosphor-dim:#1a7a0a;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{height:100%}
+body{
+  background:var(--bg);
+  color:var(--bright);
+  font-family:'SF Mono','Monaco','Menlo','Courier New',monospace;
+  font-size:13px;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  /* subtle scanline effect */
+  background-image:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.08) 2px,rgba(0,0,0,.08) 4px);
+}
+.app{max-width:900px;margin:0 auto;padding:16px 20px 28px}
+
+/* HEADER — chunky, arcade-ish */
+.header{
+  border:1px solid var(--border2);
+  background:var(--panel);
+  padding:10px 16px;
+  margin-bottom:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:relative;
+  overflow:hidden;
+}
+/* corner brackets */
+.header::before,.header::after{
+  content:'';position:absolute;top:0;width:3px;height:100%;
+  background:linear-gradient(180deg,var(--purple2),transparent);
+}
+.header::before{left:0}.header::after{right:0;transform:scaleX(-1)}
+.logo{display:flex;flex-direction:column}
+.logo-main{font-size:20px;font-weight:700;letter-spacing:.04em;line-height:1}
+.logo-main .d{color:var(--yellow)}.logo-main .t{color:var(--bright)}
+.logo-sub{font-size:8px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;margin-top:2px}
+.header-stats{display:flex;gap:20px;align-items:center}
+.hstat{text-align:right}
+.hstat .n{font-size:18px;font-weight:700;line-height:1}
+.hstat .n.up{color:var(--green)}.hstat .n.dn{color:var(--red)}.hstat .n.neu{color:var(--cyan)}
+.hstat .l{font-size:8px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase;margin-top:1px}
+.header-day{font-size:9px;color:var(--dim);letter-spacing:.1em;border:1px solid var(--border2);padding:4px 8px;text-transform:uppercase}
+
+/* DUEL ROW — the two fighters */
+.duel-row{display:grid;grid-template-columns:1fr 80px 1fr;gap:6px;margin-bottom:8px;align-items:center}
+.fighter{border:1px solid var(--border2);background:var(--panel);padding:10px 14px}
+.fighter.you{border-color:rgba(0,255,136,.2)}
+.fighter.badger{border-color:rgba(255,34,68,.15);text-align:right}
+.fighter .tag{font-size:8px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;margin-bottom:4px}
+.fighter .name{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--yellow);margin-bottom:6px;text-transform:uppercase}
+.fighter .val{font-size:32px;font-weight:700;line-height:1;letter-spacing:-.01em}
+.fighter.you .val{color:var(--green)}.fighter.you .val.dn{color:var(--red)}
+.fighter.badger .val{color:var(--mid)}
+.fighter .sub{font-size:10px;color:var(--dim);margin-top:3px}
+.fighter .sub .up{color:var(--green)}.fighter .sub .dn{color:var(--red)}
+
+/* VS badge */
+.vs-badge{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.vs-text{font-size:11px;font-weight:700;color:var(--dim);letter-spacing:.1em}
+.vs-delta{font-size:10px;font-weight:600;padding:2px 6px;border:1px solid}
+.vs-delta.ahead{color:var(--green);border-color:rgba(0,255,136,.3)}
+.vs-delta.behind{color:var(--red);border-color:rgba(255,34,68,.3)}
+
+/* POSITION BADGE */
+.pos-row{margin-bottom:8px}
+.pos-badge{
+  padding:8px 14px;
+  border:1px solid;
+  display:flex;justify-content:space-between;align-items:center;
+  font-weight:700;letter-spacing:.04em;
+}
+.pos-badge.fomo{background:rgba(255,34,68,.06);border-color:rgba(255,34,68,.4);color:var(--red)}
+.pos-badge.safu{background:rgba(0,255,136,.06);border-color:rgba(0,255,136,.4);color:var(--green)}
+.pos-badge .pos-main{font-size:14px;display:flex;align-items:center;gap:10px}
+.pos-badge .pos-desc{font-size:9px;letter-spacing:.12em;color:var(--mid);text-transform:uppercase;font-weight:400}
+.pos-badge .blink{animation:blink 1.1s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* CHART */
+.chart-wrap{
+  border:1px solid var(--border2);
+  background:#020206;
+  margin-bottom:5px;
+  position:relative;
+}
+canvas{width:100%;height:380px;display:block}
+.countdown-overlay{
+  position:absolute;inset:0;background:rgba(2,2,8,.95);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;
+  display:none;
+}
+.count-lbl{font-size:9px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;margin-bottom:14px}
+.count-n{font-size:88px;font-weight:700;color:var(--yellow);line-height:1;text-shadow:0 0 40px rgba(255,221,0,.5)}
+
+/* STRIP */
+.strip{height:5px;display:flex;margin-bottom:8px;border:1px solid var(--border)}
+.seg-g{background:var(--green);opacity:.5}
+.seg-r{background:var(--red);opacity:.2}
+.seg-f{background:rgba(255,255,255,.03)}
+
+/* LEGEND + PROGRESS */
+.meta-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:9px}
+.legend{display:flex;gap:14px;color:var(--dim)}
+.leg-item{display:flex;align-items:center;gap:5px}
+.sw{width:16px;height:2px;display:inline-block}
+.sw-g{background:var(--green)}.sw-y{background:var(--yellow);opacity:.8}.sw-r{background:var(--red)}
+.progress-wrap{display:flex;align-items:center;gap:8px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase}
+.prog{flex:1;height:2px;background:var(--panel);min-width:200px}
+.prog-fill{height:100%;background:var(--purple2)}
+
+/* CONTROLS */
+.ctrl-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ctrl-lbl{font-size:8px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;white-space:nowrap}
+.sp-group{display:flex;gap:2px}
+.sp-btn{
+  background:transparent;border:1px solid var(--border2);
+  color:var(--dim);font-family:inherit;font-size:9px;
+  padding:3px 9px;cursor:pointer;text-transform:uppercase;letter-spacing:.06em;
+}
+.sp-btn.on{background:var(--purple);border-color:var(--purple2);color:var(--brighter)}
+.kbd{margin-left:auto;font-size:8px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+
+/* BIG TOGGLE */
+.toggle-btn{
+  width:100%;padding:16px;font-family:inherit;
+  font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  cursor:pointer;border:1px solid;
+  display:flex;justify-content:center;align-items:center;gap:14px;
+  position:relative;overflow:hidden;transition:.15s;
+}
+.toggle-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.03) 50%,transparent 100%);
+  transform:translateX(-100%);transition:transform .3s;
+}
+.toggle-btn:hover::before{transform:translateX(100%)}
+.toggle-btn.hodl{background:rgba(255,34,68,.07);border-color:var(--red);color:var(--red)}
+.toggle-btn.yolo{background:rgba(0,255,136,.07);border-color:var(--green);color:var(--green)}
+.toggle-btn .icon{font-size:18px}
+.toggle-btn .label{flex:1;text-align:center}
+.toggle-btn .hotkey{font-size:9px;color:var(--dim);letter-spacing:.12em;font-weight:400}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-main"><span class="d">DEGEN</span><span class="t"> TERMINAL</span></div>
+      <div class="logo-sub">No Fees · No Spread · No Mercy · 2017–2026</div>
+    </div>
+    <div class="header-stats">
+      <div class="hstat"><div class="n dn">$8,611</div><div class="l">Your Stack</div></div>
+      <div class="hstat"><div class="n neu">$10,250</div><div class="l">Badger Stack</div></div>
+      <div class="hstat"><div class="n dn">−$1,639</div><div class="l">vs Badger</div></div>
+    </div>
+    <div class="header-day">DAY 19 / 365</div>
+  </div>
+
+  <!-- DUEL ROW -->
+  <div class="duel-row">
+    <div class="fighter you">
+      <div class="tag">Player</div>
+      <div class="name">⚡ THE APE</div>
+      <div class="val dn" id="you-val">$8,611</div>
+      <div class="sub"><span class="dn">−$1,389 today </span>&nbsp;·&nbsp; <span>0 trades</span></div>
+    </div>
+
+    <div class="vs-badge">
+      <div class="vs-text">VS</div>
+      <div class="vs-delta behind" id="vs-delta">−$1,639</div>
+    </div>
+
+    <div class="fighter badger">
+      <div class="tag">Opponent</div>
+      <div class="name">🦡 HONEY BADGER</div>
+      <div class="val">$10,250</div>
+      <div class="sub"><span class="up">+$250 today</span></div>
+    </div>
+  </div>
+
+  <!-- POSITION BADGE -->
+  <div class="pos-row">
+    <div class="pos-badge fomo" id="pos-badge">
+      <div class="pos-main">
+        <span>FOMO</span>
+        <span class="pos-desc">Altcoin Bags Full</span>
+      </div>
+      <span class="blink">▮</span>
+    </div>
+  </div>
+
+  <!-- CHART -->
+  <div class="chart-wrap">
+    <div class="countdown-overlay" id="countdown">
+      <div class="count-lbl">The next block confirms in...</div>
+      <div class="count-n" id="count-n">3</div>
+    </div>
+    <canvas id="chart"></canvas>
+  </div>
+
+  <!-- STRIP -->
+  <div class="strip" id="strip"></div>
+
+  <!-- LEGEND + PROGRESS -->
+  <div class="meta-row">
+    <div class="legend">
+      <div class="leg-item"><span class="sw sw-g"></span> You (Alts)</div>
+      <div class="leg-item"><span class="sw sw-y"></span> You (BTC)</div>
+      <div class="leg-item"><span class="sw sw-r"></span> Honey Badger</div>
+    </div>
+    <div class="progress-wrap">
+      <span>Day 19</span>
+      <div class="prog"><div class="prog-fill" style="width:5.2%"></div></div>
+      <span>365</span>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="ctrl-row">
+    <span class="ctrl-lbl">SPEED</span>
+    <div class="sp-group">
+      <button class="sp-btn">0.5×</button>
+      <button class="sp-btn on">1×</button>
+      <button class="sp-btn">2×</button>
+      <button class="sp-btn">4×</button>
+    </div>
+    <span class="kbd">SPACE: TOGGLE &nbsp;·&nbsp; P: PAUSE</span>
+  </div>
+
+  <!-- TOGGLE BUTTON -->
+  <button class="toggle-btn hodl" id="toggle-btn" onclick="togglePos()">
+    <span class="icon">₿</span>
+    <span class="label">HODL · SWITCH TO BITCOIN</span>
+    <span class="hotkey">SPACE</span>
+  </button>
+
+</div>
+
+<script>
+const DAY = 19;
+const positions = Array(365).fill(0).map((_,i)=> i < 19 ? 1 : 0);
+const badger = [], you = [];
+for(let i=0;i<365;i++){
+  const t=i/364;
+  badger.push(15*Math.sin(t*Math.PI*1.5)*t - 5*t + 20*t*t);
+  you.push(badger[i]+(positions[i]===1?5*Math.sin(i*0.3)*Math.sqrt(i+1)-8:0));
+}
+
+function drawChart(){
+  const cv=document.getElementById('chart'),cx=cv.getContext('2d');
+  const W=cv.parentElement.clientWidth*2,H=760;
+  cv.width=W;cv.height=H;const dpr=2;
+  cx.clearRect(0,0,W,H);
+
+  const pad={top:20*dpr,bottom:24*dpr,left:48*dpr,right:16*dpr};
+  const pw=W-pad.left-pad.right,ph=H-pad.top-pad.bottom;
+
+  const vals=[...badger.slice(0,DAY),...you.slice(0,DAY)];
+  let yMin=Math.min(...vals),yMax=Math.max(...vals);
+  const yPad=(yMax-yMin)*.15||15;
+  yMin=Math.floor(yMin-yPad);yMax=Math.ceil(yMax+yPad);
+  const Y=v=>pad.top+ph-((v-yMin)/(yMax-yMin))*ph;
+  const X=i=>pad.left+pw*i/364;
+
+  // BTC bands — slightly warmer yellow, lower opacity
+  let bs=-1;
+  for(let i=0;i<DAY;i++){
+    if(positions[i]===0){if(bs<0)bs=i}
+    else if(bs>=0){cx.fillStyle='rgba(255,221,0,0.06)';cx.fillRect(X(bs),pad.top,X(i)-X(bs),ph);bs=-1}
+  }
+  if(bs>=0){cx.fillStyle='rgba(255,221,0,0.06)';cx.fillRect(X(bs),pad.top,X(DAY)-X(bs),ph)}
+
+  // Future
+  cx.fillStyle='rgba(255,255,255,0.01)';cx.fillRect(X(DAY),pad.top,pw-(X(DAY)-pad.left),ph);
+
+  // Grid — slightly purple-tinted
+  cx.strokeStyle='#0e0e1a';cx.lineWidth=1;
+  for(let i=0;i<=5;i++){cx.beginPath();cx.moveTo(pad.left,pad.top+ph*i/5);cx.lineTo(W-pad.right,pad.top+ph*i/5);cx.stroke()}
+  for(let i=0;i<=12;i++){cx.beginPath();cx.moveTo(pad.left+pw*i/12,pad.top);cx.lineTo(pad.left+pw*i/12,H-pad.bottom);cx.stroke()}
+
+  // Zero line
+  cx.strokeStyle='rgba(255,255,255,0.07)';cx.setLineDash([3*dpr,8*dpr]);
+  cx.beginPath();cx.moveTo(pad.left,Y(0));cx.lineTo(W-pad.right,Y(0));cx.stroke();
+  cx.setLineDash([]);
+
+  // Y labels
+  cx.font=`${8*dpr}px 'SF Mono',monospace`;cx.fillStyle='#3a3a5a';cx.textAlign='right';
+  const step=Math.max(5,Math.ceil((yMax-yMin)/6/5)*5);
+  for(let p=Math.ceil(yMin/step)*step;p<=yMax;p+=step)
+    cx.fillText(`${p>0?'+':''}${p}%`,pad.left-4*dpr,Y(p)+3*dpr);
+
+  // Badger line
+  cx.strokeStyle='rgba(255,34,68,0.7)';cx.lineWidth=2*dpr;
+  cx.beginPath();for(let i=0;i<DAY;i++){if(i===0)cx.moveTo(X(i),Y(badger[i]));else cx.lineTo(X(i),Y(badger[i]))}cx.stroke();
+
+  // Future badger dashed
+  cx.strokeStyle='rgba(255,34,68,0.15)';cx.lineWidth=1.5*dpr;cx.setLineDash([4*dpr,8*dpr]);
+  cx.beginPath();for(let i=DAY;i<365;i++){if(i===DAY)cx.moveTo(X(i),Y(badger[i]));else cx.lineTo(X(i),Y(badger[i]))}
+  cx.stroke();cx.setLineDash([]);
+
+  // YOU line — slightly brighter green, thicker
+  cx.lineWidth=3*dpr;
+  let ss=0,inB=positions[0]===1;
+  for(let i=1;i<=DAY;i++){
+    const pos=i<DAY?positions[i]:-1;
+    if(pos!==(inB?1:0)||i===DAY){
+      cx.strokeStyle=inB?'rgba(0,255,136,0.9)':'rgba(255,221,0,0.65)';
+      cx.beginPath();for(let j=ss;j<i;j++){if(j===ss)cx.moveTo(X(j),Y(you[j]));else cx.lineTo(X(j),Y(you[j]))}
+      cx.stroke();ss=i;if(i<DAY)inB=pos===1;
+    }
+  }
+
+  // Current day marker
+  cx.strokeStyle='rgba(255,255,255,0.12)';cx.lineWidth=1*dpr;
+  cx.beginPath();cx.moveTo(X(DAY),pad.top);cx.lineTo(X(DAY),H-pad.bottom);cx.stroke();
+}
+drawChart();
+window.addEventListener('resize',drawChart);
+
+// Strip
+(function(){
+  const s=document.getElementById('strip');s.innerHTML='';
+  let ss=0,cur=positions[0];
+  for(let i=1;i<=DAY;i++){
+    if(i===DAY||positions[i]!==cur){
+      const d=document.createElement('div');d.className=cur===1?'seg-g':'seg-r';
+      d.style.width=((i-ss)/365*100)+'%';s.appendChild(d);ss=i;if(i<DAY)cur=positions[i];
+    }
+  }
+  const rem=document.createElement('div');rem.className='seg-f';rem.style.width=((365-DAY)/365*100)+'%';s.appendChild(rem);
+})();
+
+let inBasket=true;
+function togglePos(){
+  inBasket = __omp_shell("inBasket;")
+  const badge=document.getElementById('pos-badge');
+  const btn=document.getElementById('toggle-btn');
+  if(inBasket){
+    badge.className='pos-badge fomo';
+    badge.innerHTML='<div class="pos-main"><span>FOMO</span><span class="pos-desc">Altcoin Bags Full</span></div><span class="blink">▮</span>';
+    btn.className='toggle-btn hodl';
+    btn.innerHTML='<span class="icon">₿</span><span class="label">HODL · SWITCH TO BITCOIN</span><span class="hotkey">SPACE</span>';
+  } else {
+    badge.className='pos-badge safu';
+    badge.innerHTML='<div class="pos-main"><span>SAFU</span><span class="pos-desc">Hodling Only Bitcoin</span></div><span class="blink">▮</span>';
+    btn.className='toggle-btn yolo';
+    btn.innerHTML='<span class="icon">🦍</span><span class="label">YOLO · SWITCH TO ALTCOINS</span><span class="hotkey">SPACE</span>';
+  }
+}
+</script>
+</body>
+</html>

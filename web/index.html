@@ -5,71 +5,80 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="api-base" content="https://api.gridrun.net">
 <meta name="api-key" content="immadegen">
-<title>defihodler</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%23000' rx='2'/><rect x='6' y='1' width='1' height='14' fill='%2300bc00'/><rect x='4' y='4' width='5' height='8' fill='%2300bc00' rx='0.5'/></svg>">
+<title>DEGEN|TERMINAL</title>
 <style>
+body{background:var(--bg);color:var(--bright);font-family:'SF Mono','Monaco','Menlo','Consolas',monospace;font-size:15px;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
 :root{--bg:#000;--panel:#0d0d10;--panel2:#111114;--border:#1c1c20;--border2:#242428;--dim:#5c5c60;--mid:#8a8a8e;--bright:#c8c8cc;--green:#00bc00;--red:#c10706;--yellow:#fcff00;--purple:#3c425b;--green-bg:#041604;--red-bg:#160404}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--bright);font-family:'SF Mono','Monaco','Menlo','Consolas',monospace;font-size:13px;-webkit-font-smoothing:antialiased;padding-top:30px}
-/* accent bar removed — tape is now the top element */
+body::before{content:'';display:block;height:2px;background:linear-gradient(90deg,#1a1a2e 0%,var(--purple) 30%,#5a6080 50%,var(--purple) 70%,#1a1a2e 100%)}
 .screen{display:none}.screen.on{display:flex;flex-direction:column}
 #scr-lobby.on{display:block}
 .app{max-width:920px;margin:0 auto;padding:12px 20px 24px}
 
 /* === LOBBY === */
-.lobby-header{border:1px solid var(--border);background:var(--panel);padding:16px 20px;margin-bottom:14px;text-align:center}
-.lobby-header h1{font-size:20px;font-weight:700;letter-spacing:.06em;margin-bottom:4px}
-.lobby-header h1 .g{color:var(--green)}
-.lobby-header .sub{font-size:13px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
-.tape-wrap{position:fixed;top:0;left:0;right:0;z-index:50;border-bottom:1px solid var(--border);background:var(--panel);overflow:hidden;height:28px;display:flex;align-items:center}
-.tape{display:inline-block;white-space:nowrap;animation:tape 30s linear infinite;font-size:12px;padding-left:20px}
+.tape-wrap{border-bottom:1px solid var(--border);padding:5px 0;background:var(--panel);white-space:nowrap;font-size:12px}
+.tape{display:inline-block;animation:tape 30s linear infinite;padding-left:20px}
 .tape span{margin-right:28px;color:var(--dim)}
 .tape .vb{font-size:11px;font-weight:700;letter-spacing:.06em;padding:1px 5px;border:1px solid}
 .tape .vb.d{color:var(--green);border-color:rgba(0,188,0,.3)}
 .tape .vb.b{color:var(--red);border-color:rgba(193,7,6,.3)}
 .tape .vb.l{color:var(--yellow);border-color:rgba(252,255,0,.3)}
-.tape .vb.h{color:var(--green);border-color:rgba(0,188,0,.2)}
-.tape .up{color:var(--green)}.tape .dn{color:var(--red)}
+.tape .vb.h{color:var(--mid);border-color:var(--border)}
+.tape .up{color:var(--green)}.tape .dn{color:var(--red)}.tape .mid{color:var(--mid)}
 @keyframes tape{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.hero{display:flex;gap:14px;margin-bottom:18px}
-.hero-btn{flex:1;border:1px solid;padding:18px 16px 14px;text-align:center;cursor:pointer;transition:.1s}
-.hero-btn:hover{opacity:.9}
-.hero-btn.green{background:var(--green-bg);border-color:rgba(0,188,0,.4);color:var(--green)}
-.hero-btn.red{background:var(--red-bg);border-color:rgba(193,7,6,.4);color:var(--red)}
-.hero-btn .hb-name{font-size:18px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px}
-.hero-btn .hb-desc{font-size:14px;color:var(--dim);line-height:1.4}
-.hero-btn .hb-play{font-size:15px;font-weight:600;margin-top:10px;letter-spacing:.08em;text-transform:uppercase}
-.challenge-box{border:1px solid rgba(252,255,0,.2);background:var(--panel);padding:14px 20px;margin-bottom:14px;text-align:center}
-.challenge-title{font-size:15px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:.04em}
-.challenge-sub{font-size:12px;color:var(--mid);margin-top:4px}
-.howto{border:1px solid var(--border);background:var(--panel);padding:16px 20px;margin-bottom:18px;text-align:center}
-.howto h2{font-size:15px;font-weight:700;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;margin-bottom:12px}
-.howto-steps{display:flex;gap:10px}
-.howto-step{flex:1;text-align:center}
-.howto-step .n{font-size:24px;font-weight:700;color:var(--purple);margin-bottom:4px}
-.howto-step .t{font-size:14px;color:var(--mid);line-height:1.4}
-.ledger-box{border:1px solid var(--border);background:var(--panel);padding:14px 16px;margin-bottom:12px}
-.ledger-box h2{font-size:14px;font-weight:700;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-bottom:10px}
-.lgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.lstat{text-align:center}.lstat .lv{font-size:22px;font-weight:700}.lstat .lk{font-size:12px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
-.lstat.lg .lv{color:var(--green)}.lstat.lr .lv{color:var(--red)}.lstat.ly .lv{color:var(--yellow)}
-.recent-box{border:1px solid var(--border);background:var(--panel);padding:14px 16px;margin-bottom:12px}
-.recent-box h2{font-size:14px;font-weight:700;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-bottom:10px}
-.rfeed{max-height:180px;overflow-y:auto}
-.rrow{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.02);font-size:14px}
-.rv{padding:1px 6px;font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;border:1px solid}
-.rv-dg{color:var(--green);border-color:rgba(0,188,0,.3)}
-.rv-lk{color:var(--yellow);border-color:rgba(252,255,0,.3)}
-.rv-bg{color:var(--red);border-color:rgba(193,7,6,.3)}
-.rt{color:var(--mid)}.rr{color:var(--dim);margin-left:auto}
-.footer-row{text-align:center;font-size:13px;color:var(--dim);padding:10px 0}
-.footer-row a{color:var(--mid);text-decoration:none}
+.hero{position:relative;padding:44px 20px 40px;text-align:center}
+.hero-chips{display:flex;justify-content:center;gap:10px;margin-bottom:20px}
+.chip{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border:1px solid}
+.chip.ape{color:var(--green);border-color:rgba(0,188,0,.3);background:rgba(0,188,0,.04)}
+.chip.vs{color:var(--dim);border-color:var(--border);font-size:11px;padding:5px 10px}
+.chip.badger{color:var(--red);border-color:rgba(193,7,6,.3);background:rgba(193,7,6,.04)}
+.hero-title{font-size:38px;font-weight:700;letter-spacing:.04em;line-height:1.1;margin-bottom:8px}
+.hero-title .g{color:var(--green)}
+.hero-tag{font-size:11px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;margin-bottom:10px}
+.hero-copy{font-size:14px;color:var(--mid);line-height:1.7;max-width:400px;margin:0 auto 26px}
+.hero-copy strong{color:var(--bright)}
+.cta-row{display:flex;justify-content:center;gap:10px}
+.btn-play{background:var(--green);color:#000;border:none;font-family:inherit;font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:13px 0;width:280px;text-align:center;cursor:pointer}
+.btn-play:hover{background:#00d400}
+.btn-play.challenged{background:var(--yellow);color:#000;font-size:13px}
+.btn-daily{background:transparent;color:var(--mid);border:1px solid var(--border);font-family:inherit;font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:13px 0;width:280px;text-align:center;cursor:pointer;box-sizing:border-box}
+.btn-daily:hover{border-color:var(--mid);color:var(--bright)}
+.content{max-width:920px;margin:0 auto;padding:24px 20px;border-top:1px solid var(--border)}
+.sec-head{font-size:10px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between}
+.live{color:var(--green);display:flex;align-items:center;gap:5px}
+.ldot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.gstats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:24px}
+.gs{background:var(--panel);padding:14px 16px;text-align:center}
+.gs .n{font-size:26px;font-weight:700;color:var(--bright);margin-bottom:3px;line-height:1}
+.gs .n.red{color:var(--red)}.gs .n.yellow{color:var(--yellow)}.gs .n.green{color:var(--green)}
+.gs .l{font-size:10px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+.rtable{width:100%;border-collapse:collapse;margin-bottom:24px;font-size:13px}
+.rtable th{font-size:10px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;text-align:left;padding:5px 8px;border-bottom:1px solid var(--border);font-weight:400}
+.rtable td{padding:8px 8px;border-bottom:1px solid rgba(255,255,255,.03)}
+.rtable tr:hover td{background:rgba(255,255,255,.012)}
+.vbadge{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border:1px solid}
+.vb-d{color:var(--green);border-color:rgba(0,188,0,.3)}
+.vb-b{color:var(--red);border-color:rgba(193,7,6,.3)}
+.vb-l{color:var(--yellow);border-color:rgba(252,255,0,.3)}
+.vb-h{color:var(--mid);border-color:var(--border)}
+td.up{color:var(--green)}td.dn{color:var(--red)}td.mid{color:var(--mid)}
+.lore{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:24px}
+.lore-card{border:1px solid var(--border);background:var(--panel);padding:16px}
+.lore-icon{font-size:28px;margin-bottom:8px}
+.lore-title{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;color:var(--bright)}
+.lore-body{font-size:12px;color:var(--dim);line-height:1.65}
+.lore-stat{font-size:16px;font-weight:700;margin-top:8px}
+.lore-stat.red{color:var(--red)}.lore-stat.green{color:var(--green)}
+.footer{border-top:1px solid var(--border);padding:11px 0;display:flex;justify-content:space-between;font-size:10px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
 
 /* === GAME (matches kiro v2-path-a) === */
-.header{border:1px solid var(--border);background:var(--panel);padding:9px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.header{border:1px solid var(--border);background:var(--panel);padding:9px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
 .logo-name{font-size:14px;font-weight:700;letter-spacing:.06em}
 .logo-name .g{color:var(--green)}
 .logo-sub{font-size:9px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
-.duel{display:grid;grid-template-columns:1fr 100px 1fr;gap:6px;margin-bottom:7px}
+.duel{display:grid;grid-template-columns:1fr 100px 1fr;gap:6px;margin-bottom:8px}
 .fighter{border:1px solid var(--border);background:var(--panel);padding:10px 14px}
 .fighter.you{border-color:rgba(0,188,0,.2)}
 .fighter.badger{border-color:rgba(193,7,6,.15);text-align:right}
@@ -83,41 +92,37 @@ body{background:var(--bg);color:var(--bright);font-family:'SF Mono','Monaco','Me
 .vs-num{font-size:22px;font-weight:700;padding:2px 7px;border:1px solid}
 .vs-num.ahead{color:var(--green);border-color:rgba(0,188,0,.3)}
 .vs-num.behind{color:var(--red);border-color:rgba(193,7,6,.3)}
-.pos-banner{border:1px solid;padding:8px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;font-weight:700;letter-spacing:.04em}
+.pos-banner{border:1px solid;padding:8px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-weight:700;letter-spacing:.04em}
 .pos-banner.fomo{background:var(--red-bg);border-color:rgba(193,7,6,.4);color:var(--red)}
 .pos-banner.safu{background:var(--green-bg);border-color:rgba(0,188,0,.4);color:var(--green)}
-.pos-main{display:flex;align-items:center;gap:12px;font-size:14px}
-.pos-desc{font-size:9px;letter-spacing:.12em;color:var(--mid);text-transform:uppercase;font-weight:400}
+canvas{width:100%;height:800px;display:block}
+.pos-main{display:flex;align-items:center;gap:12px;font-size:16px}
+.pos-desc{font-size:14px;letter-spacing:.04em;color:var(--mid);text-transform:uppercase;font-weight:400}
 .chart-wrap{border:1px solid var(--border);background:#000;position:relative;margin-bottom:5px}
-canvas{width:100%;height:600px;display:block}
 .countdown{position:absolute;inset:0;background:rgba(0,0,0,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;display:none}
 .c-lbl{font-size:9px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;margin-bottom:12px}
 .c-num{font-size:80px;font-weight:700;color:var(--bright);line-height:1}
 .c-sub{font-size:12px;color:var(--mid);text-align:center;max-width:340px;line-height:1.5;margin-top:12px}
-.strip{height:4px;display:flex;margin-bottom:7px}
-.sg-g{background:var(--green);opacity:.55}.sg-r{background:var(--red);opacity:.2}.sf{background:rgba(255,255,255,.04)}
-.meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:9px}
+.meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;font-size:14px}
 .legend{display:flex;gap:14px;color:var(--dim)}
 .li{display:flex;align-items:center;gap:5px}
+.day-bar-wrap{display:flex;align-items:center;margin-bottom:10px;padding-left:52px;padding-right:16px;position:relative}
 .sw{width:18px;height:2px;display:inline-block}
 .sw-g{background:var(--green)}.sw-y{background:var(--yellow);opacity:.8}.sw-r{background:var(--red)}
-.prog-wrap{display:flex;align-items:center;gap:8px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
-.prog{flex:1;height:6px;background:#1a1a20;min-width:180px;border:1px solid var(--border)}
-.prog-fill{height:100%;background:linear-gradient(90deg,#4a5270,#6a7290,#8a92b0);border-right:1px solid rgba(255,255,255,.1)}
-.ctrl{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.ctrl-lbl{font-size:8px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
 .spd{display:flex;gap:2px}
-.spd-btn{background:var(--purple);border:1px solid rgba(255,255,255,.07);color:var(--dim);font-family:inherit;font-size:9px;padding:3px 9px;cursor:pointer;text-transform:uppercase;letter-spacing:.06em}
+.spd-btn{background:var(--purple);border:1px solid rgba(255,255,255,.07);color:var(--mid);font-family:inherit;font-size:14px;padding:3px 12px;cursor:pointer;text-transform:uppercase;letter-spacing:.06em}
 .spd-btn.on{color:var(--bright);border-color:rgba(255,255,255,.18);background:#4a5270}
-.kbd{margin-left:auto;font-size:8px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
-.toggle{width:100%;padding:15px;font-family:inherit;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:1px solid;display:flex;justify-content:center;align-items:center;gap:12px}
+.pause-btn{background:var(--purple);border:1px solid rgba(255,255,255,.07);color:var(--mid);font-family:inherit;font-size:14px;padding:3px 10px;cursor:pointer;margin-right:6px;min-width:40px;text-align:center}
+.day-bar-label{position:absolute;left:0;width:52px;font-size:12px;letter-spacing:.08em;color:#6a7290;text-transform:uppercase;text-align:center;white-space:nowrap}
+.toggle{width:100%;padding:45px;font-family:inherit;font-size:22px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:1px solid;display:flex;justify-content:center;align-items:center;gap:12px}
+.day-bar{flex:1;height:4px;background:#1a1a20}
+.day-bar-fill{height:4px;background:linear-gradient(90deg,#4a5270,#6a7290,#8a92b0);width:0%}
 .toggle.hodl{background:var(--green-bg);border-color:var(--green);color:var(--green)}
 .toggle.yolo{background:var(--red-bg);border-color:var(--red);color:var(--red)}
 
-/* === SUMMARY === */
-.summary-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;justify-content:center;align-items:center;z-index:100}
-.summary-overlay.on{display:flex;align-items:flex-start;padding-top:160px}
-.summary-card{width:420px;max-height:92vh;overflow-y:auto;background:#0a0a0c;border:1px solid #1c1c20;border-radius:24px;padding:14px 22px 32px;display:flex;flex-direction:column;gap:14px}
+.summary-overlay.on{display:flex;justify-content:center;align-items:flex-start;background:rgba(0,0,0,.65)}
+.summary-overlay{position:fixed;inset:0;display:none;z-index:100}
+.summary-card{width:420px;max-height:92vh;overflow-y:auto;background:#0a0a0c;border:1px solid #1c1c20;border-radius:24px;padding:14px 22px 26px;display:flex;flex-direction:column;gap:14px}
 .sum-top-row{display:flex;justify-content:space-between;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
 .sum-top-row .verdict-label{color:var(--bright)}.sum-top-row .datetime{color:var(--dim)}
 .sum-verdict-box{border:1px solid #1c1c20;border-radius:8px;background:#111114;padding:24px 16px;text-align:center}
@@ -146,56 +151,117 @@ canvas{width:100%;height:600px;display:block}
 .sum-events-box{border:1px solid #1c1c20;border-radius:8px;background:#111114;padding:14px 16px}
 .events-title{font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
 .event-row{font-size:12px;color:var(--mid);padding:4px 0;border-top:1px solid rgba(255,255,255,.03)}
+.meth-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;justify-content:center;align-items:flex-start;z-index:200;padding:40px 20px 40px;overflow-y:auto}
+.meth-overlay.on{display:flex}
+.meth-card{width:100%;max-width:680px;background:#0a0a0c;border:1px solid #1c1c20;border-radius:16px;padding:10px 36px 28px;position:relative;color:var(--mid);font-size:13px;line-height:1.75}
+.meth-card h2{font-size:16px;font-weight:700;color:var(--bright);letter-spacing:.06em;margin:28px 0 10px;text-transform:uppercase}
+.meth-card h2:first-child{margin-top:0}
+.meth-card hr{border:none;border-top:1px solid var(--border);margin:16px 0}
+.meth-card p{margin-bottom:12px}
+.meth-card em{color:var(--dim)}
+.meth-card a{color:var(--green);text-decoration:none}
+.meth-close{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--dim);font-family:inherit;font-size:18px;cursor:pointer;line-height:1}
+.meth-close:hover{color:var(--bright)}
+.meth-footer{text-align:center;font-size:11px;color:var(--dim);margin-top:28px;padding-top:18px;border-top:1px solid var(--border)}
 </style>
 </head>
 <body>
 <!-- === LOBBY === -->
 <div class="screen on" id="scr-lobby">
-<div class="app">
-  <div class="lobby-header">
-    <h1>DEGEN<span class="g">TERMINAL</span></h1>
-    <div class="sub">The ape trades. The badger waits. Guess who wins.</div>
+<div class="tape-wrap"><div class="tape" id="tape">Loading recent games...</div></div>
+
+<div class="hero">
+  <div class="hero-chips">
+    <div class="chip ape">⚡ Token Degen</div>
+    <div class="chip vs">VS</div>
+    <div class="chip badger">🦡 Bitcoin HODLer</div>
   </div>
-  <div class="tape-wrap"><div class="tape" id="tape">Loading recent games...</div></div>
-  <div class="hero">
-    <div class="hero-btn green" id="btn-play">
-      <div class="hb-name">Token Degen</div>
-      <div class="hb-desc">YOLO into the 5 most volatile altcoins. One click to ape in, one click to hide in BTC.</div>
-      <div class="hb-play">PLAY</div>
+  <div class="hero-title">DEGEN<span class="g">TERMINAL</span></div>
+  <div class="hero-tag">No Fees · No Spread · No Mercy · 2017–2026</div>
+  <div class="hero-copy">
+    $10,000. 365 days. One button.<br>
+    <strong>HODL Bitcoin</strong> or <strong>YOLO the top‑5 most volatile alts.</strong><br>
+    The honey badger bought BTC on day one and never looked back.<br>
+    Beat it. Prove you're a DEGEN, not just lucky.
+  </div>
+  <div class="cta-row">
+    <button class="btn-play" id="btn-play">▶ PLAY NOW</button>
+    <button class="btn-daily" id="btn-daily">⊞ DAILY CHALLENGE</button>
+  </div>
+</div>
+
+<div class="content">
+  <div class="sec-head"><span>Global Statistics</span><span class="live"><span class="ldot"></span>Live</span></div>
+  <div class="gstats">
+    <div class="gs"><div class="n" id="lg-games">—</div><div class="l">Games Played</div></div>
+    <div class="gs"><div class="n red" id="lg-badger">—</div><div class="l">Badger Wins</div></div>
+    <div class="gs"><div class="n yellow" id="lg-median">—</div><div class="l">Median vs Badger</div></div>
+    <div class="gs"><div class="n green" id="lg-best">—</div><div class="l">Best Degen vs Badger</div></div>
+  </div>
+
+  <div class="sec-head"><span>Recent Results</span></div>
+  <table class="rtable">
+    <thead><tr><th>VERDICT</th><th>WINDOW</th><th>VS BADGER</th><th>TRADES</th><th>SEASON</th></tr></thead>
+    <tbody id="recent-tbody">
+      <tr><td colspan="5" class="mid">Loading...</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec-head"><span>The Lore</span></div>
+  <div class="lore">
+    <div class="lore-card">
+      <div class="lore-icon">🦍</div>
+      <div class="lore-title">Token Degen (You)</div>
+      <div class="lore-body">Always switching, always convinced this time is different. The basket is wild — top 5 most volatile alts rebalanced daily. DOGE, PEPE, ENJ. The coins you forgot you held.</div>
+      <div class="lore-stat red">Wins 28% of the time</div>
+    </div>
+    <div class="lore-card">
+      <div class="lore-icon">🦡</div>
+      <div class="lore-title">The Bitcoin HODLer</div>
+      <div class="lore-body">Bought BTC on day one and never looked back. Not interested in your thesis, doesn't care about use cases, and a depeg doesn't matter when it values everything in sats.</div>
+      <div class="lore-stat green">Wins 72% of the time</div>
     </div>
   </div>
-  <div class="challenge-box" id="challenge-box" style="display:none">
-    <div class="challenge-title">You've been challenged!</div>
-    <div class="challenge-sub">Play the same period as your friend and see if you can do better!</div>
+
+  <div class="footer">
+    <span>Market Data: 2017–2026 · 54 coins · Daily resolution · <a href="#" onclick="document.getElementById('meth-overlay').classList.add('on');return false" style="color:var(--bright);text-decoration:none">METHODOLOGY &amp; CREDITS</a></span>
+    <span>You Trade, The Badger Waits. Guess who wins?</span>
   </div>
-  <div class="howto">
-    <h2>How It Works</h2>
-    <div class="howto-steps">
-      <div class="howto-step"><div class="n">1</div><div class="t">$10,000 in BTC.<br>A random 365-day window from 2017–2026.</div></div>
-      <div class="howto-step"><div class="n">2</div><div class="t">One button: HODL BTC or YOLO into a basket of top tokens.</div></div>
-      <div class="howto-step"><div class="n">3</div><div class="t">The badger bought BTC<br>and never looked back. Beat it.</div></div>
-    </div>
-  </div>
-  <div class="ledger-box">
-    <h2>Global Ledger · All returns are vs the Honey Badger (BTC HODL)</h2>
-    <div class="lgrid">
-      <div class="lstat"><div class="lv" id="lg-games">—</div><div class="lk">Games</div></div>
-      <div class="lstat lr"><div class="lv" id="lg-badger">—</div><div class="lk">Badger Wins</div></div>
-      <div class="lstat ly"><div class="lv" id="lg-lucky">—</div><div class="lk">Lucky Apes</div></div>
-      <div class="lstat lg"><div class="lv" id="lg-degen">—</div><div class="lk">Degens</div></div>
-      <div class="lstat lr"><div class="lv" id="lg-don">—</div><div class="lk">Donated</div></div>
-    </div>
-  </div>
-  <div class="recent-box">
-    <h2>Recent Results</h2>
-    <div class="rfeed" id="recent-feed"><div class="rrow"><span style="color:var(--dim)">Loading...</span></div></div>
-  </div>
-  <div class="footer-row">
-    <a href="#" onclick="document.getElementById('meth-modal').classList.add('on');return false">Methodology</a> · Built with historical Binance data 2017–2026 · Not financial advice
-  </div>
+</div>
 </div>
 </div>
 
+
+<!-- === METHODOLOGY MODAL === -->
+<div class="meth-overlay" id="meth-overlay">
+<div class="meth-card">
+<button class="meth-close" id="meth-close">&times;</button>
+<h2>METHODOLOGY &amp; CREDITS</h2>
+<hr>
+<h2>Real Data</h2>
+<p>Market data is sourced from Binance, without which we wouldn't have a liquid token ecosystem. The constraints that come from this choice are realistic and practical. Because crypto has no daily closing price (it's a 24/7 market), we pick a fixed time every day to source a single daily price. The dataset starts in mid-2017, when Binance was founded. Although Bitcoin was already trading at around USD 2,000 by then, there were not many alternative coins (fewer still which were not Bitcoin forks or clones). The altcoin market really only grew after Binance (in an attempt to get a lead over earlier competitors like Bittrex with stricter listing rules) quickly started listing every coin it could find. The choice to use Binance data was grounded in easy access to reliable market data and its role in shaping the ecosystem but it also means we miss the truly degen stuff like the Solana meme coins. It turns out anyway that such short-lived tokens would have to be excluded to make the game playable.</p>
+<h2>The Alt Basket</h2>
+<p>Our degen altcoin basket is made up of the Top 5 (for at least the prior 2 weeks) volatile (30-day rolling annual stddev) altcoins equally weighted. The chart ticks on daily prices so having a 14-day minimum filters out coins that may otherwise show as blips rather than a trend on a 365 day chart. This results in about +/- 50 coins that stay in the basket for an average of 7 days (after the 14-day filter) as of this writing.</p>
+<p>The trading window is 1 year, which for crypto is 365 trading days. This was selected to give a good balance of playtime at 1x speed (about 45s), cover sufficient crypto events/seasons and also happily covers both the time horizon between trading and investing, and typical crypto holding periods. It probably comes as no surprise that as the window lengthens the proportion of Badger wins goes up — from about 60% at 90 days to 80% at 2 years (according to our banana casino).</p>
+<h2>Fees, Spread and Slippage</h2>
+<p>No fees, spread, slippage. These are the things that will kill you in real life trading, which don't matter as much to a long term single-asset HODLer. It's in your favour that we don't model it here.</p>
+<h2>Calculation</h2>
+<p>Both portfolios start with $10,000 worth of Bitcoin on day 1, at day 1 BTC/USD prices.</p>
+<p>The badger holds this BTC and converts it back at the end of the 365 days at day 365 BTC/USD prices. It does not trade at all during the period, not even BTC/USD.</p>
+<p>The player's (your) portfolio starts in the altcoin (aka Degen) basket, unless you toggle out to hold BTC during the countdown before Day 1. Then it starts same as the badger. Whenever you toggle, the full value of your holdings are converted into the other side at market prices. This means you'll want to be on the side of the higher line, and optimally switch when the gap is the biggest and about to move in the opposite direction. The yellow line represents your current performance.</p>
+<h2>Chart</h2>
+<p>The green line represents the performance of the altcoin basket, red line for BTC performance. The yellow line represents your performance, so ideally you'll want to keep that above both red and green. When you first start the game it may not be easy to see 3 lines, as the yellow line will initially follow either the green or red line (depending on if you toggled HODL/YOLO during the countdown).</p>
+<p>The day bar represents how far you are in the game. There is no option for other time periods. You can speed it up using the speed controls if you feel it's going nowhere, or slow it down for more precise timing. You can also Pause and toggle during the Pause — the game is less about market timing than predicting the future, and if you wanted an edge on predictability just keep replaying the same game.</p>
+<h2>Inspiration</h2>
+<p>In parts of my personal and professional life I've been asked to consider the value (or my opinion) of trading shitcoins. At those times I often wished there was a simple resource explaining how HODLing BTC long term is a "better" strategy than degen ape-ing into coins. (Unless you're a professional, which I occasionally was, but if you are you wouldn't be asking me.) The point being that, yes there may be alpha that traders work hard to capture; if you want 2-min advice, try this game!</p>
+<p>When I recently stumbled upon the absolutely fantastic <a href="https://beatthecouch.com/" target="_blank">Beat The Couch</a>, I realised that it was exactly what I was looking for, except applied to crypto trading (rather than market timing). I want to give credit to their biggest innovation — the monkey simulator, that runs 1000 rounds using the same parameters you played to give you an idea if you're really good or just lucky. Run a monkey simulator on your real-life trades to align for a quick ego/skill alignment.</p>
+<h2>Gratitude</h2>
+<p>Besides the couch at Beat the Couch, I'm also very grateful to <a href="https://fyra.sh" target="_blank">fyra</a> for hosting this on their CDN. The stats tracking backend is a small self-hosted worker hosted by the <a href="https://gridrun.net" target="_blank">GRIDRUN</a> team.</p>
+<p>Thanks also to you for playing, giving <a href="mailto:degen@gridrun.net">feedback</a> or sharing the link. Hope you had fun and remember when asking a professional trader for tips — yes we're secretive but it's actually not that we don't want to share, it's just that... it's not that simple.</p>
+<p>I leave you with a note from my AI coding partner:<br><em>Interesting... BTC is down ~34% of the time, up ~66% of the time over 365-day windows. The badger wins 70.2% of the time, but BTC itself only wins 65.6% — meaning the basket underperforms BTC even when BTC is up, and gets crushed when BTC is down.</em></p>
+<div class="meth-footer">Copyright &copy; 2026, All Rights Reserved.</div>
+</div>
+</div>
 <!-- === GAME === -->
 <div class="screen" id="scr-game">
 <div class="app">
@@ -219,7 +285,7 @@ canvas{width:100%;height:600px;display:block}
     </div>
   </div>
   <div class="pos-banner fomo" id="pos-banner">
-    <div class="pos-main"><span>FOMO</span><span class="pos-desc">Altcoin Bags Full</span></div>
+    <div class="pos-main"><span>FOMO</span></div><span class="pos-desc">Altcoin Bags Full</span>
   </div>
   <div class="chart-wrap">
     <div class="countdown" id="countdown">
@@ -229,31 +295,25 @@ canvas{width:100%;height:600px;display:block}
     </div>
     <canvas id="chart"></canvas>
   </div>
-  <div class="strip" id="strip"></div>
+  <div class="day-bar-wrap">
+    <div class="day-bar-label" id="day-label">0</div>
+    <div class="day-bar"><div class="day-bar-fill" id="day-bar-fill"></div></div>
+  </div>
   <div class="meta">
     <div class="legend">
       <div class="li"><span class="sw sw-g"></span>Alts</div>
       <div class="li"><span class="sw sw-y"></span>You</div>
       <div class="li"><span class="sw sw-r"></span>BTC</div>
     </div>
-    <div class="prog-wrap">
-      <span id="day-label">DAY 0</span>
-      <div class="prog"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
-      <span>365</span>
-    </div>
-  </div>
-  <div class="ctrl">
-    <span class="ctrl-lbl">SPEED</span>
     <div class="spd">
+      <button class="pause-btn" id="pause-btn">⏸</button>
       <button class="spd-btn" data-s="0.5">0.5×</button>
       <button class="spd-btn on" data-s="1">1×</button>
       <button class="spd-btn" data-s="2">2×</button>
       <button class="spd-btn" data-s="4">4×</button>
     </div>
-    <span class="kbd">SPACE: TOGGLE · P: PAUSE</span>
   </div>
   <button class="toggle hodl" id="toggle-btn">HODL · SWITCH TO BITCOIN</button>
-</div>
 </div>
 
 <!-- === SUMMARY === -->
@@ -323,7 +383,7 @@ function startGame(forcedS){
   G.btcQty=START/BTC_PRICE[DATES[G.s]];
   btcS=[0];altS=[0];youS=[0];
   showScreen('game');
-  updateUI();drawChart();drawStrip();
+  updateUI();drawChart();drawDayBar();
   var ov=document.getElementById('countdown'),num=document.getElementById('count-num');
   ov.style.display='flex';var c=3;num.textContent='3';
   var timer=setInterval(function(){
@@ -350,14 +410,14 @@ function loop(ts){
   acc+=(ts-lt)/1000*DPS*G.speed;lt=ts;
   var n=Math.floor(acc);acc-=n;
   while(n-->0&&G.running&&!G.done)step();
-  updateUI();drawChart();drawStrip();
+  updateUI();drawChart();drawDayBar();
   if(!G.done)raf=requestAnimationFrame(loop);
 }
 
 var cv=document.getElementById('chart'),cx=cv.getContext('2d');
 var yLo=-25,yHi=25;
 function drawChart(){
-  var W=cv.parentElement.clientWidth*2,H=1200;cv.width=W;cv.height=H;var dpr=2;
+  var W=cv.parentElement.clientWidth*2,H=1600;cv.width=W;cv.height=H;var dpr=2;
   cx.clearRect(0,0,W,H);if(btcS.length<2)return;
   // Compute range from CURRENT visible data only (not future projection)
   var allV=btcS.concat(altS).concat(youS);
@@ -391,7 +451,7 @@ function drawChart(){
   cx.strokeStyle='rgba(255,255,255,.07)';cx.setLineDash([3*dpr,8*dpr]);
   cx.beginPath();cx.moveTo(pad.l,zy);cx.lineTo(W-pad.r,zy);cx.stroke();cx.setLineDash([]);
   // Y labels
-  cx.font=(8*dpr)+"px 'SF Mono',monospace";cx.fillStyle='#5c5c60';cx.textAlign='right';
+  cx.font=(12*dpr)+"px 'SF Mono',monospace";cx.fillStyle='#6a7290';cx.textAlign='right';
   var yst=Math.max(5,Math.ceil((yMx-yMn)/6/5)*5);
   for(var pct=Math.ceil(yMn/yst)*yst;pct<=yMx;pct+=yst)cx.fillText((pct>0?'+':'')+pct+'%',pad.l-4*dpr,Yf(pct)+3*dpr);
   // BTC line (red)
@@ -409,18 +469,9 @@ function drawChart(){
   if(G.i>0&&G.i<WIN){var curX=pad.l+pw*G.i/WIN;cx.strokeStyle='rgba(255,255,255,.1)';cx.lineWidth=.5*dpr;cx.beginPath();cx.moveTo(curX,pad.t);cx.lineTo(curX,H-pad.b);cx.stroke()}
 }
 
-function drawStrip(){
-  var strip=document.getElementById('strip');strip.innerHTML='';
-  var s=0,cur=G.pos[0]||0;
-  for(var i=1;i<=G.i;i++){
-    if(i===G.i||G.pos[i]!==cur){
-      var seg=document.createElement('div');
-      seg.className='sg'+(cur===1?' sg-g':' sg-r');
-      seg.style.width=((i-s)/WIN*100)+'%';strip.appendChild(seg);
-      s=i;if(i<G.i)cur=G.pos[i];
-    }
-  }
-  if(G.i<WIN&&!G.done){var sf=document.createElement('div');sf.className='sg sf';sf.style.width=((WIN-G.i)/WIN*100)+'%';strip.appendChild(sf)}
+function drawDayBar(){
+  document.getElementById('day-label').textContent=G.i;
+  document.getElementById('day-bar-fill').style.width=(G.i/WIN*100)+'%';
 }
 
 function updateUI(){
@@ -450,16 +501,14 @@ function updateUI(){
   var bn=document.getElementById('pos-banner'),tg=document.getElementById('toggle-btn');
   if(G.inBasket){
     bn.className='pos-banner fomo';
-    bn.innerHTML='<div class="pos-main"><span>FOMO</span><span class="pos-desc">Altcoin Bags Full</span></div>';
+    bn.innerHTML='<div class="pos-main"><span>FOMO</span></div><span class="pos-desc">Altcoin Bags Full</span>';
     tg.className='toggle hodl';tg.innerHTML='HODL &middot; SWITCH TO BITCOIN';
   }else{
     bn.className='pos-banner safu';
-    bn.innerHTML='<div class="pos-main"><span>SAFU</span><span class="pos-desc">Hodling Only Bitcoin</span></div>';
+    bn.innerHTML='<div class="pos-main"><span>SAFU</span></div><span class="pos-desc">Hodling Only Bitcoin</span>';
     tg.className='toggle yolo';tg.innerHTML='YOLO &middot; SWITCH TO ALTCOINS';
   }
   
-  document.getElementById('day-label').textContent='DAY '+G.i;
-  document.getElementById('prog-fill').style.width=(G.i/WIN*100)+'%';
 }
 
 function runBananaTest(callback){
@@ -472,6 +521,7 @@ function runBananaTest(callback){
   if(blocks.length===0){callback(null);return}
   var totalB=blocks.reduce(function(a,b){return a+b},0);
   var totalH=WIN-totalB,startIdx=G.s,btcStart=BTC_PRICE[DATES[startIdx]];
+  var youDollarsFinal=G.btcQty*BTC_PRICE[DATES[G.s+WIN-1]];
   var N=1000,worse=0,m=0;
   function chunk(){
     var end=Math.min(m+50,N);
@@ -495,35 +545,7 @@ function runBananaTest(callback){
 }
 
 function finishGame(){
-  G.done=true;G.running=false;cancelAnimationFrame(raf);updateUI();drawChart();drawStrip();var be=BTC_PRICE[DATES[G.s+WIN-1]];var youDollarsFinal=G.btcQty*be;
-  // Populate summary (everything except banana test, which runs async)
-  document.getElementById('sdt').textContent=DATES[G.s]+' UTC';
-  document.getElementById('sst').textContent=verdict;
-  document.getElementById('sst').className='stamp '+stampClass;
-  document.getElementById('sds').textContent=fdt(DATES[G.s])+' → '+fdt(DATES[G.s+WIN-1]);
-  document.getElementById('sss').textContent=snames.length>0?'You traded through the '+snames.join(', '):'';
-  document.getElementById('str').textContent=G.trades;
-  document.getElementById('sti').textContent=pctIn+'%';
-  document.getElementById('sps').textContent='—';
-  if(rel>0.01){oel.innerHTML='You beat the Bitcoin HODLER by <span class="win">'+fmt$(Math.round(youD-badD))+'</span>'}
-  else if(unw&&rel>-0.01){oel.innerHTML='This window was unwinnable. <span class="win">Matching the badger counts as a win.</span>'}
-  else{oel.innerHTML="You'd have been better off by <span class='lose'>"+fmt$(Math.round(badD-youD))+"</span> just HODLing Bitcoin"}
-  document.getElementById('sya').textContent=fmt$(Math.round(youD));
-  document.getElementById('syp').textContent=(yp>=0?'+':'')+yp.toFixed(1)+'%';
-  document.getElementById('syp').className='pct'+(yp>0.1?' up':yp<-0.1?' dn':' eq');
-  document.getElementById('sba').textContent=fmt$(Math.round(badD));
-  document.getElementById('sbp').textContent=(bp>=0?'+':'')+bp.toFixed(1)+'%';
-  document.getElementById('sbp').className='pct'+(bp>0.1?' up':bp<-0.1?' dn':' eq');
-  var tier=TIERS[0][1];for(var ti=0;ti<TIERS.length;ti++){if(youD>=TIERS[ti][0])tier=TIERS[ti][1]}
-  if(unw&&rel>-0.01)tier='At least you survived. The badger is still watching.';
-  document.getElementById('stier').textContent=tier;
-  // Events
-  var evs=[],ws2=new Date(DATES[G.s]),we2=new Date(DATES[G.s+WIN-1]);
-  for(var ei=0;ei<EVENTS.length;ei++){var ed=new Date(EVENTS[ei].date);if(ed>=ws2&&ed<=we2)evs.push(EVENTS[ei])}
-  var ebox=document.getElementById('sum-events-box'),elist=document.getElementById('sum-events-list'),etitle=document.getElementById('sum-events-title');
-  if(evs.length>0){ebox.style.display='block';etitle.textContent=evs.length+' notable event'+(evs.length>1?'s':'')+' during this period';elist.innerHTML='';for(var ej=0;ej<evs.length;ej++){var erow=document.createElement('div');erow.className='event-row';erow.textContent=evs[ej].date.slice(0,7)+' — '+evs[ej].text;elist.appendChild(erow)}}
-  else{ebox.style.display='none'}
-  document.getElementById('summary-overlay').classList.add('on');
+  G.done=true;G.running=false;cancelAnimationFrame(raf);updateUI();drawChart();drawDayBar();var be=BTC_PRICE[DATES[G.s+WIN-1]];var youDollarsFinal=G.btcQty*be;
   var bs=BTC_PRICE[DATES[G.s]];
   var youD=G.btcQty*be,badD=START*be/bs;
   var rel=youD/badD-1;
@@ -578,40 +600,64 @@ function finishGame(){
   var evs=[],ws2=new Date(DATES[G.s]),we2=new Date(DATES[G.s+WIN-1]);
   for(var ei=0;ei<EVENTS.length;ei++){var ed=new Date(EVENTS[ei].date);if(ed>=ws2&&ed<=we2)evs.push(EVENTS[ei])}
   var ebox=document.getElementById('sum-events-box'),elist=document.getElementById('sum-events-list'),etitle=document.getElementById('sum-events-title');
-  if(evs.length>0){ebox.style.display='block';etitle.textContent=evs.length+' notable event'+(evs.length>1?'s':'')+' during this period';elist.innerHTML='';for(var ej=0;ej<evs.length;ej++){var erow=document.createElement('div');erow.className='event-row';erow.textContent=evs[ej].date.slice(0,7)+' — '+evs[ej].text;elist.appendChild(erow)}}
+  if(evs.length>0){ebox.style.display='block';var ec=Math.min(evs.length,8);etitle.textContent=ec+' notable event'+(ec>1?'s':'')+' during this period'+(evs.length>8?' (showing '+ec+' of '+evs.length+')':'');elist.innerHTML='';for(var ej=0;ej<ec;ej++){var erow=document.createElement('div');erow.className='event-row';erow.textContent=evs[ej].date.slice(0,7)+' — '+evs[ej].text;elist.appendChild(erow)}}
+
   else{ebox.style.display='none'}
+  document.getElementById('summary-overlay').classList.add('on');
+  var ht=document.querySelector('.header').getBoundingClientRect().top,tb=document.getElementById('toggle-btn').getBoundingClientRect().bottom,ch=document.querySelector('.summary-card').offsetHeight;document.getElementById('summary-overlay').style.paddingTop=Math.max(0,(ht+tb)/2-ch/2)+'px';
   
   // POST to server
   setTimeout(function(){runBananaTest(function(bp){var pct=bp||50;document.getElementById('sps').textContent=pct===-1?'—':ord(pct);var stampEl=document.getElementById('sst');if(rel>0.02&&pct>=90){stampEl.textContent='DEGEN';stampEl.className='stamp degen'}if(API){try{var payload=JSON.stringify({i:crypto.randomUUID?crypto.randomUUID():String(Date.now()),s:G.s,p:pct,r:rel,t:G.pos.reduce(function(a,p,i){if(i===0||p!==G.pos[i-1])a.push(i);return a},[]),d:Math.round(youD-badD),final:Math.round(youD)});fetch(API+'/pump/run',{method:'POST',body:payload,keepalive:true,headers:{'X-Api-Key':(document.querySelector('meta[name=api-key]')||{}).content||''}}).then(function(r){return r.json()}).then(function(d){if(d&&d.tierText)document.getElementById('stier').textContent=d.tierText}).catch(function(){})}catch(e){}}})},150)
 }
 
-function doToggle(){if(G.done)return;G.inBasket=!G.inBasket;if(G.phase==='live')G.trades++;updateUI()}
+function doToggle(){if(G.done)return;G.inBasket=!G.inBasket;if(G.phase==='live'&&G.running)G.trades++;updateUI()}
 
 function loadLobbyData(){
   if(!API)return;
   fetch(API+'/pump/ledger').then(function(r){return r.json()}).then(function(d){
     document.getElementById('lg-games').textContent=(d.games||0).toLocaleString();
     document.getElementById('lg-badger').textContent=(d.badger_wins||0).toLocaleString();
-    document.getElementById('lg-degen').textContent=(d.degen_wins||0).toLocaleString();
-    document.getElementById('lg-lucky').textContent=(d.lucky_wins||0).toLocaleString();
-    document.getElementById('lg-lost').textContent='$'+Math.round(d.lost||0).toLocaleString();
+    fetch(API+'/pump/recent?n=100').then(function(r2){return r2.json()}).then(function(d2){
+      if(d2&&d2.games&&d2.games.length){
+        var rets=[];
+        for(var i=0;i<d2.games.length;i++){var rr=d2.games[i].r;if(typeof rr==='number')rets.push(rr)}
+        rets.sort(function(a,b){return a-b});
+        if(rets.length>0){
+          var med=rets[Math.floor(rets.length/2)];
+          document.getElementById('lg-median').textContent=(med>=0?'+':'')+(med*100).toFixed(1)+'%';
+          document.getElementById('lg-best').textContent=(rets[rets.length-1]>=0?'+':'')+(rets[rets.length-1]*100).toFixed(1)+'%';
+        }
+      }
+    }).catch(function(){});
   }).catch(function(){});
   fetch(API+'/pump/recent?n=20').then(function(r){return r.json()}).then(function(d){
     var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var el=document.getElementById('recent-feed');el.innerHTML='';
+    var tbody=document.getElementById('recent-tbody');
     var tape=document.getElementById('tape'),h='';
-    if(!d||!d.games||!d.games.length){tape.innerHTML='No games played yet. Be the first.';return}
+    if(!d||!d.games||!d.games.length){
+      tbody.innerHTML='<tr><td colspan="5" class="mid">No games played yet. Be the first.</td></tr>';
+      tape.innerHTML='No games played yet. Be the first.';return;
+    }
+    tbody.innerHTML='';
     for(var i=0;i<d.games.length;i++){
-      var g=d.games[i],ret=g.r||0,vc='',v='BADGER';
-      if(ret>0.02&&g.p>=90){vc='rv-dg';v='DEGEN'}else if(ret>0.01){vc='rv-lk';v='LUCKY APE'}else if(ret>-0.01){vc='rv-dg';v='HODLER'}else{vc='rv-bg';v='BADGER'}
-      var row=document.createElement('div');row.className='rrow';
-      row.innerHTML='<span class="rv '+vc+'">'+v+'</span><span class="rt">'+ (g.t?g.t.length:0)+' trades</span><span class="rr">vs badger: '+(ret>=0?'+':'')+(ret*100).toFixed(1)+'%</span>';
-      el.appendChild(row);
-      var tvc=vc==='rv-dg'?'d':vc==='rv-lk'?'l':vc==='rv-dg'?'h':'b';
+      var g=d.games[i],ret=g.r||0,vc='',v='BADGER',tvc='b';
+      if(ret>0.02&&g.p>=90){vc='vb-d';v='DEGEN';tvc='d'}
+      else if(ret>0.01){vc='vb-l';v='LUCKY APE';tvc='l'}
+      else if(ret>-0.01){vc='vb-h';v='HODLER';tvc='h'}
+      else{vc='vb-b';v='BADGER WINS';tvc='b'}
       var vs=parseInt(g.s),ve=vs+364,ds=new Date(DATES[vs]),de=new Date(DATES[ve]||DATES[DATES.length-1]);
-      var wStr=MON[ds.getUTCMonth()]+String(ds.getUTCFullYear()).slice(2)+'→'+MON[de.getUTCMonth()]+String(de.getUTCFullYear()).slice(2);
-      var up=ret>=0,relPct=(ret*100).toFixed(0);
-      h+='<span><span class="vb '+tvc+'">'+(tvc==='d'?'DEGEN':tvc==='l'?'LUCKY APE':tvc==='h'?'HODLER':'BADGER')+'</span> '+wStr+' <span class="'+(up?'up':'dn')+'">'+(up?'+':'')+relPct+'% vs badger</span></span> · ';
+      var wStr=MON[ds.getUTCMonth()]+' '+ds.getUTCFullYear()+'→'+MON[de.getUTCMonth()]+' '+de.getUTCFullYear();
+      var ws2=new Date(DATES[vs]),we2=new Date(DATES[ve]||DATES[DATES.length-1]),snames=[];
+      for(var si=0;si<SEASONS.length;si++){var ss=new Date(SEASONS[si].s),se=new Date(SEASONS[si].e);if(ws2<=se&&we2>=ss)snames.push(SEASONS[si].name)}
+      var seasonStr=snames.length>0?snames.slice(0,3).join(', '):'—';
+      var retPct=(ret>=0?'+':'')+(ret*100).toFixed(1)+'%',retClass=ret>0.01?'up':ret<-0.01?'dn':'mid';
+      if(i>=d.games.length-8){
+        var tr=document.createElement('tr');
+        tr.innerHTML='<td><span class="vbadge '+vc+'">'+v+'</span></td><td class="mid">'+wStr+'</td><td class="'+retClass+'">'+retPct+'</td><td class="mid">'+(g.t?g.t.length:0)+'</td><td class="mid">'+seasonStr+'</td>';
+        tbody.appendChild(tr);
+      }
+      var up=ret>=0,relPct2=(ret*100).toFixed(0),wStr2=MON[ds.getUTCMonth()]+String(ds.getUTCFullYear()).slice(2)+'→'+MON[de.getUTCMonth()]+String(de.getUTCFullYear()).slice(2);
+      h+='<span class="ti"><span class="vb '+tvc+'">'+(tvc==='d'?'DEGEN':tvc==='l'?'LUCKY APE':tvc==='h'?'HODLER':'BADGER WINS')+'</span> '+wStr2+' '+(tvc==='h'?'<span class="mid">matched badger</span>':'<span class="'+(up?'up':'dn')+'">'+(up?'+':'')+relPct2+'% vs badger</span>')+'</span>';
     }
     tape.innerHTML=h+h;
   }).catch(function(){});
@@ -619,20 +665,14 @@ function loadLobbyData(){
 
 // Event handlers
 document.getElementById('toggle-btn').addEventListener('click',doToggle);
-document.addEventListener('keydown',function(e){if(e.code==='Space'){e.preventDefault();if(G.screen==='game')doToggle()}if(e.code==='KeyP'&&G.phase==='live'&&!G.done){G.running=!G.running;if(G.running){lt=0;raf=requestAnimationFrame(loop)}}});
+document.addEventListener('keydown',function(e){if(e.code==='Space'){e.preventDefault();if(G.screen==='game')doToggle()}if(e.code==='KeyP'&&G.phase==='live'&&!G.done){G.running=!G.running;if(!G.running){G._pp=G.inBasket}else{if(G.inBasket!==G._pp)G.trades++;lt=0;raf=requestAnimationFrame(loop)}document.getElementById('pause-btn').textContent=G.running?'⏸':'▶'}});
 document.querySelectorAll('.spd-btn').forEach(function(b){b.addEventListener('click',function(){G.speed=parseFloat(b.dataset.s);document.querySelectorAll('.spd-btn').forEach(function(x){x.classList.toggle('on',x===b)})})});
 document.getElementById('btn-again').addEventListener('click',function(){document.getElementById('summary-overlay').classList.remove('on');startGame()});
+document.getElementById('pause-btn').addEventListener('click',function(){if(G.phase!=='live'||G.done)return;G.running=!G.running;if(!G.running){G._pp=G.inBasket}else{if(G.inBasket!==G._pp)G.trades++;lt=0;raf=requestAnimationFrame(loop)}this.textContent=G.running?'⏸':'▶'});
+document.getElementById('meth-close').addEventListener('click',function(){document.getElementById('meth-overlay').classList.remove('on')});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')document.getElementById('meth-overlay').classList.remove('on')});
+document.getElementById('meth-overlay').addEventListener('click',function(e){if(e.target===this)this.classList.remove('on')});
 
-function copyChallengeLink(){
-  var url=location.origin+location.pathname+'?t='+G.s;
-  var cb=document.getElementById('btn-challenge');
-  if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(url).then(function(){
-      cb.textContent='LINK COPIED!';cb.style.background='rgba(252,255,0,.15)';
-      setTimeout(function(){cb.textContent='CHALLENGE A FRIEND';cb.style.background=''},1800);
-    }).catch(function(){fallbackCopy(url,cb)});
-  }else{fallbackCopy(url,cb)}
-}
 function copyShareLink(){
   var url=location.origin+location.pathname;
   var cb=document.getElementById('btn-copy');
@@ -662,10 +702,26 @@ function copyChallengeLink(){
   }else{fallbackCopy(url,cb,'CHALLENGE A FRIEND')}
 }
 document.getElementById('btn-lobby').addEventListener('click',function(){document.getElementById('summary-overlay').classList.remove('on');showScreen('lobby')});
-window.addEventListener('resize',function(){if(G.screen==='game'){drawChart();drawStrip()}});
+function dailyChallengeDay(){
+  var d=new Date(),s=d.toISOString().slice(0,10),h=0;
+  for(var i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0}
+  return FP+Math.abs(h)%(MX-FP);
+}
+window.addEventListener('resize',function(){if(G.screen==='game'){drawChart();drawDayBar()}});
 
 // Init
 var params=new URLSearchParams(location.search);var challengeS=parseInt(params.get('s'),10);var challengeT=parseInt(params.get('t'),10);
-if(Number.isInteger(challengeS)){startGame(challengeS)}else if(Number.isInteger(challengeT)){showScreen('lobby');document.getElementById('challenge-box').style.display='block';document.getElementById('btn-play').setAttribute('onclick','startGame('+challengeT+')')}else{showScreen('lobby');document.getElementById('btn-play').setAttribute('onclick','startGame()')}</script>
+if(Number.isInteger(challengeS)){startGame(challengeS)}
+else if(Number.isInteger(challengeT)){
+  showScreen('lobby');
+  var btn=document.getElementById('btn-play');
+  btn.textContent='YOU\u2019VE BEEN CHALLENGED!';
+  btn.className='btn-play challenged';
+  btn.setAttribute('onclick','startGame('+challengeT+')');
+}else{
+  showScreen('lobby');
+  document.getElementById('btn-play').setAttribute('onclick','startGame()');
+}
+document.getElementById('btn-daily').addEventListener('click',function(){startGame(dailyChallengeDay())});</script>
 </body>
 </html>

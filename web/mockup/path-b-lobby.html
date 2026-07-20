@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Path B — Degen Arcade · Lobby</title>
+<style>
+:root{
+  --bg:#040408;--panel:#080810;--border:#16162a;--border2:#1e1e38;
+  --dim:#3a3a5a;--mid:#6a6a9a;--bright:#d0d0f0;--brighter:#eeeeff;
+  --green:#00ff88;--red:#ff2244;--yellow:#ffdd00;--cyan:#00ccff;
+  --purple:#5533cc;--purple2:#7755ee;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:var(--bg);color:var(--bright);
+  font-family:'SF Mono','Monaco','Menlo','Courier New',monospace;
+  font-size:13px;-webkit-font-smoothing:antialiased;min-height:100vh;
+  background-image:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);
+}
+
+/* TICKER TAPE */
+.tape{border-bottom:1px solid var(--border2);padding:5px 0;background:var(--panel);overflow:hidden;white-space:nowrap}
+.tape-inner{display:inline-block;animation:scroll 32s linear infinite;font-size:10px;letter-spacing:.06em}
+@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ti{display:inline;margin-right:36px;color:var(--dim)}
+.ti .v.up{color:var(--green)}.ti .v.dn{color:var(--red)}.ti .label{color:var(--mid)}
+
+/* HERO */
+.hero{
+  position:relative;overflow:hidden;
+  padding:52px 20px 48px;text-align:center;
+  background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(85,51,204,.08) 0%,transparent 70%);
+  border-bottom:1px solid var(--border2);
+}
+/* big faded "VS" watermark */
+.hero::before{
+  content:'VS';position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  font-size:240px;font-weight:700;
+  color:rgba(255,255,255,.018);letter-spacing:-.02em;
+  pointer-events:none;line-height:1;
+}
+
+.hero-chips{display:flex;justify-content:center;gap:12px;margin-bottom:24px}
+.chip{
+  font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:6px 16px;border:1px solid;
+}
+.chip.ape{color:var(--green);border-color:rgba(0,255,136,.3);background:rgba(0,255,136,.04)}
+.chip.badger{color:var(--red);border-color:rgba(255,34,68,.3);background:rgba(255,34,68,.04)}
+.chip.vs{color:var(--dim);border-color:var(--border2);background:var(--panel);font-size:9px;padding:6px 12px}
+
+.hero-title{font-size:40px;font-weight:700;letter-spacing:.02em;line-height:1.1;margin-bottom:10px}
+.hero-title .d{color:var(--yellow)}.hero-title .t{color:var(--brighter)}
+.hero-tag{font-size:9px;letter-spacing:.22em;color:var(--dim);text-transform:uppercase;margin-bottom:10px}
+.hero-copy{font-size:12px;color:var(--mid);line-height:1.7;max-width:420px;margin:0 auto 28px}
+.hero-copy strong{color:var(--bright)}
+
+/* CTA */
+.cta-wrap{display:flex;justify-content:center;gap:10px;margin-top:4px}
+.btn-primary{
+  background:var(--purple);color:var(--brighter);border:1px solid var(--purple2);
+  font-family:inherit;font-size:13px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;padding:14px 44px;cursor:pointer;
+  position:relative;overflow:hidden;transition:.2s;
+}
+.btn-primary:hover{background:var(--purple2)}
+.btn-secondary{
+  background:transparent;color:var(--mid);border:1px solid var(--border2);
+  font-family:inherit;font-size:12px;font-weight:600;letter-spacing:.06em;
+  text-transform:uppercase;padding:14px 28px;cursor:pointer;transition:.15s;
+}
+.btn-secondary:hover{border-color:var(--mid);color:var(--bright)}
+
+/* SCOREBOARD */
+.content{max-width:900px;margin:0 auto;padding:28px 20px}
+.section-title{
+  font-size:8px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;
+  margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--border2);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.section-title .live{color:var(--green);display:flex;align-items:center;gap:5px}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* GLOBAL STATS */
+.global-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:24px}
+.gs-card{
+  border:1px solid var(--border2);background:var(--panel);
+  padding:14px 16px;position:relative;overflow:hidden;
+}
+.gs-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+}
+.gs-card:nth-child(1)::after{background:var(--purple2)}
+.gs-card:nth-child(2)::after{background:var(--red)}
+.gs-card:nth-child(3)::after{background:var(--yellow)}
+.gs-card:nth-child(4)::after{background:var(--green)}
+.gs-num{font-size:26px;font-weight:700;color:var(--brighter);margin-bottom:3px;line-height:1}
+.gs-num.red{color:var(--red)}.gs-num.green{color:var(--green)}.gs-num.yellow{color:var(--yellow)}
+.gs-label{font-size:8px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+
+/* RECENT RESULTS TABLE */
+.results-table{width:100%;border-collapse:collapse;margin-bottom:24px;font-size:11px}
+.results-table th{
+  font-size:8px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;
+  text-align:left;padding:6px 8px;border-bottom:1px solid var(--border2);font-weight:400;
+}
+.results-table td{padding:8px 8px;border-bottom:1px solid rgba(255,255,255,.03)}
+.results-table tr:hover td{background:rgba(255,255,255,.015)}
+.verdict-badge{
+  font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:2px 7px;border:1px solid;
+}
+.vb-degen{color:var(--green);border-color:rgba(0,255,136,.3)}
+.vb-lucky{color:var(--yellow);border-color:rgba(255,221,0,.3)}
+.vb-badger{color:var(--red);border-color:rgba(255,34,68,.3)}
+.vb-hodler{color:var(--cyan);border-color:rgba(0,204,255,.3)}
+.td-up{color:var(--green)}.td-dn{color:var(--red)}.td-mid{color:var(--mid)}
+
+/* LORE PANEL */
+.lore-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:24px}
+.lore-card{border:1px solid var(--border2);background:var(--panel);padding:16px}
+.lore-icon{font-size:28px;margin-bottom:8px}
+.lore-title{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--brighter);text-transform:uppercase;margin-bottom:6px}
+.lore-body{font-size:10px;color:var(--dim);line-height:1.65}
+.lore-stat{font-size:14px;font-weight:700;margin-top:8px}
+.lore-stat.red{color:var(--red)}.lore-stat.green{color:var(--green)}
+
+/* FOOTER */
+.footer{
+  border-top:1px solid var(--border2);padding:12px 20px;
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:8px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;
+  max-width:900px;margin:0 auto;
+}
+</style>
+</head>
+<body>
+
+<!-- Tape -->
+<div class="tape">
+  <div class="tape-inner">
+    <span class="ti"><span class="label">DEGEN</span> Aug19→Aug20 <span class="v up">+61%</span></span>
+    <span class="ti"><span class="label">BADGER WINS</span> Jan21→Dec21 <span class="v dn">−48%</span></span>
+    <span class="ti"><span class="label">LUCKY APE</span> May22→Apr23 <span class="v up">+4%</span></span>
+    <span class="ti"><span class="label">DEGEN</span> Mar20→Feb21 <span class="v up">+213%</span></span>
+    <span class="ti"><span class="label">HODLER</span> Nov18→Oct19 <span class="v up">matched</span></span>
+    <span class="ti"><span class="label">BADGER WINS</span> Dec21→Nov22 <span class="v dn">−78%</span></span>
+    <span class="ti"><span class="label">DEGEN</span> Apr24→Mar25 <span class="v up">+88%</span></span>
+    <!-- dup for loop -->
+    <span class="ti"><span class="label">DEGEN</span> Aug19→Aug20 <span class="v up">+61%</span></span>
+    <span class="ti"><span class="label">BADGER WINS</span> Jan21→Dec21 <span class="v dn">−48%</span></span>
+    <span class="ti"><span class="label">LUCKY APE</span> May22→Apr23 <span class="v up">+4%</span></span>
+    <span class="ti"><span class="label">DEGEN</span> Mar20→Feb21 <span class="v up">+213%</span></span>
+    <span class="ti"><span class="label">HODLER</span> Nov18→Oct19 <span class="v up">matched</span></span>
+    <span class="ti"><span class="label">BADGER WINS</span> Dec21→Nov22 <span class="v dn">−78%</span></span>
+    <span class="ti"><span class="label">DEGEN</span> Apr24→Mar25 <span class="v up">+88%</span></span>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-chips">
+    <div class="chip ape">⚡ THE APE</div>
+    <div class="chip vs">VS</div>
+    <div class="chip badger">🦡 HONEY BADGER</div>
+  </div>
+  <div class="hero-title"><span class="d">DEGEN</span><span class="t"> TERMINAL</span></div>
+  <div class="hero-tag">No Fees · No Spread · No Mercy · 2017–2026</div>
+  <div class="hero-copy">
+    $10,000. 365 days. One button.<br>
+    <strong>HODL Bitcoin</strong> or <strong>YOLO the top-5 most volatile altcoins.</strong><br>
+    The honey badger bought BTC on day one and never looked.<br>
+    Beat it. Prove you're a DEGEN, not just lucky.
+  </div>
+  <div class="cta-wrap">
+    <button class="btn-primary" onclick="location.href='path-b-game.html'">▶ PLAY NOW</button>
+    <button class="btn-secondary">⊞ DAILY CHALLENGE</button>
+  </div>
+</div>
+
+<div class="content">
+  <!-- Global stats -->
+  <div class="section-title">
+    <span>Global Statistics</span>
+    <span class="live"><span class="live-dot"></span> Live</span>
+  </div>
+  <div class="global-stats">
+    <div class="gs-card"><div class="gs-num">72,140</div><div class="gs-label">Games Played</div></div>
+    <div class="gs-card"><div class="gs-num red">72.1%</div><div class="gs-label">Badger Win Rate</div></div>
+    <div class="gs-card"><div class="gs-num yellow">−59.5%</div><div class="gs-label">Median vs Badger</div></div>
+    <div class="gs-card"><div class="gs-num green">+1,422%</div><div class="gs-label">Best Human Ever</div></div>
+  </div>
+
+  <!-- Recent results -->
+  <div class="section-title"><span>Recent Results</span></div>
+  <table class="results-table">
+    <thead>
+      <tr>
+        <th>VERDICT</th>
+        <th>WINDOW</th>
+        <th>YOUR RETURN</th>
+        <th>vs BADGER</th>
+        <th>TRADES</th>
+        <th>SEASON</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="verdict-badge vb-degen">DEGEN</span></td>
+        <td class="td-mid">Aug 2019 → Aug 2020</td>
+        <td class="td-up">+61.0%</td>
+        <td class="td-up">+39.2%</td>
+        <td class="td-mid">14</td>
+        <td class="td-mid">COVID Crash, DeFi Summer</td>
+      </tr>
+      <tr>
+        <td><span class="verdict-badge vb-badger">BADGER WINS</span></td>
+        <td class="td-mid">Jan 2021 → Dec 2021</td>
+        <td class="td-dn">−48.0%</td>
+        <td class="td-dn">−375%</td>
+        <td class="td-mid">22</td>
+        <td class="td-mid">NFT Mania, Metaverse</td>
+      </tr>
+      <tr>
+        <td><span class="verdict-badge vb-lucky">LUCKY APE</span></td>
+        <td class="td-mid">May 2022 → Apr 2023</td>
+        <td class="td-up">+4.0%</td>
+        <td class="td-up">+42.0%</td>
+        <td class="td-mid">7</td>
+        <td class="td-mid">Crypto Winter, SVB Depeg</td>
+      </tr>
+      <tr>
+        <td><span class="verdict-badge vb-hodler">HODLER</span></td>
+        <td class="td-mid">Nov 2018 → Oct 2019</td>
+        <td class="td-mid">+0.0%</td>
+        <td class="td-mid">+0.0%</td>
+        <td class="td-mid">0</td>
+        <td class="td-mid">Crypto Winter</td>
+      </tr>
+      <tr>
+        <td><span class="verdict-badge vb-degen">DEGEN</span></td>
+        <td class="td-mid">Mar 2020 → Feb 2021</td>
+        <td class="td-up">+213%</td>
+        <td class="td-up">+126%</td>
+        <td class="td-mid">31</td>
+        <td class="td-mid">COVID Crash, DeFi Summer, Institutional Wave</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Lore -->
+  <div class="section-title"><span>The Lore</span></div>
+  <div class="lore-grid">
+    <div class="lore-card">
+      <div class="lore-icon">🦍</div>
+      <div class="lore-title">The Ape (You)</div>
+      <div class="lore-body">Always switching. Always convinced this time is different. The basket is wild — top 5 most volatile alts, rebalanced daily. DOGE, PEPE, ENJ. The coins you forgot you held.</div>
+      <div class="lore-stat red">Wins 27.9% of the time</div>
+    </div>
+    <div class="lore-card">
+      <div class="lore-icon">🦡</div>
+      <div class="lore-title">The Honey Badger</div>
+      <div class="lore-body">Bought BTC on day one. Never looked. Doesn't care about your thesis. Doesn't care about the depeg. Doesn't care. The badger doesn't care. It just compounds.</div>
+      <div class="lore-stat green">Wins 72.1% of the time</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>Data: Binance 2017–2026 · 54 coins · Daily resolution</span>
+  <span>The ape trades. The badger waits. Guess who wins.</span>
+</div>
+</body>
+</html>

@@ -1,11 +1,11 @@
-# pumprun
+# pumprun / DEGEN|TERMINAL
 
 A crypto degen timing game. You have $10,000 and one year (365 days) of secret
 historical market data. One button: HODL Bitcoin or YOLO into the 5 most volatile
 altcoins. Your opponent is the Honey Badger — it bought BTC on day one and never
 looked back.
 
-**[Play now](https://pumprun.com)**
+**[Play now](https://pumprun.apps.fyra.sh)**
 
 ## How It Works
 
@@ -20,14 +20,15 @@ and you're a DEGEN. Otherwise, you're just a LUCKY APE.
 
 ```
 ├── web/                  # Single-page game client
-│   └── index.html        # ~142 KB, no framework, embedded data
+│   └── index.html        # ~147 KB, no framework, embedded data
 ├── server/               # Go stats server
-│   ├── main.go           # ~350 lines, append-only JSON-lines storage
+│   ├── main.go           # ~400 lines, append-only JSON-lines storage
 │   └── README.md         # Deploy instructions
-├── design/               # Specs, mocks, data, lore
+├── design/               # Specs, mockups, data, lore
 │   ├── SPEC.md           # Authoritative product spec
+│   ├── NOTES.md          # Implementation notes & decisions
 │   ├── data/             # Pre-computed datasets (54 coins, 2017–2026)
-│   └── kiro/             # UI mockups (design proposals)
+│   └── mockup/           # UI design proposals
 ├── build.py              # Web client build script
 ├── AGENTS.md             # Agent communication protocol
 └── bugfix-tracker.md     # Bug tracker
@@ -44,8 +45,8 @@ cd web && python3 -m http.server 8900
 ### Server
 ```bash
 cd server
-go build -o defihodler-server .
-./defihodler-server -addr :8080 -data data/
+go build -o pumprun-server .
+./pumprun-server -addr :8080 -data data/
 ```
 
 See `server/README.md` for full deploy instructions.
@@ -54,12 +55,8 @@ See `server/README.md` for full deploy instructions.
 
 - **Client**: single HTML file, vanilla JS, Canvas API. No framework.
 - **Server**: Go, append-only JSON-lines file, in-memory stats, rate-limited.
-- **Data**: 54 Binance coins, 2017–2026, pre-computed basket returns (12.8 KB binary).
+- **Data**: 54 Binance coins, 2017–2026, pre-computed basket returns (~13 KB binary).
 - **Font**: SF Mono (system, plain zero). Colors sampled from cryptowat.ch.
-
-## License
-
-TBD
 
 ## Configuration
 
@@ -78,7 +75,7 @@ If left empty, the client uses the same origin as the page.
 Protect the POST endpoint with a shared secret:
 
 ```bash
-./defihodler-server -api-key "your-secret-here"
+./pumprun-server -api-key "your-secret-here"
 ```
 
 See `server/README.md` for full deploy instructions, TLS setup, and systemd unit.
