@@ -319,8 +319,8 @@ function loadLobbyData(){
       var retPct=(ret>=0?'+':'')+(ret*100).toFixed(1)+'%',retClass=ret>0.01?'up':ret<-0.01?'dn':'mid';
       if(i>=d.games.length-8){
         var tr=document.createElement('tr');
-        tr.innerHTML='<td><span class="vbadge '+vc+'">'+v+'</span></td><td class="mid">'+wStr+'</td><td class="'+retClass+'">'+retPct+'</td><td class="mid">'+(g.t?g.t.length:0)+'</td><td class="mid">'+seasonStr+'</td>';
-        tbody.appendChild(tr);
+        tr.innerHTML='<td><span class=\"vbadge '+vc+'\">'+v+'</span></td><td class=\"mid\">'+wStr+'</td><td class=\"'+retClass+'\">'+retPct+'</td><td class=\"mid\">'+(g.t?g.t.length:0)+'</td><td class=\"mid\">'+seasonStr+'</td>';
+        tbody.insertBefore(tr,tbody.firstChild);
       }
       var up=ret>=0,relPct2=(ret*100).toFixed(0),wStr2=MON[ds.getUTCMonth()]+String(ds.getUTCFullYear()).slice(2)+'\u2192'+MON[de.getUTCMonth()]+String(de.getUTCFullYear()).slice(2);
       h+='<span class="ti"><span class="vb '+tvc+'">'+(tvc==='d'?'DEGEN':tvc==='l'?'LUCKY APE':tvc==='h'?'HODLER':'BADGER WINS')+'</span> '+wStr2+' '+(tvc==='h'?'<span class="mid">matched badger</span>':'<span class="'+(up?'up':'dn')+'">'+(up?'+':'')+relPct2+'% vs badger</span>')+'</span>';
